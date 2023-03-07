@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="GBK">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>Document</title>
+
+		<link rel="stylesheet" type="text/css" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+
+		<style>
+			body {
+            background: #3D3D3D;
+        }
+
+        .page-content {
+            border-top: solid 1px #5C5C5C;
+            min-height: 760px;
+            width: 100%;
+        }
+
+        .footer {
+            padding: 10px 30px 10px;
+            font-family: 'Open Sans';
+            font-size: 12px;
+            color: #999999;
+        }
+
+        .nav-item {
+            border-top: solid 1px #5C5C5C;
+        }
+
+        .nav-item:hover {
+            background: #303030;
+        }
+
+        .nav-item a {
+            color: white;
+        }
+    </style>
+
+		<!--官网:https://code.jquery.com/
+    slim版本比普通版小，精简版，除去了Ajax和一些特效。
+    -->
+		<script src="bootstrap-4.3.1-dist/jsx/jquery-3.3.1.slim.min.js"></script>
+		<!--<script src="bootstrap-4.3.1-dist/jsx/popper.min.js"></script>-->
+		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+
+
+	</head>
+
+	<body>
+
+		<!--模改：参照https://getbootstrap.com/docs/4.3/components/navbar/
+    fixed-top(固定定位)   sticky-top
+    -->
+		<nav class="navbar sticky-top navbar-expand-lg bg-dark navbar-dark">
+			<a class="navbar-brand text-white" href="#">Japan游学项目<span class="text-danger">实践</span></a>
+
+			<!--减小到一定范围时，显示如下按扭 反之隐藏
+        #navbarSupportedContent:点击时，显示该ID里面的内容
+        -->
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			 aria-controls="navbarSupprotedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<!-- 方框里面的三条线 -->
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<!-- 宽度到一定范围时，显示如下信息 反之隐藏 -->
+			<div class="collapse navbar-collapse navbar-nav mr-auto">
+				<ul class="navbar-nav mr-auto">
+				</ul>
+				<span class="text-danger">
+					<a class="navbar-brand text-white">{$userName}</a>
+				</span>
+				<!-- <form class="form-inline"> -->
+				<a class="btn btn-outline-warning" href="MyProjectLogin.html">退出</a>
+				<!-- </form> -->
+			</div>
+		</nav>
+
+		<!-- 菜单栏 -->
+		<div class="container-fluid">
+			<div class="row">
+				<!--lg时，占两列， 小于则占用12列-->
+				<div class="col-12 col-lg-2 px-0 collapse d-lg-block" id="navbarSupportedContent">
+					<!--这里就是一个nav 参考官网写-->
+					<ul class="nav flex-column text-lg-center" style="background: #3D3D3D;">
+						<li class="nav-item">
+							<a class="nav-link active" href="#">
+								数据管理
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">
+								数据统计
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">
+								数据分析
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">
+								机器学习
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">
+								我的任务
+							</a>
+						</li>
+					</ul>
+				</div>
+
+				<!--内容页面-->
+				<div id="rightContent" class="col-12 col-lg-10 bg-light page-content">
+					<!-- <div class="container-fluid pl-3 pt-3 pb-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <form>
+                                <div class="form-group">
+                                    <label for="txtUserName">用户名</label>
+                                    <input type="text" class="form-control form-control-lg" id="txtUserName"
+                                        placeholder="请输入用户名">
+                                    <small class="form-text text-muted" id="smUserNameHelp">名称不会对任何人泄露</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="txtPassword">密码</label>
+                                    <input type="password" class="form-control" id="txtPassword" placeholder="请输入密码">
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" id="chkCheckOut">
+                                    <label class="form-check-label" for="chkCheckOut">记住我</label>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary">提交</button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="ttt1">测试1</label>
+                                        <input class="form-control" id="ttt1" type="text">
+
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="ttt2">测试2</label>
+                                        <input class="form-control" id="ttt1" type="text">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div> -->
+					<!--<div class="row">
+                        <div class="col-12">
+                            <div>水平的看一看</div>
+                            <form action="">
+                                <div class="form-group row">
+                                    <label class="col-sm-2">标题</label>
+                                    <div class="col-sm-10 ">
+                                        <input class="form-control" type="text">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 bg-danger">
+                            <div class="jumbotron">
+                                <h1 class="display-4">Hello, world!</h1>
+                                <p class="lead">This is a simple hero unit, a simple jumbotron-style component for
+                                    calling
+                                    extra attention to featured content or information.</p>
+                                <hr class="my-4">
+                                <p>It uses utility classes for typography and spacing to space content out within the
+                                    larger
+                                    container.</p>
+                                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+                            </div>
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 bg-primary">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+
+                        </div>
+                    </div>-->
+					<table class="table table-hover table-bordered">
+						<thead>
+							<tr>
+								<th scope="col">任务名称</th>
+								<th scope="col">任务详情</th>
+								<th scope="col">任务状态</th>
+								<th scope="col">创建日期</th>
+							</tr>
+						</thead>
+						<tbody>
+							{$content}
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+		</div>
+		<div class="footer">
+			<div class="footer-inner">
+				2019 &copy; Wxg-cqkj
+			</div>
+		</div>
+		<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		        <div class="modal-dialog">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                    <h5 class="modal-title" id="exampleModalLabel">任务详情</h5>
+		                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		                        <span aria-hidden="true">&times;</span>
+		                    </button>
+		                </div>
+		                <div class="modal-body">
+		                    ...
+		                </div>
+		                <div class="modal-footer">
+		                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+	</body>
+
+</html>

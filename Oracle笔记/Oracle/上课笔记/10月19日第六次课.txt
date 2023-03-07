@@ -1,0 +1,148 @@
+```mysql
+-- 数据库编程
+--case when 条件1 then 代码1 when 条件2 then 代码2  ...  
+when 条件n then 代码n else 代码 end case;
+
+declare		-- 自定义变量
+  v_num number;		-- 未给定初始值
+begin
+  v_num := &a;		-- 从键盘输入一个数
+  case
+    when v_num < 10 then	-- 判断这个数是否小于10
+      dbms_output.put_line('小孩子');	-- 小于10输出的语句
+    when v_num < 20 then	-- 判断这个数是否小于20
+      dbms_output.put_line('小朋友');
+    else －·	
+      dbms_output.put_line('大人');
+  end case;
+end;
+
+-- 课堂作业
+/*月份：1-3或9-12：6折， 4-8：8.8折
+年龄段：12岁免费以下，12-50：原折扣价格，50岁以上在折扣价格基础上再打5折
+飞机的原价：2000元
+年龄变量：&age
+月份：&month
+--使用两种方式实现（if else,  case when）
+*/
+
+-- while 条件表达式  loop  循环体  end loop;
+
+declare
+  v_num number;
+begin
+  v_num := 1;
+  while v_num < 10 loop
+     dbms_output.put_line(v_num);
+     v_num := v_num + 1;
+  end loop;
+end;
+
+-- for语法： for ... in ...  loop 代码块  end loop;
+-- 输出 1~100之间的数
+declare
+  v_num number;
+begin
+  for v_num in 1..100 loop
+     dbms_output.put_line(v_num);
+  end loop;
+end;
+
+-- for(隐式游标)遍历
+--语法：for 临时变量 in (子查询) loop 代码块 end loop;
+declare
+  v_sal number := 0;
+begin
+  for tmp in (select sal from emp) loop
+     -- 遍历每一行，可通过tmp.列名 取行中值，做一些业务逻辑处理
+     v_sal := v_sal + tmp.sal;
+  end loop;
+
+  dbms_output.put_line(v_sal);
+end;
+
+
+-- 课堂作业1：在客户表中新增一个字段，保存会员的类型（级别） level
+-- (<100 青铜, 100-500之间 白银  500-2000之间 黄金  2000-10000之间 白金 10000-50000之间    钻石 50000以上  王者)
+-- 根据客户的消费总金额来初始化会员的类型。（规则如上）
+/*begin
+  for i in (查询所有的客户信息) loop
+     cash = 通过i.cusId查询当前客户消费的总金额
+     result = (case when cash > 100000 then '王者' when cash > 100000 then '王者'....end);
+     更新当前客户的cusType = result;
+     update customer set cusType = result where cusid = i.cusid;
+  end loop;
+end;
+*/
+
+-- 分页
+/*
+-- 方法一
+select * 
+-- 方法二
+-- row_number() over (partition by 表达式 order by 表达式)
+select *
+  from (select row_number() over(order by s.age) rn, s.*
+          from student s)
+ where rn between 3 and 4;
+
+ select *
+  from (select row_number() over(partition by sex order by s.age) rn, s.*
+          from student s)
+ where rn between 3 and 4;
+
+-- 作业
+ -- 分页(pageSize(每页大小), pageIndex(第N页), 计算pageCount(页的数量)=查询结果的总数				量/pageSize)0
+ -- 起始位址：(pageindex -1 ) * pagesize + 1
+ -- 终止位置：pagesize * pageindex
+ */
+ select *
+ 		from (select rownum rn, t.*
+         		from (查询的sql语句) t )
+ where rownum between 起始位址 and 结束位置；
+ 
+ 
+ -- 
+ 
+ -- 要求：接收用户输入的两个参数：pageSize，pageIndex
+ -- 编程实现：输出对应的学生信息表中的页的数据（学号  姓名  年龄）
+ /*
+  学号      姓名    年龄
+ s001      XXX     17 
+ s008882   XX      18  
+ */
+ -- 1：验证学生表中有没有用户输入的该页数据，如果没有，输出提示:无效页。
+ -- 2：查询该页的数据，并打印出来。
+
+
+
+-- 函数
+/*
+create or replace function 函数名(参数名 数据类型，...) return  数据类型
+as
+变量1 数据类型1
+...
+begin
+   代码块
+   return 表达式;
+end;
+*/
+
+-- 课堂练习:
+--2：定义一个函数：处理一个字符串,超过指定个数的字符后面以...代替,没有超过，不处理
+
+--课堂作业
+--　1：定义一个函数，实现
+--　如有字符串'   ab    cd  112  dfe   efe   '  => 返回：' ab*cd*112*dfe*efe   '
+
+
+
+
+```
+
+
+
+```
+
+```
+

@@ -1,0 +1,34 @@
+Mysql函数
+一、日期函数
+1、curdate()和current_date() 获取当前日期
+2、curtime()和current_time()获取当前时间
+3、now(), current_timestamp(),localtime(),sysdate(),localtimestamp()
+获取当前日期和时间
+二、数学函数，主要用于处理数字
+1、abs(x) 可以求出表中某个字段取值的绝对值；
+例：select abs(5),abs(-5);
+2、floor(x) 向下取整
+例：select floor(9.876),floor(-9.09);
+3、rand() 用于返回0-1之间的随机数
+例：select rand(),rand();
+4、truncate(x,y) 用于返回值x保留到小数点y位的值，其中x可以是数值，也可以是字段（注意：该函数不做四舍五入）
+例：select truncate(6.95959,2);
+5、sqrt(x) 返回参数x的平方根
+select sqrt(9);
+三、字符串函数，用于处理表中的字符串
+1、upper(s),ucase(s) 转换字符串s中所有的字母为大写字母，s也可以是字段名
+例：select upper('Hello'),ucase('world');
+
+2、left(s,n)用于返回字符串s的前n个字符
+例：select left('hello',2);
+
+3、substring(s,n,len)截取字符串
+例：select substring('hello',2,3);
+四：其他函数
+1、if(expr,v1,v2)是一种条件判断函数，如老师辛苦了
+表达式expr成立，则执行v1，否则执行v2
+例：查询表tb_score,如果分值大于85则输出“优秀”，否则输出“一般”。
+
+2、ifnull(v1,v2) 也是一种条件判断函数，其表示的是如果表达式v1不为空，则显示v1的值，否则显示v2的值
+例：select ifnull('Hello','Runoob');
+例：select ifnull(2/0,1);

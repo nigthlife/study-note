@@ -1,0 +1,167 @@
+1.掌握MySQL数据库中简单数据查询；
+
+（1）a.查询所有字段数据：
+
+	select * from 表名；
+
+	select * from tb_student;
+
+（2）b.查询指定字段数据：
+
+	select 字段名1，字段名2 from 表名；
+
+	select classNo,department,className from tb_class;
+
+
+（3）c.避免重复数据查询(distinct):
+
+	(3.1)查询表tb_class中的部门有那些?
+
+		select distinct department from tb_class;
+
+	(3.2)查询表tb_student中的班级编号有那些？
+
+		select distinct classno from tb_student;
+
+（4）d.数学四则运算数据查询:(定义字段别名)
+
+	(4.1)查询学生的姓名和年龄：
+
+	     select studentName,Year(now())-Year(birthday) as age from tb_student;
+
+（5）e.设置显示格式数据查询: concat(字段名1，‘描述’,字段名2) as 别名
+
+	查询每个学生的年龄是多少? 
+
+	select concat(studentName,'的年龄是：'
+	,Year(now())-Year(birthday)) 学生的年龄
+	from tb_student;
+
+（6）f.关系运算符合逻辑运算符条件查询；
+
+	在tb_course中查询课时大于等于48学时的课程名称及学分；
+
+	select courseName,courseHour from tb_course where courseHour>=48;
+
+	(6.1)查询少数民族学生的姓名、性别、籍贯和民族
+
+
+	（where nation!='汉' 或where NOT nation='汉'）不等于<>或！=
+
+（7）g.带between and关键字查询
+
+         查询出生在1997-01-01和1997-12-31之间学生的姓名、性别和出生日期
+
+	select studentName,sex,birthday from tb_student 
+	where birthday between '1997-01-01' and '1997-12-31';
+
+         查询出生不在1997-01-01和1997-12-31之间学生的姓名、性别和出生日期?
+
+	birthday between NOT '1997-01-01' and '1997-12-31';
+
+（8）h.带in关键字的集合查询
+
+         查询籍贯是北京、天津和上海学生的信息
+	select * from tb_student where native In('北京','天津','上海');
+
+         查询籍贯不是北京、天津和上海学生的信息
+
+
+（9）j.带is null关键字空值查询
+
+         查询tb_class班级中年级的空值数据记录
+
+	select classname,grade from tb_class where grade is null;
+
+         查询年级grade为2013,2014的班级\\ in查询包括null值，查询结果一样
+
+	select classname from tb_class where grade in(null,2013,2014);
+
+
+         查询年级grade不是2013,2014的班级\\ in查询包括null值，查询结果为空
+
+	select classname from tb_class where grade not in(null,2013,2014);
+
+         查询tb_class班级中年级不为空值的数据记录的班级
+
+	select classname,grade from tb_class where grade is not null;
+
+（10）h.比较大小查询
+
+        查询tb_score中大于80分的学生的编号：
+
+	select studentno from tb_score where score>80;
+
+        查询年龄小于23岁的同学的姓名
+
+	select studentname from tb_student where (year(now())-year(birthday))<23;
+
+
+（11）多条件数据查询:
+
+	select 字段名 from 表名 where 字段名=数据值 or 字段名=数据值;
+	select 字段名 from 表名 where 字段名=数据值and字段名=数据值;
+
+        查询学分大于等于3且学时大于32的课程名称、学分和学时数
+
+	select courseName,credit,courseHour from tb_course where credit>=3
+	AND courseHour>32;
+
+        查询籍贯是北京或上海的学生姓名
+
+	select studentname,native from tb_student where native='北京'or native='上	海';
+
+（12）i.带like关键字的模糊查询
+
+          (12.1)带有%通配符的查询
+
+        查询班级编号中以A开头的有哪些班级
+
+	    select classname from tb_class where classno like 'A%';
+
+        查询班级编号中不是以A开头的有哪些班级
+
+	select classname from tb_class where classno not like 'A%';
+
+
+(2)带有_通配符的查询
+
+查询学生中第二个字是一的姓名有哪些？
+
+	select studentname from tb_student where studentname like '_一%';
+
+
+查询员工中第二个字母不是一的姓名有哪些？
+
+	select studentname from tb_student where studentname not like '_一%';
+
+
+(3)带like关键字的模糊查询注意点
+
+例子：查询班级表中带计字的部门名称
+
+	select department from tb_class where department like '%计%';
+
+查询班级表中不带计字的部门名称
+
+	select department from tb_class where department not like '%计%';
+
+l.按照字段排序查询；
+
+	select * from 表名 order by 字段名 ASC|DESC;
+
+单个字段排序查询
+
+查询学生的姓名，籍贯和民族，并将查询结果按姓名升序排列；
+
+	select studentname,native,nation from tb_student order by studentName;
+
+
+查询学生选课成绩大于85分的学号、课程号和成绩信息，并将查询结果先按学号升序排列，
+按成绩降序排列
+
+	select * from tb_score where score>85 order by studentNo,score DESC;
+
+
+
+

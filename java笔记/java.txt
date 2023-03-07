@@ -1,0 +1,65 @@
+				
+			第一次课
+（1）Java语言的特点
+	简单性   解释性
+	面向对象	高性能
+	分布式处理  多线程
+	健壮性	动态
+	结构中立	安全性
+	开源
+	跨平台
+（2）跨平台原理
+	只有在需要运行的Java应用程序的操作系统上，
+	先安装一个Java虚拟机（JVM Java Virtual Machine）
+	由JVM来负责Java程序的在改系统中运行
+
+（3）
+	因为有J JVM,所以同一个Java程序在三个不同的操作
+	系统中都可以执行。这样就实现了Java程序的跨平台性。
+	也称为Java具有良好的可移植性。
+（4）JDK
+	Java运行环境
+	包括Java虛拟机(JVM ava V irtual V achine)和Java程序所需的核心类库
+	等，如果想要运行一个开发好的Java程序，计算机中只需要安装JRE即可。
+（5）JRE
+	java开发工具包
+	JDK是提供给Java开发人员使用的，其中包含了java的开发工具，也包括
+	了JRE。所以安装了JDK,就不用在单独安装JRE了。
+	其中的开发工具:编译工具(avac.exe)运行工具(java.exe)，打包工具
+	(jar.exe)等
+
+			第二次	从键盘输入
+（1）：
+	next和nextLine的区别
+	next()读取到有效字符后才可以结束输入，对输入之前遇到空格、回车、teb会自行去掉，
+	只有输入有效字符前，next（）方法才将后面输入的空格、回车、teb视为分隔符或结束符
+
+	nextLine（）方法的结束符只能是回车键，他返回的是回车键之前的所有字符
+	
+	
+
+
+
+（2）：
+	import java.util.Scanner;	//使用前必须导入这个
+	Scanner reader = new Scanner(System.in);
+	int x = reader.nextInt();	//输入一个int类型的数据
+	double x = reader.nextDouble();	//输入一个double类型数据
+	float x = reader.nextFloat();	//输入一个float类型的数据
+	short x = reader.nextShort();	//输入一个short类型的数据
+	byte x = reader.nextByte();	//输入一个byte类型的数据
+	
+	Scanner类中没有定义读取char类型数据的方法，可以先读取String 然后在转化为char
+	String str = reader.next();
+	char c = str.charAr(0);	//这就是获取字符串第一个字符
+
+
+
+
+
+
+
+
+
+
+

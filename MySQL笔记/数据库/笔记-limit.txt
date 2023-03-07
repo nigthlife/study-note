@@ -1,0 +1,483 @@
+15、创建事件v_cre,用于5分钟后创建表customer的备份表cust_bk,要求复制表结构与数据；			
+			（一）限制查询结果的数量 limit
+（1）查询循序	
+select ....from 
+where....（分组前）
+group by...分组
+having....（分组后，一般会含有聚合函数）
+order by....（asc，desc）
+limit....;限制查询结果数据（表格中第一行数据从0开始）
+
+使用Limit子句来限制Select语句返回的行数,Limit后接起始位置，
+特别注意的地方是第一条记录的起始位置是0。
+
+语法格式：
+select 字段名1，字段名2 from 表名 Limit 起始位置,显示行数；
+或者
+select 字段名1，字段名2 from 表名 Limit 行数 OFFSET 起始位置；
+
+例1：查询表tb_score，分数前10名的学生信息；
+select * from tb_score order by score desc limit 10;
+select * from tb_score order by score desc limit 0,10;
+select * from tb_score order by score desc limit 10 offset 0;
+
+例2：查询表tb_score,成绩排名第3至第5的学生学号、课程号和成绩；
+select studentno,courseno,score from tb_score order by score desc
+limit 2,3;
+
+select studentno,courseno,score from tb_score order by score desc
+limit 3 offset 2;
+
+			第二次课：分组聚合查询：
+
+（1）Group by子句中每个字段必须是检索列或有效的表达式，但不能是聚合函数，Select语句中使用表达式，必须在group by子句中制定相同的表达式，不能使用别名；
+除聚合函数之外，Select子句中的每个列都必须在group by子句中给出；
+分组的列中含有NULL值，则NULL将作为一个单独的分组返回，如果该列中存在多个NULL值，则将这些NULL值所在的行分为一组。
+
+（2）语法格式：
+select 字段列表，聚合函数（字段名） from 表名 group by 字段列表 having 条件；
+
+（3）例子1：查询各个课程号及相应的选课人数；
+Select courseNo,Count(studentNo) from tb_score group by courseNo;
+
+（4）例子2：查询每个学生的选课门数、平均分和最高分；
+Select studentNo,count(*) as 选课门数,avg(score) 平均分,max(score) 最高分 	from tb_score group by studentNo;
+
+（5）例子3：查询平均分在80分以上的每个同学的选课门数、平均分和最高分；
+Select studentNo,count(*) 选课门数,avg(score) 平均分,max(score) 最高分 	from tb_score group by studentNo having avg(score)>=80;
+
+（6）例子4：查询所有学生选课的平均成绩，但只有当平均成绩大于80的情况下才输出；
+Select avg(score) 平均分 from tb_score having avg(score)>=80;
+
+（7）例子5：查询有2门以上（含2门）课程成绩大于88分的学生学号及（88分以上的）课程	数；
+Select studentNo,count(*) 课程数 from tb_score where score>88 group by 	studentNo having count(*)>=2;
+
+
+
+				（二）复制表数据
+
+方法一：Create table 新表明 select * from 原表名； //即复制数据也复制结构
+方法二：create table 新表明 like 源表名；  //只复制表结构，不复制数据
+完成一张表的部分数据到另一张表
+1.表结构完全一样
+INSERT INTO 目标表 SELECT * FROM 来源表;
+ 2.表结构不一样（这种情况下得指定列名）
+INSERT INTO 目标表 (字段1, 字段2, ...) SELECT 字段1, 字段2, ... FROM 来源表;(这里的话字段必须保持一致)
+
+
+				（三）多表查询
+
+（1）：交叉连接（cross join，又称为笛卡尔积）
+	语法一：select * from 表1 cross join 表2；
+	语法二：select * from 表1，表2；
+	例子：查询学生表与成绩的交叉
+	select * from tb_student cross join tb_score；tb_class c
+	select * from tb_student,tb_score;
+
+（2）：内连接
+	目的是为了消除交叉连接中某些没有意义的数据行
+	也就是说，只有满足条件的记录才能出现在结果集中
+语法一：	select 字段1，字段2....字段n
+	from 表1 [inner] join 表2
+	on 连接条件
+	[where 过滤条件]
+例子：
+	例1：查询汉族学生的学号，姓名以及班级名称
+	mysql> select studentno,studentname,classname
+  	  -> from tb_student inner join tb_class
+ 	  -> on tb_student.classno=tb_class.classno
+   	  -> where nation='汉';
+语法二：	select 字段1，字段2....字段n
+	from 表1，表2
+	where 连接条件 [and 过滤条件]
+例子：	
+	SELECT studentno,studentname,classname
+	FROM tb_student,tb_class
+	WHERE tb_student.classno=tb_class.`classno`
+	AND nation='汉'
+	
+
+
+		（四）自然连接&外连接&联合查询
+
+
+
+1、交叉连接（cross join,又称为笛卡尔积)
+      语法一：
+	select * from 表1 cross join 表2
+      语法二：
+	select *  from 表1，表2；
+	例子：查询学生表与成绩表的交叉
+	SELECT * FROM tb_student CROSS JOIN tb_score;
+	select * from tb_student,tb_score;
+
+2、内连接（inner join）
+      语法一：
+	select  字段1，字段2，...，字段n 
+	from 表1  [inner] join表2
+	on 连接条件
+	[where 过滤条件];
+      语法二：
+	select  字段1，字段2，...，字段n 
+	from 表1 ,表2
+	Where 连接条件 [and 过滤条件];
+	例1：查询汉族学生的学号，姓名以及班级名称
+	mysql> select studentno,studentname,classname
+  	  -> from tb_student inner join tb_class
+  	  -> on tb_student.classno=tb_class.classno
+	  -> where nation='汉';
+
+	SELECT studentno,studentname,classname
+	FROM tb_student,tb_class
+	WHERE tb_student.classno=tb_class.`classno`
+	AND nation='汉'
+
+	例2：查询每个学生选修课程的情况
+	select studentname,courseno,score from tb_score,tb_student
+   	 -> where tb_score.studentno=tb_student.studentno;
+	select studentname,courseno,score from tb_score inner join tb_student
+	on tb_score.studentno=tb_student.studentno;
+
+3、表的别名 as
+	例子：查询汉族学生的学号，姓名,班级编号以及班级名称
+	select studentno,studentname,a.classno,classname
+	from tb_student as a,tb_class b
+	where a.classno=b.classno
+	and nation='汉';
+
+4、自连接 （自我连接）
+      注意：使用自连接时，需要为表指定多个不同的别名，
+      且对所有查询字段的引用均必须使用表别名限定，否则select操作会失败。
+
+	例1：查询与‘数据库’这门课学分相同的课程信息
+	SELECT a.courseno,a.`courseName`,a.`credit`,
+	a.`courseHour`,a.`term`,a.`priorCourse`
+	FROM tb_course AS a,tb_course b 
+	WHERE b.coursename='数据库' 
+	AND b.credit=a.credit 
+	AND a.`courseName`!='数据库';
+
+分析步骤：
+
+     1.以学分相同作为连接条件（虚拟一张相同的表连接）
+
+	 select a.*,b.* from tb_course a,tb_course b
+  	 where a.credit=b.credit;
+
+     2.以不显示b表中courseName='数据库'为条件
+
+	select a.*,b.*from tb_course a,tb_course b
+ 	where a.credit=b.credit and b.courseName='数据库';
+
+     3.以显示a表中courseName!='数据库'为条件排除数据库这门课
+
+	select a.* from tb_course a,tb_course b
+	where a.credit=b.credit and b.courseName='数据库'
+	and a.courseName!='数据库';
+
+ 5、自然连接 natural join
+      只有当连接字段在两张表中的字段名都相同时才可以使用，
+      否则返回的是笛卡尔积的结果集。
+
+           例1：查询学生的所有信息情况和每个学生所在的班级名称。
+	SELECT tb_student.*,classname FROM
+	tb_student NATURAL JOIN tb_class;
+
+           例2：查询每个学生的选修课程情况
+	SELECT a.studentno,studentname,courseno,score
+	FROM tb_student a NATURAL JOIN tb_score b;
+
+ 6、外连接 
+      语法结构：
+	select  字段名1，字段名2，...，字段名n 
+	from 表1 left | right [outer] join表2 
+	on 连接条件
+	[where 过滤条件];
+
+注意：outer是可选项，可以省略不写
+
+   a.左外连接（Left [outer] join）
+	返回该关键字左边表（基表）的所有记录，并与关键字右表中的记录进行匹配，左	表的某些记录在右表中没有记录，右表均被设置为空值NULL，与左表进行连接；
+
+例1：使用左连接查询所有学生及其选修课程的情况，包括没有选修课程的学生，要求显示学生学号、姓名、选修的课程号和成绩。
+select a. studentno,studentname,courseno,score from tb_student a left join tb_score b
+on a.studentno=b.studentno;
+
+b.右外连接（Right [outer] join）
+返回该关键字右边表（基表）的所有记录，并与关键字右表中的记录进行匹配，右表的某些记录在右表中没有记录，左表均被设置为空值NULL，与右表进行连接；
+
+总结：
+i、左外连接Left [outer]join
+
+左外连接
+以左边为基准表，显示左表中所有的内容，当遇上比较条件
+的内容不一致时，连接的右表以空值NULL显示 
+扩展：https://www.cnblogs.com/skys-li/p/8602543.html
+
+ii、右外连接Right [outer]join
+
+右外连接
+以右边为基准表，显示右表中所有的内容，当遇上比较条件
+的内容不一致时，连接的左表以空值NULL显示
+
+总结：
+inner JOIN: 如果表中有至少一个匹配，则返回行
+LEFT JOIN: 即使右表中没有匹配，也从左表返回所有的行
+RIGHT JOIN: 即使左表中没有匹配，也从右表返回所有的行
+
+7、联合查询（Union [all]）
+*联合查询，将查询的内容进行合并，不会筛选数据类型
+Union all合并所有内容，Union去除查询字段的重复内容再合并
+
+union all
+union
+
+使用union关键字可以把来自多个select语句中的结果组合到一个结果集中，
+合并时，多个select子句中对应的字段数和数据类型必须相同。
+
+Union（去除重复，相当于默认应用了Distinct），Union All不去除重复。
+
+语法结构：
+Select 字段名1 from  表1,表2 Where 连接条件[and 过滤条件]
+Union [all]
+Select 字段名2 from 表1,表2 Where 连接条件[and 过滤条件];
+
+例如：
+select * from a union
+select * from c;
+
+select * from a union all
+select * from c;
+
+
+例1：使用union查询选修了“管理学”或“计算机基础”的学生学号。
+
+Select studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo and courseName='管理学'
+Union 
+Select studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo and courseName='计算机管理';
+
+该语句等同于：
+Select distict studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo
+ and (courseName=’管理学’or courseName=’计算机基础’);
+
+
+例2：使用union all查询选修了“管理学”或“计算机基础”的学生学号。
+
+Select studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo and courseName='管理学'
+Union all
+Select studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo and courseName='计算机管理';
+
+该语句等同于：
+Select studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo
+ and (courseName=’管理学’or courseName=’计算机基础’);
+
+
+总结：
+1使用union关键字，会在返回的集合中，去掉重复的记录。
+2如果使用union all语句,则返回的集合中，包含重复的记录
+3显示字段的数据类型不必完全相同，但必须是mysql可以隐含转换的类型
+4第一个Select子句中的目标列名会被作为union语句结果集的列名称
+5联合查询中只能使用一条order by 子句或limit子句，且它们必须置于最后一条select 语句之后
+
+
+
+			第十四次课  视图
+（1）查看视图数据
+	select * from 视图名（显示所有数据）
+
+
+（2）修改视图
+	1.
+	Alter view 视图名 AS 
+	Select 字段名1，....,字段名n from 表名；
+	2.
+	Create or replace View 视图名 AS 
+	Select 字段名1，....,字段名n from 表名；
+	当你这个视图名称存在就是修改，当你这个视图名称不存在就是创建
+
+	（1）视图名称不能被修改，修改的是视图的查询语句
+	（2）修改视图只能通过修改查询语句修改视图，不能通过添加、删除字段来修改		视图；
+
+（3）查看详细信息
+	show create view 视图名
+
+（4）查看视图和表的详细信息
+	show table status from 数据库名 （like '视图名'）
+	
+（5）查看视图的结构信息
+	desc 视图名
+
+（6）系统表查看视图信息
+	information_schema.view
+	
+	SELECT * from Views where table_name='视图名' \G
+
+（7）删除视图语法
+	drop view 视图名
+
+（8）插入视图数据
+	insert  into 视图名 （字段名1，字段名2）values （数值1，数值2）
+
+（9）更新视图数据
+	update 视图名 set 字段名= 数值 where 条件
+
+（11）delect from 视图名 where 条件
+	对于依赖多个基础表的视图，不能使用delete语句。
+（12）
+	视图不能更新 聚合函数
+	distinct 关键字
+	group by 子句
+	order by 子句
+	having 子句
+	union 运算符
+	位于选择列表中的子查询
+	from 子句中的包含多个表
+	select 语句中引用了不可更新视图
+
+			第十五次课 事件
+
+
+（1）事件调度器 event_scheduler
+
+（2）查看事件调度器是否开启：
+	方法一：
+	show variables like 'event_scheduler';
+	show porresslist
+	方法二：
+	查看系统变量：Select @@EVENT_SCHEDULER;
+		      select @@event_scheduler;
+（3）如果event_scheduler 是off 的状态，那么我们要开启件调度器：
+
+	set global event_scheduler=1;
+	Set Global EVENT_SCHEDULER=1;  //关闭是0
+	或者
+	set global event_scheduler=true;
+	Set Global EVENT_SCHEDULER=True;  //关闭是false
+
+（4）创建事件  事件名称、什么时间、干什么
+
+语法：  Delimiter $$
+	Create event if not exists 事件名称
+	On Schedule 时间调度
+	Do
+	Begin
+	事件语句1;
+	事件语句2;
+	end
+	$
+
+（5）时间调度的语法：
+	current_timestamp 现在
+	at timestamp 现在
+	starts timestamp 从现在开始
+	ends timestamp 结束
+	AT timestamp [+INTERVAL interval]...
+	[STARTS timestamp [+INTERVAL interval]...]
+        [ENDS timestamp [+INTERVAL interval]...]
+
+（6）
+	每分钟：
+		every 1 minute 或 every 60 second 
+	当前时间：
+		at now()
+        一分钟后：
+		at now() + interval 1 minute
+        从2019.5.20：
+		starts '2019-5-20 00:00:00'
+        10天后停止：
+		end current_timestamp + interval 10 day
+        10天后开始，一个月停止执行：
+       		starts current_timestamp+interval 10 day
+        	ends current_timestamp+interval 1 month
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			第十七次课 触发器
+
+
+（1）邮件地址不合法如：@12，12@这种
+	create trigger ss on 
+	for each row 
+	begin
+	if new.email<>null then
+	   if left(new.email,1)='@' then
+		set new.email = 'xx@xx.com'
+	   endif;
+	   if right(new.email,1)='@' then
+		set new.email = 'xx@xx.com'
+	   end if;
+	end if; 
+（2）left获取左边第一个字符
+     right获取右边第一个字符
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			第十八次课 存储过程
+
+（1）创建存储过程
+    语法：create procedure 存储过程名称
+	  declare
+
+
+
+
+	

@@ -1,0 +1,101 @@
+视图view
+（1）视图的列可以来自于不同的表，是表的抽象和在逻辑意义上建立的新关系
+（2）视图是由基本产生的表
+（3）删除视图不会影响基本表
+（4）使用delete删除视图数据基本表数据也会被删除
+（5）使用drop删除视图不影响基本表
+（6）当视图来自多个表时
+
+
+
+
+
+
+
+
+一，视图的基本操作
+1.创建视图，基本语法格式：
+Create view 视图名 AS select....;
+例：从一张表中取部分字段形成视图
+create view v_stu as
+select studentno,studentname from tb_student;
+例：从不同的表中取字段形成视图
+create view v_score as
+select studentname,coursename,score from tb_student natural join tb_course natural join tb_score;
+注意：视图不仅可以根据基本表来创建，还可以根据已存在视图来创建
+
+2.修改视图，基本语法格式：
+方法一:
+Create or replace View 视图名 AS 
+Select 字段名1，....,字段名n from 表名；
+例：向视图v_stu中添加字段birthday
+create or replace view v_stu as
+select studentno,studentname,birthday from tb_student;
+方法二:
+Alter view 视图名 AS 
+Select 字段名1，....,字段名n from 表名；
+例：向视图v_stu中添加字段birthday
+alter view v_stu as
+select studentno,studentname,birthday from tb_student;
+备注：
+修改视图只能通过修改查询语句修改视图，不能通过添加、删除字段来修改视图；
+修改视图名：rename table 原视图名 to 新视图名;
+
+3.查看视图，基本语法格式：
+A.查看视图的详细信息
+show create view 视图名 \G
+例：show create view v_student \G
+
+B.查询表和视图的详细信息
+show table status [from 数据库名] [like '视图名'];
+例：show table status from db_school like 'v_student' \G
+也可以这么写
+show table status where comment='view';
+
+C.查看视图的结构信息
+语法：DESC 视图名；
+例：Desc v_student;
+
+D.查看表/视图的名字
+show tables; 
+
+E.通过系统表查看视图信息
+在下面的库表中
+information_schema.VIEWS
+执行查询
+SELECT * from Views where table_name='视图名' \G
+
+4.删除视图,基本语法格式：
+DROP VIEW 视图名；
+例子：DROP view v_student;
+
+5.视图数据操作(语法结构和表数据操作一样)
+A.插入视图数据
+INSERT INTO 视图名（字段名1，....,字段名n）
+VALUES（数值1，....,数值n）;
+
+B.更新视图数据
+UPDATE 视图名 SET 字段名=数值 Where 条件；
+
+注意：倘若视图中包含了下述任何一种SQL语句结构，那么该视图就是不可更新的：
+聚合函数
+distinct关键字
+group by 子句
+order by 子句
+having子句
+union运算符
+位于选择列表中的子查询
+from 子句中包含多个表
+select语句中引用了不可更新视图 
+
+C.删除视图数据
+delete from 视图名 Where 条件；
+注意：对于依赖多个基础表的视图，不能使用delete语句。
+
+视图的特点：
+(1)视图的列可以来自于不同的表，是表的抽象和在逻辑意义上建立的新关系；
+(2)视图是由基本表（实表）产生的表（虚表）；
+(3)视图的建立和删除不影响基本表；
+(4)对视图内容的更新（添加、删除和修改）直接影响基本表；
+(5)当视图来自多个基本表时，不允许添加和删除数据;
+(6)定义的视图中Select语句不能包含FROM子句中的子查询。

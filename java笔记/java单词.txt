@@ -1,0 +1,148 @@
+pattern 模式，格式
+implements 接口实例化
+Comparable 接口里边的complaraTo
+Comparator
+
+**Scanner**
+next()：
+在读取数据的时候，遇到有空格的地方就停止，不在吸收字符，它适合单个字符或者字符串
+nextLine() 
+读取回车键前面所以字符，只有回车键能让他停下
+返回的是输入回车之前的所有字符
+Hasnext(),可以放置在while循环中
+作用是判断是否还有需要输入的值
+常用于next()，因为next()输入遇到空格就结束，如果空格之后还有数据，那么hasnext就会继续读取空格之后的字符
+
+
+(1)面对对象单词：
+
+[1]:单例设计模式中：没有属性
+【分别有：懒汉式（静态）（线程安全），和饿汉式（静态）】
+<1>:synchronized	<同步，线程>
+<2>:volatile		<重排序关键字>
+
+[2]:模板设计模式中
+<3>:abstract		<抽象类关键字>
+<4>:extends		<继承关键字>
+
+[3]:策略设计模式中：
+<4>:interface		<定义接口关键字>
+<5>:implements		<接口实例化关键字>
+【使用的是抽象类封装接口，】
+【抽象类需要具体类访问，不能实例化】
+【再利用封装的接口访问接口实例化类中的方法，】
+
+[4]:工厂设计模式中：使用的是接口，作用：降低耦合，降低依赖
+使用的是：一个工厂类，一个接口类，多个接口实例化类
+
+[5]:静态代理模式：为其他对象提供代理控制，使用的是接口
+
+[6]:适配器模式：俩个接口，俩个接口实现类，一个适配器类，
+
+[7]:多态：
+<6>:instanceof （为避免异常ClassCasException）
+
+[8]:链表：内部封装一个内部类，外部提供一个内部类的属性
+
+2.常用类
+[1]: 日期类
+<1>: Calendar
+<2>: Date
+<3>: Calendar.getInstance
+<4>: DateFormat(父类) SimpleDateFormat(创建格式)
+<5>: 对象.format(new Date())
+
+3.克隆
+[1]: 实现Cloneable接口
+[2]: 重写clone方法
+
+4.Math
+[1]: BigInteger 大数据
+
+4.基本数据类型Integer
+静态转换
+String 转 int
+int i = Integer.parseInt("15")
+int 转 Integer
+Integer i = Integer.valueOf("2007")
+Int value = i.intvalue();
+
+
+
+异常：
+[1]:断言：assert
+
+
+集合框架：
+Collections 集合框架工具类
+
+
+
+集合框架的6个接口：
+foreach中的[consumer<T> 消费者接口] 
+1.lterator（一颗瑞特）
+2.Collection
+3.Map
+4.Listltertor
+5.List
+6.Set
+Enumeration 枚举的迭代器
+[lterator] -> [Collection] -> [Map] -- [List] -- [Set]
+[lterator] -> [Listlterator] -> [list]
+
+
+2.实现类：
+[Map] -> TreeMap -- HashMap -> LinkedHashMap
+[List] -> Vector -- LinkedList -- ArrayList
+[Set] -> TreeSet -- HashSet -> LinkedHashSet
+
+3.学习比较器时：
+Comparable ---- Comparator
+
+
+4.集合中引用的方法
+1.ArrayList list = new ArrayList();
+list.get(1);			获得下标为2的元素
+Iterator it = list.iterator();	获得Iterator对象
+Object ob = it.next(); 		获取该集合中的元素
+list.remove(ob);		删除该集合中的元素
+
+2.LinkedList link = new LinkedList();
+link.add(3,"student");		向该集合指定位置插入元素
+link.addFirst("Frist")		向该集合第一个位置插入元素
+link.getFirst();		取出该集合中的第一个元素
+link.remove(3);			移除该集合中指定位置的元素
+link.removeFirst();		移除该集合中的第一个元素
+
+5.String操作方法
+StringBuffer与StringBuilder区别
+//StringBuffer是线程安全的，性能低，适合在多线程中使用
+//StringBuilder是线程不安全的，性能高，适合在单线程中使用，这种情况占大多数，jdk1.5后添加
+char[] cs = {'a','b','c'};
+String s1 = new String(cs);	//将全部的字符数组转化为字符串
+String s1 = new String(cs,0,1);	//将指定范围的字符数组转化为字符串从0开始，不包括1
+
+String str = "fkwefwfad6737383";
+<1>str.toCharArray();		//以字符数组形式返回全部字符串内容
+<2>str.getBytes();		//将字符串变为字节数
+<3>Arrays.toString(str.getBytes());
+<4>str.startsWith("f");		//从第一个位置开始判断是否以指定的内容开头
+<5>str.startsWith("f",2);	//从指定位置开始判断是否以指定的内容开头
+<6>str.endWith("3");		//判断是是否以指定的内容结尾
+<7>str.replace("w","*");	//替换指定字符
+<8>str.replace("fw","--");	//替换指定的多个字符
+<9>str.replaceAll("[0-9]","/"); //利用规则替换指定   "[0-9]"或者\\d这是一个规则，表示数字0到9
+<10>str.substring(0,4);		//截取指定范围的字符串，不包含4，写一个就表示从指定位置截取到末尾
+<11>str.split("d");		//按照指定的字符串拆分，指定的字符串会消失
+<12>str.contains("a");		//返回一个字符是否存在，返回false或true
+<13>str.indexOf("f");		//从头查找指定的字符串是否存在，如果存在则返回位置，如果不存在则返回‘-1
+<14>str.lastIndexOf("f");	//从后往前查找指定的字符串是否存在，如果存在则返回位置，如果不存在则返回‘-1	
+<15>str.isEmpty();		//判断是否为空，空是指内容"",不是指null
+<16>str.length();		//取得字符串的长度
+<17>toLowerCase();		//转小写
+<18>toUpperCase();		//转大写
+<19>str.trim();			//去掉开头和结尾的空格
+<20>String.valueOf(true);	//把布尔值转为字符串
+<21>String.valueOf(10);		//啥都能转为字符串
+<22>str.concat("****");		//字符串连接操作
+<23>str.reverse();		//字符串反转

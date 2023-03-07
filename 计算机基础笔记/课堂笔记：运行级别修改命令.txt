@@ -1,0 +1,20 @@
+运行级别修改步骤：
+1、查看运行级别：runlevel
+2、查看inittab文件内容的命令：cat /etc/inittab
+3、进入 /etc目录：cd  /etc/systemd/system
+4、修改运行级别命令： ln -sf   /usr/lib/systemd/system/multi-user.target  /etc/systemd/system/default.target 
+5、重启：reboot 或者用 init6 
+  上述步骤为 运行级别5改成3，接下来我们将3再改回5
+1、runlevel  此时运行级别为3
+2、查看inittab文件内容的命令：cat /etc/inittab
+3、cd  /etc/systemd/system 
+4、修改运行级别命令： ln -sf   /usr/lib/systemd/system/graphical.target  /etc/systemd/system/default.target 
+5、5、重启：reboot 或者用 init6 
+
+在linux里安装QQ 
+1、联网下载 linux版本的qq  X64 RPM
+2、找到 linuxqq 的下载路径 
+3、cd /tmp/mozilla_root0 
+4、ls
+5、rpm -ivh linuxqq_2.0.0-b1-1024_x86_64.rpm
+

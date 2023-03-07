@@ -1,0 +1,37 @@
+运行级别修改步骤：
+1、查看运行级别：runlevel
+2、查看inittab文件内容的命令：cat /etc/inittab //cat  查看文件内容
+3、进入 /etc目录：cd  /etc/systemd/system  、、cd进入指定目录
+4、修改运行级别命令： ln -sf   /usr/lib/systemd/system/multi-user.target  /etc/systemd/system/default.target 
+5、重启：reboot 或者用 init6 
+  上述步骤为 运行级别5改成3，接下来我们将3再改回5
+1、runlevel  此时运行级别为3
+2、查看inittab文件内容的命令：cat /etc/inittab
+3、cd  /etc/systemd/system 
+4、修改运行级别命令： ln -sf   /usr/lib/systemd/system/graphical.target  /etc/systemd/system/default.target 
+5、5、重启：reboot 或者用 init6 
+
+在linux里安装QQ 
+1、联网下载 linux版本的qq  X64 RPM
+2、找到 linuxqq 的下载路径 
+3、cd /tmp/mozilla_root0 
+4、ls
+5、rpm -ivh linuxqq_2.0.0-b1-1024_x86_64.rpm   --rpm -ivh  安装文件
+
+Linux里卸载QQ
+1、查询已安装的QQ程序： rpm -qa |grep qq
+2、卸载QQ命令： rpm -e linuxqq-2.0.0-b1.x86_64     --  rpm -e  卸载文件
+
+ 安装Office命令步骤：
+[root@localhost ~]# cd   进入指定目录
+[root@localhost 桌面]# ls              查看目录文件
+[root@localhost 桌面]# tar xzvf     解压缩文件Apache_OpenOffice_4.1.7_Linux_x86-64_install-rpm_z.gz 
+[root@localhost 桌面]# cd /root/桌面/zh-CN/RPMS
+[root@localhost RPMS]# ll   查询详细文件
+[root@localhost RPMS]# rpm -ivh *.rpm  安装
+[root@localhost RPMS]# cd desktop-integration  
+[root@localhost desktop-integration]# ls
+[root@localhost desktop-integration]# rpm -ivh openoffice4.1.7-redhat-menus-4.1.7-9800.noarch.rpm
+
+
+

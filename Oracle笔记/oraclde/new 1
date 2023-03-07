@@ -1,0 +1,121 @@
+E-R图：E:Entity实体（表）
+	   R:Relationship(表与表之间的关系)
+	   
+	   
+数据库设计：要达到：1NF
+					2NF(每一个键都完全依赖主键或候选键)
+					3NF(消除传递依赖)
+					BCNF
+					4NF
+					5NF
+		
+
+	decode
+
+[1]:www.baidu.com "百度"
+
+欢迎来到[百度](https://www.baidu.com)
+
+[2]:https://blog.csdn.net/he_nan/article/details/105850141 "引用链接"
+
+
+
+
+
+自动网页链接：<http://www.baidu.com>
+
+自动引用[百度][1]的[引用链接][2]\
+
+
+
+```mysql
+select * from Course where cName like '%言%';
+```
+
+
+
+```java
+abc
++-*
+public static void main(String[] agrs){
+  // 这个是java文件
+  （）
+    String.ssss
+}
+```
+
+```python
+abc
++-*
+print()
+a.a
+//无法
+/* 无法
+/**无法*/
+-- 放散阀
+##jjjjjj
+#gg
+```
+
+```c
+abc
++-*
+print()
+a.a
+//无法
+/* 无法
+/**无法*/
+-- 放散阀
+##jjjjjj
+#gg
+```
+
+```html
+sa
+<sfs>
+  (sgff)
+  [sfs]
+  --
+  +-*
+  "dg"
+  d.f
+  
+```
+
+```tiki wiki
+sa
+<sfs>
+  (sgff)
+  [sfs]
+  --
+  +-*
+  "dg"
+  d.f
+ [sdf]
+
+[我了个乖乖]
+```
+
+```js
+sa
+<sfs>
+  (sgff)
+  [sfs]
+  --
+  +-*
+  "dg"
+  d.f
+ [sdf]
+
+```
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,139 @@
+{
+    "style_id": 22,
+    "bg_id": 0,
+    "card_id": 3807,
+    "card_md5": "d37f1c233aa888b125fbc4f8a6308790",
+    "render_info": {
+        "bg_info": {
+            "base64_bg_pic": "",
+            "mask_view": "#00000000",
+            "lottie_id": "2008",
+            "animation_md5": "6aa35cf8b0df65b06876456acf882279",
+            "animation_loop": "1"
+        },
+        "head_info": {
+            "head_items": {
+                "1001": {
+                    "position_info": {
+                        "x_axis": "-36000w",
+                        "y_axis": "0h",
+                        "height": "100050w",
+                        "position_limit": {
+                            "top": "88px",
+                            "bottom": "88px"
+                        }
+                    },
+                    "int_kv": {
+                        "style": 1,
+                        "lpd": 120000,
+                        "rpd": 12
+                    },
+                    "str_kv": {
+                        "id": "1001",
+                        "type": "pf_like"
+                    }
+                },
+                "1002": {
+                    "position_info": {
+                        "x_axis": "520w",
+                        "y_axis": "7100h",
+                        "position_limit": {
+                            "top": "88px",
+                            "bottom": "88px"
+                        }
+                    },
+                    "int_kv": {
+                        "border": 1
+                    },
+                    "str_kv": {
+                        "id": "1002",
+                        "type": "pf_avatar"
+                    }
+                },
+                "1003": {
+                    "position_info": {
+                        "x_axis": "283300w",
+                        "y_axis": "920000h",
+                        "width": "800w",
+                        "height": "",
+                        "gravity": "center_horizontal",
+                        "position_limit": {
+                            "top": "88px",
+                            "bottom": "120px",
+                            "left": "32px",
+                            "right": "32px"
+                        }
+                    },
+                    "int_kv": {
+                        "f": 0,
+                        "ft": 1
+                    },
+                    "str_kv": {
+                        "id": "1003",
+                        "type": "pf_name"
+                    }
+                },
+                "1-2072": {
+                    "position_info": {
+                        "x_axis": "2630w",
+                        "y_axis": "8200h",
+                        "height": "730w",
+                        "width": "730w"
+                    },
+                    "str_kv": {
+                        "id": "1003",
+                        "content": "",
+                        "type": "image_view",
+                        "scale_type": "center_crop"
+                    }
+                },
+                "1-2068": {
+                    "position_info": {
+                        "x_axis": "33766w",
+                        "y_axis": "28099h",
+                        "width": "4000w",
+                        "height": "4000w",
+                        "gravity": "center_horizontal"
+                    },
+                    "str_kv": {
+                        "id": "1",
+                        "type": "image_view"
+                    },
+                    "int_kv": {
+                        "stickerId": 2068
+                    }
+                },
+                "1-2069": {
+                    "position_info": {
+                        "height": "fill",
+                        "width": "fill"
+              
+                        "content": "压缩包链接",
+                        "loop": "1",
+                        "type": "lottie_view"
+                    }
+                },
+                "1-2070": {
+                    "position_info": {
+                        "x_axis": "3000w",
+                        "y_axis": "7250h",
+                        "height": "3500w",
+                        "width": "6000w"
+                    },
+                    "str_kv": {
+                        "id": "1004",
+                        "content": "http://r.photo.store.qq.com/psc?/V52xEF7n41FVBg3psTvb1ggGkb2aoSUf/Sc7wZG8Q0BUeMz.O80ebfHUcYEO2R*JDKodBBQUANaKjGV6*9Iu95RB8PVlecqxMtUgIyFILsmm.VdJaNNRtuNHLpHN9EcQGwegNExRsPw8!/b&bo=AAixAQAAAAADJ7o!&rf=viewer_4&t=5",
+                        "type": "image_view",
+                        "scale_type": "center_crop"
+                    }
+                }
+            }
+        },
+        "body_info": {
+            "color": "#00000000",
+            "cpd": 0,
+            "line_color": "#00000000",
+            "ts": 0
+        }
+    }
+}

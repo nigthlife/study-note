@@ -1,0 +1,33 @@
+网课一 复习：数据的操作、单表查询
+
+1、插入数据insert...into...
+1）插入完整数据
+例：向tb_course表中插入课程《软件工程》，课程编号为11004，学分4，课时64，第2学期开课(term)，没有前置课程
+
+insert into tb_course(coursename,courseno,credit,coursehour,term,priorcourse) 
+values('软件工程','11004',4,64,2,null);
+
+2）插入部分数据
+例：向表tb_class中添加班级CS1901，班级名称为“计算机19-1班”
+
+3）插入多条数据
+例：向表tb_student添加多名学生信息：聂蒙，女，CS1401；王凯，男，IS1401；林一诺，女，CS1901
+insert into 表名（字段1，字段2....）values(),(),();
+
+2、数据更新update
+1）更新特定数据记录
+例1，修改tb_student表聂蒙的班级编号为CS1901；
+
+例2，修改籍贯为空的记录，设置籍贯为“江西”，民族为“汉”
+
+2）更新所有数据记录
+例：重置成绩表tb_score的分数
+
+3、数据删除delete
+1）删除特定数据记录
+例：删除学生表tb_student聂蒙同学的记录
+条件：studentname='聂蒙'
+delete from 表名 where 条件;
+2）删除所有数据记录
+例：清空分数表
+delete from 表名;

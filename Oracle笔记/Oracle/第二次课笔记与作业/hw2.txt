@@ -1,0 +1,21 @@
+-- exist:
+-- 查询有员工的部门编号和名称
+	select d.deptno,d.dname
+from emp e,dept d
+where e.deptno = d.deptno
+group by d.deptno,d.dname having count(d.deptno) is not null;
+-- 查询没有员工的部门编号和名称
+
+	
+--1查询各部门的最高薪水、最低薪水、平均薪水
+--2查询‘SMITH’的领导姓名
+--3查询公司中薪水最高的员工信息 
+--4查询各部门的平均薪水及部门编号，部门名称。 
+--5查询各岗位的最高薪水，最低薪水。要求只统计薪水>1000的
+--6查询薪水大于该部门平均薪水的员工信息 
+--7不能使用组函数，查询薪水的最高值(思考一下any or all)
+--8查询员工薪资待遇有少于1200的部门编号和部门名称
+
+
+
+

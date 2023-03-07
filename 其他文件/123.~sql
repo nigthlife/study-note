@@ -1,0 +1,56 @@
+
+-- drop Sequence S_employee;  删除序列
+-- drop table employee;       删除employee表
+
+
+-- 创建员工表序列
+create Sequence S_employee;
+update employee set empAge = 21,empName='流' where empId = 2; 
+
+-- 创建员工表
+create table employee(
+ empId number primary key,    -- 员工id
+ empName varchar2(20),    -- 员工姓名
+ empAge number,           -- 员工年龄
+ empPhone varchar2(11)      -- 员工电话
+);
+
+-- 向员工表中插入数据
+insert into employee(empId,empName,empAge,empPhone) values(S_employee.nextval,'刘胜利',22,15898987789);
+insert into employee(empId,empName,empAge,empPhone) values(S_employee.nextval,'	黄春雷',21,15678789898);
+insert into employee(empId,empName,empAge,empPhone) values(S_employee.nextval,'黄思远',22,13116789836);
+insert into employee(empId,empName,empAge,empPhone) values(S_employee.nextval,'胡蝶',19,13678699898);
+insert into employee(empId,empName,empAge,empPhone) values(S_employee.nextval,'三国杀',19,13678699898);
+insert into employee(empId,empName,empAge,empPhone) values(S_employee.nextval,'升仙',19,13678699898);
+insert into employee(empId,empName,empAge,empPhone) values(S_employee.nextval,'小明',19,13678699898);
+insert into employee(empId,empName,empAge,empPhone) values(S_employee.nextval,'小红娘',19,13678699898);
+insert into employee(empId,empName,empAge,empPhone) values(S_employee.nextval,'小白',19,13678699898);
+insert into employee(empId,empName,empAge,empPhone) values(S_employee.nextval,'大白',19,13678699898);
+
+
+-- 查询表中的数据
+select * from employee ;
+select * from task ;
+select * from usertable;
+
+-- 每页显示的数据
+select * from (
+select rownum r,t.* from
+(select * from task) t where  r < 6)where r > 3;
+
+-- 总共多少条数据
+select count(1) from (
+select rownum r,t.* from
+(select * from task) t );
+
+select count(1) from (select taskid,taskName,taskDetail,taskState from task) tb;
+
+update task set taskid = 1 where taskid = ?;
+
+select *from (select rownum r,
+t.*
+from (select taskid , taskName , taskDetail，taskState from task)t where rownum <
+=10)I
+where r
+>=
+0;

@@ -1,0 +1,178 @@
+--客户表,商品表,订单表 序列
+create sequence S_CUSTOMER;
+create sequence S_PRODUCT;
+create sequence S_ORDERS;
+
+--客户表
+create table Customer
+(
+cusId number primary key,				//客户id
+cusName nvarchar2(20) not null,	 //名称
+cusPassword nvarchar2(10) not null, //密码
+idCard char(18) unique not null,    //身份证
+phoneNumber char(12) not null,       //电话
+address nvarchar2(50) not null,      //地址
+money number(12,2) default 0 check(money>=0), 
+createDate date    //时间
+);
+
+--产品表
+create table Product
+(
+proId number primary key,  //产品id
+proNo nvarchar2(20) not null unique, //产品编号
+proName nvarchar2(20) not null,      //产品名称
+proType nvarchar2(20) not null,      //产品类别
+price number(12,2) default(0) check(price >=0),//价格
+count number(8) default(0) check(count>=0),//
+createDate date default(sysdate),          //时间
+address nvarchar2(100)                     //地址
+);
+
+--订单表
+create table Orders
+(
+orderId number primary key, //订单id
+cusId number not null,      //客户id
+proId number not null,      //产品id
+proCount number(3) check(proCount>0),
+createDate date default(sysdate),
+constraint FK_ORDERS_CUSTOMER foreign key(cusId) references Customer(Cusid),
+constraint FK_ORDERS_PRODUCT foreign key(proId) references Product(Proid)
+);
+
+insert into customer values(S_CUSTOMER.Nextval,'董卓','888888','362522199709050030',13684848888,'银河系 地球 中国 南昌',2000,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'张飞','888888','362522199709050031',13684848870,'银河系 地球 中国 南昌',3000,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'貂蝉','888888','362522199709050032',13684848866,'银河系 地球 中国 南昌',5000,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'曹操','888888','362522199709050033',13684848880,'银河系 地球 中国 南昌',5000,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'刘邦','888888','362522199709050034',13684848881,'银河系 地球 中国 南昌',8000,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'刘备','888888','362522199709050035',13684848882,'银河系 地球 中国 南昌',7000,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'刘婵','888888','362522199709050036',13684848883,'银河系 地球 中国 南昌',60000,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'马超','888888','362522199709050037',13684848884,'银河系 地球 中国 南昌',20000,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'诸葛亮','888888','362522199709050038',13684848885,'银河系 地球 中国 南昌',40000,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'赵云','888888','362522199709050039',13684848887,'银河系 地球 中国 南昌',2200,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'张角','888888','362522199709050040',13684848844,'银河系 地球 中国 南昌',20200,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'张梁','888888','362522199709050041',13684848874,'银河系 地球 中国 南昌',2000,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'张宝','888888','362522199709050042',13684848898,'银河系 地球 中国 南昌',20500,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'小乔','888888','362522199709050043',13684848899,'银河系 地球 中国 南昌',20600,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'大乔','888888','362522199709050044',13684848811,'银河系 地球 中国 南昌',20800,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'吕布','888888','362522199709050045',13684848812,'银河系 地球 中国 南昌',20070,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'关羽','888888','362522199709050046',13684848813,'银河系 地球 中国 南昌',20500,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'魏延','888888','362522199709050047',13684848847,'银河系 地球 中国 南昌',20070,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'周瑜','888888','362522199709050049',13684848865,'银河系 地球 中国 南昌',20070,sysdate);
+insert into customer values(S_CUSTOMER.Nextval,'司马懿','888888','362522199709050048',13684848845,'银河系 地球 中国 南昌',27000,sysdate);
+commit;--提交事务
+insert into Product values(S_Product.Nextval,'A001','牛奶','食品',3,100,sysdate,'上海');
+insert into Product values(S_Product.Nextval,'A002','香蕉','水果',3,1500,sysdate,'北京');
+insert into Product values(S_Product.Nextval,'A003','苹果','水果',2,1600,sysdate,'美国');
+insert into Product values(S_Product.Nextval,'A004','可乐','饮料',3,1700,sysdate,'江西');
+insert into Product values(S_Product.Nextval,'A005','雪碧','饮料',3,1800,sysdate,'九江');
+insert into Product values(S_Product.Nextval,'A006','豆腐','蔬菜',1,1400,sysdate,'广州');
+insert into Product values(S_Product.Nextval,'A007','樱桃','水果',3,1500,sysdate,'武汉');
+insert into Product values(S_Product.Nextval,'A008','黄瓜','蔬菜',2,1400,sysdate,'南昌');
+insert into Product values(S_Product.Nextval,'A009','橙子','水果',3,1700,sysdate,'南昌');
+insert into Product values(S_Product.Nextval,'A010','西瓜','水果',2,1800,sysdate,'四川');
+insert into Product values(S_Product.Nextval,'A011','菠萝','水果',3,1700,sysdate,'西藏');
+insert into Product values(S_Product.Nextval,'A012','巧克力','食品',10,8100,sysdate,'美国');
+insert into Product values(S_Product.Nextval,'A013','哈密瓜','水果',5,9100,sysdate,'西藏');
+insert into Product values(S_Product.Nextval,'A014','山竹','水果',5,1100,sysdate,'非洲');
+insert into Product values(S_Product.Nextval,'A015','冰红茶','饮料',3,5100,sysdate,'上海');
+insert into Product values(S_Product.Nextval,'A016','啤酒','饮料',10,1000,sysdate,'上海');
+insert into Product values(S_Product.Nextval,'A017','耳机','电子产品',10,8100,sysdate,'泰国');
+insert into Product values(S_Product.Nextval,'A018','鼠标','电子产品',20,1500,sysdate,'印度');
+insert into Product values(S_Product.Nextval,'A019','手机','电子产品',998,1500,sysdate,'美国');
+commit; --提交事务
+insert into Orders values(S_Orders.Nextval,2,3,50,sysdate);
+insert into Orders values(S_Orders.Nextval,3,5,510,sysdate);
+insert into Orders values(S_Orders.Nextval,4,8,450,sysdate);
+insert into Orders values(S_Orders.Nextval,5,3,150,sysdate);
+insert into Orders values(S_Orders.Nextval,6,8,550,sysdate);
+insert into Orders values(S_Orders.Nextval,7,9,450,sysdate);
+insert into Orders values(S_Orders.Nextval,8,13,550,sysdate);
+insert into Orders values(S_Orders.Nextval,9,15,850,sysdate);
+insert into Orders values(S_Orders.Nextval,10,5,450,sysdate);
+insert into Orders values(S_Orders.Nextval,11,10,250,sysdate);
+insert into Orders values(S_Orders.Nextval,12,7,350,sysdate);
+insert into Orders values(S_Orders.Nextval,13,15,150,sysdate);
+insert into Orders values(S_Orders.Nextval,14,19,520,sysdate);
+insert into Orders values(S_Orders.Nextval,15,17,550,sysdate);
+insert into Orders values(S_Orders.Nextval,16,14,530,sysdate);
+insert into Orders values(S_Orders.Nextval,17,9,50,sysdate);
+insert into Orders values(S_Orders.Nextval,18,6,540,sysdate);
+insert into Orders values(S_Orders.Nextval,19,9,550,sysdate);
+insert into Orders values(S_Orders.Nextval,20,9,420,sysdate);
+commit;
+--提交事务
+
+--作业
+--1查询产品表中产品的类型（不能有重复）
+       select distinct proType from product;
+       
+--2统计每种产品类型的产品总数
+       select proType,sum(product.count) from product group by proType;
+
+--3统计每种产品类型的平均价格。
+       select proType,round(avg(price),2) price 
+         from product group by proType;
+
+--4按产品类型统计产品总数量大于2000的产品类型
+       select proType,product.count from product where product.count > 2000 
+       group by proType,product.count ;
+
+--5查询每个用户消费的金额
+       单价 * 总数 找出每个客户id然后购买什么产品买了多少
+       select cusname,money from customer;
+
+
+--6查询购买过两种或两种以上产品的客户信息)
+select c.cusid,
+       c.cusname,
+       c.cuspassword,
+       c.idcard,
+       c.phonenumber,
+       c.address,
+       c.money,
+       c.createdate
+from Customer c
+where  (select count(distinct o.proid) 
+from orders o where o.cusid = c.cusid) > =2
+
+      /* select * from Customer c where cusid in(select c.cusid from customer c,orders o，product p 
+        where c.cusid = o.cusid and o.proid = p.prono 
+        group by c.cusid having count(1) >= 2);
+       
+       select protype from product p,orders o where */
+
+
+      
+--7查询所有产品名称，产品价格及购买了当前产品的客户名称
+--（如果，该商品没有客户购买，则客户名称显示“未销售”  -- nvl()函数）
+ 
+     select cusName from customer,(select cusid,proid from orders) o
+     where customer.cusid = o.cusid; --  查出用户名称
+     
+     select proName,price from product p,(select proid from orders) o
+     where p.proid = o.proid;  -- 差出订单中产品名称和单价
+      
+     (select cusid,proid from orders) -- 查出客户id和差产品id
+     -- 根据客户名称找到购买的产品名称和单价 
+     
+     select p.proName,p.price,nvl(c.cusName,'未销售') from 
+     (select cusid,proid from orders) o,product p,customer c
+     where o.cusid = c.cusid and o.proid = p.proid;
+
+
+
+--8查询购买过同一件产品两次以上的客户信息和产品信息。
+     select p.*,c.* from product p, customer c,(select cusid,proid from orders)o
+      where o.cusid = c.cusid and o.proid = p.proid
+        and (select count(1) from orders 
+        where p.proid = proid and c.cusid = cusid)>2;
+      
+
+
+
+--9修改产品表中价格最贵的产品的价格为原来的一半。
+update product set price = (price/2)
+where price = (select max(price) from product);
+

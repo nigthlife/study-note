@@ -1,0 +1,171 @@
+1、交叉连接（cross join,又称为笛卡尔积)
+语法一：select * from 表1 cross join 表2
+语法二：select *  from 表1，表2；
+例子：查询学生表与成绩表的交叉
+SELECT * FROM tb_student CROSS JOIN tb_score;
+select * from tb_student,tb_score;
+
+2、内连接（inner join）
+语法一：
+select  字段1，字段2，...，字段n 
+from 表1  [inner] join表2
+on 连接条件
+[where 过滤条件];
+语法二：
+select  字段1，字段2，...，字段n 
+from 表1 ,表2
+Where 连接条件 [and 过滤条件];
+例1：查询汉族学生的学号，姓名以及班级名称
+mysql> select studentno,studentname,classname
+    -> from tb_student inner join tb_class
+    -> on tb_student.classno=tb_class.classno
+    -> where nation='汉';
+
+SELECT studentno,studentname,classname
+FROM tb_student,tb_class
+WHERE tb_student.classno=tb_class.`classno`
+AND nation='汉'
+
+例2：查询每个学生选修课程的情况
+select studentname,courseno,score from tb_score,tb_student
+    -> where tb_score.studentno=tb_student.studentno;
+
+select studentname,courseno,score from tb_score inner join tb_student
+on tb_score.studentno=tb_student.studentno;
+
+3、表的别名 as
+例子：查询汉族学生的学号，姓名,班级编号以及班级名称
+select studentno,studentname,a.classno,classname
+from tb_student as a,tb_class b
+where a.classno=b.classno
+and nation='汉';
+
+4、自连接 （自我连接）
+注意：使用自连接时，需要为表指定多个不同的别名，
+且对所有查询字段的引用均必须使用表别名限定，否则select操作会失败。
+例1：查询与‘数据库’这门课学分相同的课程信息
+SELECT a.courseno,a.`courseName`,a.`credit`,
+a.`courseHour`,a.`term`,a.`priorCourse`
+ FROM tb_course AS a,tb_course b 
+WHERE b.coursename='数据库' 
+AND b.credit=a.credit 
+AND a.`courseName`!='数据库';
+
+分析步骤：
+
+1.以学分相同作为连接条件（虚拟一张相同的表连接）
+
+ select a.*,b.* from tb_course a,tb_course b
+  where a.credit=b.credit;
+
+2.以不显示b表中courseName='数据库'为条件
+
+select a.*,b.*from tb_course a,tb_course b
+  where a.credit=b.credit and b.courseName='数据库';
+
+3.以显示a表中courseName!='数据库'为条件排除数据库这门课
+
+select a.* from tb_course a,tb_course b
+where a.credit=b.credit and b.courseName='数据库'
+and a.courseName!='数据库';
+
+5、自然连接 natural join
+只有当连接字段在两张表中的字段名都相同时才可以使用，否则返回的是笛卡尔积的结果集。
+例1：查询学生的所有信息情况和每个学生所在的班级名称。
+SELECT tb_student.*,classname FROM
+tb_student NATURAL JOIN tb_class;
+
+例2：查询每个学生的选修课程情况
+SELECT a.studentno,studentname,courseno,score
+FROM tb_student a NATURAL JOIN tb_score b;
+
+6、外连接 
+语法结构：
+select  字段名1，字段名2，...，字段名n 
+from 表1 left|right [outer] join表2 
+on 连接条件
+[where 过滤条件];
+
+注意：outer是可选项，可以省略不写
+
+a.左外连接（Left [outer] join）
+返回该关键字左边表（基表）的所有记录，并与关键字右表中的记录进行匹配，左表的某些记录在右表中没有记录，右表均被设置为空值NULL，与左表进行连接；
+例1：使用左连接查询所有学生及其选修课程的情况，包括没有选修课程的学生，要求显示学生学号、姓名、选修的课程号和成绩。
+select a. studentno,studentname,courseno,score from tb_student a left join tb_score b
+on a.studentno=b.studentno;
+
+b.右外连接（Right [outer] join）
+返回该关键字右边表（基表）的所有记录，并与关键字右表中的记录进行匹配，右表的某些记录在右表中没有记录，左表均被设置为空值NULL，与右表进行连接；
+
+总结：
+i、左外连接Left [outer]join
+
+左外连接
+以左边为基准表，显示左表中所有的内容，当遇上比较条件
+的内容不一致时，连接的右表以空值NULL显示 
+扩展：https://www.cnblogs.com/skys-li/p/8602543.html
+
+ii、右外连接Right [outer]join
+
+右外连接
+以右边为基准表，显示右表中所有的内容，当遇上比较条件
+的内容不一致时，连接的左表以空值NULL显示
+
+7、联合查询（Union [all]）
+*联合查询，将查询的内容进行合并，不会筛选数据类型
+Union all合并所有内容，Union去除查询字段的重复内容再合并
+
+union all
+union
+
+使用union关键字可以把来自多个select语句中的结果组合到一个结果集中，
+合并时，多个select子句中对应的字段数和数据类型必须相同。
+
+Union（去除重复，相当于默认应用了Distinct），Union All不去除重复。
+
+语法结构：
+Select 字段名1 from  表1,表2 Where 连接条件[and 过滤条件]
+Union [all]
+Select 字段名2 from 表1,表2 Where 连接条件[and 过滤条件];
+
+例如：
+select * from a union
+select * from c;
+
+select * from a union all
+select * from c;
+
+
+例1：使用union查询选修了“管理学”或“计算机基础”的学生学号。
+
+Select studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo and courseName='管理学'
+Union 
+Select studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo and courseName='计算机管理';
+
+该语句等同于：
+Select distict studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo
+ and (courseName=’管理学’or courseName=’计算机基础’);
+
+
+例2：使用union all查询选修了“管理学”或“计算机基础”的学生学号。
+
+Select studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo and courseName='管理学'
+Union all
+Select studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo and courseName='计算机管理';
+
+该语句等同于：
+Select studentNo from tb_score,tb_course
+Where tb_score.courseNo=tb_course.courseNo
+ and (courseName=’管理学’or courseName=’计算机基础’);
+
+
+总结：
+使用union关键字，会在返回的集合中，去掉重复的记录。
+如果使用union all语句,则返回的集合中，包含重复的记录
+
+

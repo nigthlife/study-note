@@ -1,0 +1,41 @@
+（1）dns：dns服务的作用，他是域名解析符，正向把域名解析为ip地址，反向把ip地址解析为域名
+分布式的数据库，存储的是域名和ip映射的一组数据表，有一一对应关系，
+
+（2）域名访问有联想性，
+
+（3）DNS: 域名解析
+	协议：UDP(DNS)user datagram protocol 用户数据包协议
+	默认端口：53
+
+（4）WEB: 提供www服务
+	协议：HTTP HyperText Transfer Protocol 超文本传输协议。
+	默认端口：80
+（5）FTP服务
+	协议: FTP File Transfer Protocol. 文件传输协议
+	默认端口：21
+（6）emaIL
+	协议: SMTP Simple Mail Transfer Protocol 简单邮件传输协议
+	POP3 Post Office Protocol - Version 3      邮局协议版本3
+	端口: SMTP 25
+	POP3  110
+
+		
+		第十七次课   IP地址
+
+（1）MAC地址（二层）：物理地址，为了定位网络中的主机
+主要用MAC地址进行广播
+（2）IP地址（三层）：逻辑地址，为了让我们确定主机所在的网络
+（3）查看网卡地址指令：IPconfig /all
+（4）封包先封ip在封MAC地址，拆包先拆MAC在拆IP
+（5）交换机查询MAC地址指令
+	show Mac - address -table
+（6）查询ARP 表
+	ARP -a
+
+
+0011 0101
+1100 1101
+1011 1000
+0010 1000
+1101 0010
+0010 0001

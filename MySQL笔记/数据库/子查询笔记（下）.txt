@@ -1,0 +1,88 @@
+3、带any/some、all关键字的子查询：
+any/some 任一，某个
+all  所有
+
+前面我们所学的，查询没有选修了课程的学生姓名
+SELECT studentname FROM tb_student WHERE
+studentno NOT IN
+(SELECT studentno FROM tb_score);
+可以改写为：
+SELECT studentname FROM tb_student WHERE
+studentno <>all
+(SELECT studentno FROM tb_score);
+
+>all(>=all)：比子查询中返回数据记录中最大的还要大于（大于等于）的数据记录
+  例子：查询男生中比所有女生出生晚的学生姓名和出生年份
+select studentName，year(birthday)
+from tb_student
+where  sex=’男’and year(birthday) >all
+(select year(birthday) from tb_student where sex =’女’);
+等同于
+select studentName，year(birthday)
+from tb_student
+where sex=’男’and year(birthday) >
+(select max( year(birthday) )from tb_student where sex =’女’);
+
+<all(<=all)：比子查询中返回数据集中最小的还要小于（小于等于）的数据记录
+  例子：查询男生中比所有女生出生早的学生姓名和出生年份
+select studentName，year(birthday)
+from tb_student
+where  sex=’男’and year(birthday) <all
+(select year(birthday) from tb_student where sex =’女’);
+等同于
+select studentName，year(birthday)
+from tb_student
+where sex=’男’and year(birthday) <
+(select min( year(birthday) )from tb_student where sex =’女’);
+
+=ANY:其功能与关键字in一样
+>ANY(>=ANY):比子查询中返回数据记录中最小的还要大于（大于等于）的数据记录
+  例子：查询男生中比某个女生出生晚的学生姓名和出生年份
+select studentName，year(birthday)
+from tb_student
+where  sex=’男’and year(birthday) >any
+(select year(birthday) from tb_student where sex =’女’);
+
+<ANY(<=ANY):比子查询中返回数据记录中最大的还要小于（小于等于）的数据记录
+  例子：查询男生中比某个女生出生早的学生姓名和出生年份。
+select studentName，year(birthday)
+from tb_student
+where  sex=’男’and year(birthday) <any
+(select year(birthday) from tb_student where sex =’女’);
+
+前面我们所学的，查询选修了课程的学生姓名
+SELECT studentname FROM tb_student WHERE
+studentno in
+(SELECT studentno FROM tb_score);
+也可以改写为：
+SELECT studentname FROM tb_student WHERE
+studentno =ANY
+(SELECT studentno FROM tb_score);
+
+[总结]
+all 大于最大的，小于最小的
+>all（15，18，20） 等同于 >20
+<all（15，18，20）等同于<15
+
+any 大于最小的，小于最大的
+>any（15，18，20） 等同于>15
+<any（15，18，20）等同于<20
+
+
+4、带exists关键字的子查询
+使用关键字EXISTS构造子查询，系统对子查询进行运算以判断它是否返回结果集，
+如果子查询的结果集不为空，则EXISTS返回的结果为TRUE，此时外层查询语句将
+进行查询；
+如果子查询的结果集为空，则EXISTS返回的结果为FLASE，此时外层查询语句将不
+进行查询；
+
+例子：查询选修了课程号为“31002”的学生姓名
+select studentName from tb_student a
+where exists
+(select*from tb_score where a.studentno=tb_score.studentNo and courseNo=’31002’);
+例子：查询没有选修课程号为“31002”的学生姓名
+select studentName from tb_student a
+where not exists
+(select*from tb_score b where a.studentno=b.studentNo and courseNo=’31002’);
+
+这种情况下的子查询，对于mysql内部，是做了“内连接之后”的结果。

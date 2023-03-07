@@ -1,0 +1,47 @@
+子查询又称为嵌套查询
+外层查询又称之为父查询；
+内层查询又称之为子查询；
+通常情况下，先执行子查询，然后将子查询的结果作为父查询的过滤条件。
+用途：嵌套查询可以用多个简单查询构成一个复杂的查询，从而增强SQL的查询能力。
+1、带in关键字的子查询
+例1，查询选修了课程的学生姓名
+SELECT studentname FROM tb_student WHERE
+studentno IN
+(SELECT studentno FROM tb_score);
+
+等同于
+SELECT DISTINCT studentname FROM tb_student
+NATURAL JOIN tb_score;(自然连接)
+
+等同于
+SELECT DISTINCT studentname FROM tb_student JOIN tb_score
+ON tb_student.`studentno`=tb_score.`studentno`;(内连接）
+
+例2，查询没有选修课程的学生姓名。
+SELECT studentname FROM tb_student WHERE
+studentno  NOT IN
+(SELECT DISTINCT studentno FROM tb_score)
+
+2、带比较运算符的子查询
+当用户能确切知道内层返回的是单值时，可以用<,<=,>,>=,=,<>,!=等比较运算符构造子查询
+例子：查询班级‘计算机14-1班’所有学生的学号、姓名
+方法一：内连接
+SELECT studentno,studentname FROM tb_student a,
+tb_class b
+WHERE a.classno=b.classno AND b.classname='计算机14-1班';
+方法二：子查询
+SELECT studentno,studentname FROM tb_student
+WHERE classno = (
+SELECT classno FROM tb_class 
+WHERE classname='计算机14-1班');
+
+例子：查询不是班级‘计算机14-1班’所有学生的学号、姓名
+SELECT studentno,studentname FROM tb_student
+WHERE classno != (
+SELECT classno FROM tb_class 
+WHERE classname='计算机14-1班')
+
+例子：查询学分比“计算机基础”学分高的课程信息。
+SELECT coursename FROM tb_course
+WHERE credit > 
+(SELECT credit FROM tb_course WHERE coursename='计算机基础');

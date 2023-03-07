@@ -1,0 +1,551 @@
+-- 第十三次课随堂练习
+-- 第一题
+
+
+-- 1.按供应商分组，统计供货的数据总数,查询供应商名称和供货总数
+SELECT sname,SUM(qty) FROM s INNER JOIN sp WHERE
+s.`sno`=sp.`sno` GROUP BY sname 
+
+-- 第二题
+-- 2.查询供应商为Smith供应的零件编号；
+SELECT pno 零件编号 FROM sp WHERE sno 
+=(SELECT sno FROM s WHERE sname = 'smith')
+
+-- 第三题  3.查找供货量在500~800之间的供货零件的名称；
+SELECT pname 零件名称 FROM p INNER JOIN sp ON p.pno = sp.`pno` WHERE 
+qty BETWEEN 500 AND 800
+
+-- 第四题  
+-- 4.查找供应红色零件的供应号码和供应商名称，并按供应商名称降序排序；
+
+SELECT sno,sname FROM s WHERE sno IN(SELECT sp.sno 号码 FROM p INNER JOIN sp
+ON p.`pno`=sp.`pno` AND color = 'red')ORDER BY sname DESC
+
+-- 第五题
+-- 5.查询重量在15以下，Paris供应商供应的零件代码和零件名；
+SELECT DISTINCT p.pno , p.`pname` FROM p INNER JOIN sp WHERE p.`pno`=sp.pno 
+AND p.`pno` IN(SELECT sp.pno FROM sp INNER JOIN s WHERE sp.`sno`=s.`sno` AND
+city = 'paris')AND weight <15
+
+-- 第六图
+-- 6.查询由London供应商供应的零件名称和供货数量；
+SELECT pname,qty FROM p INNER JOIN sp WHERE p.pno = sp.`pno` AND p.`pno` IN
+(SELECT sp.pno FROM sp INNER JOIN s WHERE sp.`sno`=s.`sno` AND
+city = 'london')
+
+-- 第七题
+-- 7.查询不供应绿色的供应商名称；
+SELECT 
+SELECT pno FROM p WHERE color !='green'
+
+-- 第八题
+-- 8.查询供应零件代码为P1和P2两种零件的供应商名称；
+SELECT sname FROM s INNER JOIN sp WHERE s.sno = sp.`sno`
+AND pno ='p1'
+UNION 
+SELECT sname FROM s INNER JOIN sp WHERE s.sno = sp.`sno`
+AND pno ='p2'
+
+-- 第九图
+-- 9.查询与供应商Smith同一城市的供货商供应的零件名称；
+SELECT DISTINCT pname FROM p INNER JOIN sp WHERE p.pno = sp.`pno`
+AND p.pno IN (SELECT pno FROM sp INNER JOIN s WHERE sp.sno = s.`sno`
+AND sname ='Smith')
+
+-- 第十题
+-- 10.查询与零件名Nut颜色相同的零件代码和零件名称
+SELECT pno,pname FROM p WHERE color IN
+(SELECT color FROM p WHERE pname = 'nut')
+
+
+
+
+
+-- 第一图
+-- 1.查询借阅者姓名、借出日期及实际归还日期
+SELECT readername 姓名,borrowdate,returndate FROM 
+tb_reader INNER JOIN tb_borrow WHERE tb_reader.`readerNo`=
+tb_borrow.`readerNo`
+
+
+-- 第二题
+-- 2.查询图书所有类别进货总数（包括没有数量的类别）
+SELECT DISTINCT classno,SUM(bnum) FROM tb_class LEFT JOIN tb_book
+ON classno = btype GROUP BY classno;
+
+
+-- 第三题
+-- 3.使用自然连接，查询黄凯的借阅记录
+SELECT readerName,tb_borrow.* FROM tb_reader NATURAL JOIN tb_borrow
+WHERE readerName = '黄凯';
+
+-- 第四题
+-- 4.使用内连接，查询未及时归还的图书名称及相关借阅记录
+SELECT DISTINCT bname,b.* FROM tb_borrow b,tb_book WHERE bookno = bno;
+
+-- 第五题
+-- 5.使用内连接，查询未及时归还图书的学生姓名及书名
+SELECT DISTINCT bname,tb_borrow.* FROM tb_borrow,tb_book WHERE bookno = bno
+AND shouldDate != returnDate;
+
+
+
+
+
+
+
+
+
+-- 第六题
+-- 6、查询未被借出去的图书名称
+SELECT bname FROM tb_book WHERE bno NOT IN(
+SELECT DISTINCT bookno FROM tb_borrow ORDER BY bookno ASC)
+
+
+-- 第七题
+-- 7.查询与高等数学单价相同的图书信息
+SELECT * FROM tb_book WHERE price IN
+(SELECT price FROM tb_book WHERE bname = '高等数学')
+AND bname != '高等数学'
+
+
+-- 第八题
+-- 8.查询被借出次数最多的图书信息
+SELECT readerno,bookno,COUNT(bookno) FROM tb_borrow 
+ORDER BY bookno ASC
+
+
+-- 第九题
+-- 9.统计14年1月被借出的图书名称
+SELECT bname FROM tb_book WHERE bno IN(
+SELECT bookno FROM tb_borrow WHERE borrowdate LIKE '2014_01%')
+
+
+
+-- 第十题
+-- 10.查询10月份入库的图书的借阅情况,并按图书编号的升序排列
+
+SELECT * FROM tb_book WHERE bdate LIKE '20___10%'
+ORDER BY bno ASC;
+
+
+-- 实训报告十三
+-- 1.对morder表的数据，查询订单金额大于500，每个区域的订单总金额；
+SELECT region,SUM(order_price) FROM morder WHERE order_price >500
+GROUP BY region 
+
+-- 2.对morder表的数据，按照区域和类型进行分组，
+-- 查询出总金额大于5000，每个区域和类型订单的总金额；
+SELECT region 区域,`type` 类型,SUM(order_price)FROM morder
+GROUP BY region HAVING SUM(order_price) > 5000
+
+-- 3.查找北京区域订单的用户名和手机号;
+SELECT DISTINCT user_name 用户姓名,phone_num 电话 FROM `user`
+INNER JOIN morder WHERE `user`.`id`=morder.user_id AND 
+user.id IN( SELECT user_id FROM morder WHERE region = '北京')
+
+
+-- 4.查询从来没有下过单的用户名称；
+SELECT user_name FROM `user` WHERE user_name NOT IN
+(SELECT DISTINCT user_name FROM `user` AS  a INNER JOIN 
+morder  AS b WHERE a.phone_num = b.recv_phone )
+
+
+-- 5.查询订单金额低于平均订单金额的订单价格以及所属用户名；
+SELECT order_price ,user_name  FROM morder
+INNER JOIN `user` a WHERE morder.`user_id` = a.id 
+AND order_price < (SELECT AVG(order_price) FROM morder)
+
+
+-- 6.查询user表中重复的email地址；
+
+SELECT email FROM USER GROUP BY email HAVING COUNT(*) > 1
+
+
+-- 7.统计订单金额大于平均金额的每个地区订单总金额，
+-- 按照倒序排列，取总金额最高的第2个地区；
+SELECT region ,SUM(order_price )FROM morder  
+WHERE order_price >(SELECT AVG(order_price) FROM morder)
+GROUP BY region ASC LIMIT 0,2
+
+
+-- 8.查询北河年龄相同的订单信息；
+SELECT morder.* FROM morder INNER JOIN USER
+WHERE morder.user_id = user.id AND
+user_id IN(SELECT id FROM USER WHERE age IN
+(SELECT age FROM USER WHERE user_name = '北河'))
+
+
+
+-- 9.查询查询周老师的区域相同的用户编号、姓名和年龄； 
+SELECT DISTINCT user.id,user_name,age FROM 
+USER INNER JOIN morder
+WHERE morder.user_id=user.id AND region IN(
+SELECT region FROM morder INNER JOIN USER 
+WHERE morder.user_id=user.id AND user.id IN(
+SELECT id FROM USER WHERE user_name ='周老师'))
+
+-- 10.查询出每门课都大于80分的学生姓名和最低分数；
+SELECT `name`,MIN(score)FROM score GROUP BY
+ `name` HAVING MIN(score) >80 
+
+
+
+
+-- 第十四周实训报告
+-- 1.用any和聚合函数两种方式分别构建查询语句，
+-- 要求查询女生中比某个男生出生年份晚的学生姓名和出生年份；
+
+
+SELECT studentname,YEAR(birthday) FROM tb_student 
+WHERE sex ='女' AND YEAR(birthday) >ANY(  
+SELECT YEAR(birthday) FROM tb_student WHERE sex ='男');
+
+SELECT studentname,YEAR(birthday) FROM tb_student
+WHERE sex = '女' AND YEAR(birthday) >
+(SELECT MIN(YEAR(birthday)) FROM tb_student WHERE sex ='男')
+
+
+
+-- 2.用any和聚合函数两种方式分别构建查询语句，
+-- 要求查询女生中比某个男生出生年份早的学生姓名和出生年份； 
+
+
+SELECT studentname,YEAR(birthday) FROM tb_student 
+WHERE sex ='女' AND YEAR(birthday) < ANY(  
+SELECT YEAR(birthday) FROM tb_student WHERE sex ='男');
+
+SELECT studentname,YEAR(birthday) FROM tb_student
+WHERE sex = '女' AND YEAR(birthday) <
+(SELECT MAX(YEAR(birthday)) FROM tb_student WHERE sex ='男')
+
+
+-- 3.用all和聚合函数两种方式分别构建查询语句，
+-- 要求查询女生中比所有男生出生年份早的学生姓名和出生年份；
+
+
+SELECT studentname,YEAR(birthday) FROM tb_student 
+WHERE sex='女' AND YEAR(birthday) < ALL
+(SELECT YEAR(birthday) FROM tb_student WHERE sex = '男');
+
+SELECT studentname,YEAR(birthday) FROM tb_student 
+WHERE sex='女' AND YEAR(birthday) < 
+(SELECT MIN(YEAR(birthday)) FROM tb_student WHERE sex='男')
+
+
+-- 4.用all和聚合函数两种方式分别构建查询语句，
+-- 要求查询女生中比所有男生出生年份晚的学生姓名和出生年份；
+
+
+SELECT studentname,YEAR(birthday) FROM tb_student 
+WHERE sex='女' AND YEAR(birthday) > ALL
+(SELECT YEAR(birthday) FROM tb_student WHERE sex = '男');
+
+SELECT studentname,YEAR(birthday) FROM tb_student 
+WHERE sex='女' AND YEAR(birthday) > 
+(SELECT MAX(YEAR(birthday)) FROM tb_student WHERE sex='男')
+
+
+-- 5.用exist查询来自北京的学生学号和姓名
+
+
+SELECT studentno,studentname FROM tb_student a
+WHERE EXISTS 
+(SELECT native FROM tb_student b WHERE 
+  native = '北京' AND a.native =b.`native`)
+
+
+
+
+-- 6.用exist查询分数大于90分的学生学号和姓名
+
+
+
+SELECT studentno,studentname FROM tb_student a
+WHERE EXISTS
+(SELECT studentno FROM tb_score b WHERE score>90 AND
+a.studentno = b.`studentNo`)
+
+
+
+-- 7.用exist查询选修了管理学的学生的学号和姓名
+
+
+
+
+SELECT DISTINCT studentno,studentname FROM tb_student a
+WHERE EXISTS
+(SELECT DISTINCT studentno FROM tb_course,tb_score 
+ WHERE tb_score.`courseNo`=tb_course.`courseno`
+ AND a.studentno=tb_score.`studentNo` AND coursename='管理学')
+
+
+SELECT studentno,studentname FROM tb_student a
+WHERE studentno IN
+(SELECT studentno FROM tb_score WHERE courseno IN
+(SELECT courseno FROM tb_course 
+WHERE coursename='管理学' ))
+
+
+SELECT studentName FROM tb_student a
+WHERE EXISTS
+(SELECT*FROM tb_score WHERE 
+a.studentno=tb_score.studentNo AND courseNo='31002');
+
+
+
+-- 随堂练习
+-- 1.查询没有选修课程号为“B004”的学生姓名
+SELECT s_name FROM students WHERE s_no NOT IN
+(SELECT s_no FROM score INNER JOIN course
+WHERE score.`c_no` =course.`c_no`
+AND course.c_no = 'B004')
+
+
+-- 2.用带EXIST的查询查找有不及格科目的同学信息。
+SELECT * FROM students WHERE EXISTS
+(SELECT report FROM score WHERE 
+ report <60 AND students.`s_no`=score.`s_no` )
+
+-- 3.查询女生中比某个男生出生晚的学生姓名和出生年份。
+SELECT s_name,YEAR(birthday) FROM students
+WHERE sex ='女' AND YEAR(birthday) > ANY 
+(SELECT YEAR(birthday) FROM students
+WHERE sex ='男')
+
+
+-- 4.查询女生中比某个男生出生早的学生姓名和年龄。
+SELECT s_name,YEAR(CURDATE())-YEAR(birthday) 
+FROM students
+WHERE sex ='女' AND YEAR(birthday) < ANY 
+(SELECT YEAR(birthday) FROM students
+WHERE sex ='男')
+
+
+-- 5.用带EXIST的查询查询选修了“计算机文化基础”的学生姓名。
+SELECT s_name FROM students WHERE EXISTS
+(SELECT s_no FROM score INNER JOIN course 
+WHERE score.s_no = students.`s_no`AND
+score.c_no =course.`c_no` AND c_name ='计算机文化基础'  
+ )
+
+
+-- 6 .查找STUDENTS表中比所有信息学院的学生年龄都大的学生学号、姓名。
+SELECT s_no,s_name FROM students WHERE 
+YEAR(CURDATE())-YEAR(birthday)>ALL
+(SELECT YEAR(CURDATE())-YEAR(birthday) FROM students)
+
+
+
+-- 练习周
+
+
+SELECT COUNT(*)FROM tb_score GROUP BY studentno
+-- 1.使用in关键字查询未及时归还的图书名称；
+
+SELECT  bname FROM tb_book WHERE bno IN(
+SELECT  bookNo FROM tb_borrow WHERE  returnDate>shouldDate)
+
+SELECT bname FROM tb_book  WHERE bno  IN
+(SELECT bookno FROM tb_borrow  WHERE returnDate>shouldDate); 
+
+-- 2.使用exists或in关键字构建查询，查询未及时归还图书的学生姓名；
+SELECT DISTINCT readername FROM tb_reader WHERE readerno IN
+(SELECT readerno FROM tb_borrow WHERE returnDate > shouldDate)
+
+SELECT  readername FROM tb_reader WHERE EXISTS
+(SELECT readerno FROM tb_borrow WHERE  returnDate > shouldDate AND
+tb_reader.`readerNo`= tb_borrow.`readerNo`
+ )
+
+-- 3.使用exists或in关键字构建查询，查询未被借出去的图书名称
+SELECT bname FROM tb_book WHERE bno NOT IN
+(SELECT DISTINCT bookno FROM tb_borrow)
+
+SELECT bname FROM tb_book WHERE NOT EXISTS
+(SELECT bookno FROM tb_borrow WHERE tb_book.`bno` = tb_borrow.`bookNo`)
+
+
+-- 4.用exists或in关键字构建查询，查询与高等数学单价相同的图书信息
+
+SELECT * FROM tb_book WHERE price IN
+(SELECT price FROM tb_book WHERE bname = '高等数学')AND bname != '高等数学'
+
+SELECT * FROM tb_book a WHERE EXISTS
+(SELECT price FROM tb_book b WHERE
+ a.price = b.price AND bname = '高等数学')
+
+
+-- 5.查询被借出次数最多的图书名称以及借阅次数；
+SELECT bname,COUNT(bookno) FROM tb_book ,tb_borrow WHERE 
+tb_book.bno = tb_borrow.`bookNo` AND bno = 
+(SELECT bookno FROM tb_borrow GROUP BY bookno ORDER BY
+COUNT(bookno) DESC LIMIT 0,1)
+ 
+ SELECT bname,COUNT(bookno) FROM tb_book a,tb_borrow b
+WHERE a.bno = b.bookno AND bookno =
+(SELECT bookno FROM tb_borrow GROUP BY bookno ORDER BY COUNT(bookno) DESC 
+LIMIT 0,1)
+
+ 
+
+
+
+
+-- 6.用in或exists构建子查询，统计14年1月被借出的图书名称
+
+
+SELECT bname FROM tb_book WHERE bno IN(
+SELECT bookno FROM tb_borrow WHERE borrowDate LIKE '2014-01%')
+
+SELECT bname FROM tb_book WHERE EXISTS
+(SELECT bookno FROM tb_borrow WHERE 
+tb_book.bno = tb_borrow.`bookNo`
+AND borrowdate LIKE '2014-01%')
+
+
+-- 第十四次课
+CREATE VIEW v_book AS SELECT isbn FROM books
+
+CREATE VIEW v_students AS
+SELECT * FROM tb_student WHERE sex = '男'
+
+SELECT * FROM v_students
+
+SHOW TABLE STATUS WHERE COMMENT = 'view'
+
+
+
+-- 第十五次课实训报告
+-- (1)在已有数据库db_school中创建视图v_student,
+-- 要求该视图包含学生信息表tb_student中所有男生信息;
+CREATE VIEW v_tb_student AS SELECT * FROM tb_student 
+WHERE sex = '男'
+SELECT * FROM v_tb_student
+
+
+
+-- (2)在已有数据库db_school中创建视图v_score_avg，要求该视图包含
+-- 表tb_score中所有学生的学号和平均成绩并按学号studentNo进行排序。
+CREATE VIEW v_score_avg AS SELECT studentno,AVG(score) FROM
+tb_score GROUP BY studentno ORDER BY studentno ASC;
+SELECT DISTINCT* FROM v_score_avg
+
+
+DROP VIEW v_score_avg
+
+
+-- (3)在视图v_student中查找classNo为’CS1401’的学生学号和姓名;
+CREATE OR REPLACE VIEW v_student AS 
+SELECT studentno,studentname FROM tb_student WHERE classno
+= 'CS1401';
+SELECT * FROM v_student
+
+
+
+
+-- (4)在已有数据库db_school中查看视图v_student（详细结构）;
+SHOW CREATE VIEW v_student
+
+
+
+-- (5)在已有数据库db_school中,向视图v_student插入数据
+-- (‘2018040200’,’周明’,’男’,’1997-08-16’,’辽宁’,’汉’,’IS1401’);
+CREATE OR REPLACE VIEW v_student AS SELECT * FROM tb_student
+INSERT INTO v_student VALUES 
+('2018040200','周明','男','1997-08-16','辽宁','汉','IS1401');
+
+
+-- (6)选择已有数据库db_school,在视图v_studuent中，
+-- 修改学号为‘2018040200’的native列更新为’河南’;
+UPDATE v_student SET native = '河南' WHERE 
+studentno = '2018040200';
+ 
+ 
+ 
+-- (7)使用Alter view语句修改数据库db_school中的视图v_student
+-- 的定义，要求该视图包含学生表tb_student中性别为’男’、
+-- 民族为’汉’的学生的学号、姓名和所属班级;
+ALTER VIEW v_student AS
+SELECT studentno,studentname,classno FROM tb_student
+WHERE sex = '男' AND nation = '汉'
+SELECT * FROM v_student
+
+-- (8)选择已有数据库db_school,在视图v_studuent中，
+-- 删除学生姓名为’周明’的学生信息;
+DELETE FROM v_student WHERE studentname = '周明'
+
+
+
+
+-- (9)选择已有数据库db_school,删除视图v_student
+DROP VIEW v_student
+
+
+
+
+
+
+-- 随堂练习十四
+-- 1.创建视图v_stu,要求包含字段学号、学生姓名、
+-- 学院名称，并按学院名称升序排序
+CREATE OR REPLACE VIEW v_stu AS 
+SELECT s_no,s_name, d_name FROM students a, departments b
+WHERE a.`D_NO`= b.`D_NO`
+ORDER BY d_name ASC;
+
+-- 4.修改视图v_stu,使其显示的字段再添加学生的出生日期
+CREATE OR REPLACE VIEW v_stu AS
+SELECT s_no,s_name,d_name,birthday FROM students a, departments b
+WHERE a.`D_NO`= b.`D_NO`
+ORDER BY d_name ASC;
+
+-- 5.使用create or replace语法创建视图v_teacher,要求包含老师姓名
+-- 、所属学院名称及教授的课程名称
+CREATE OR REPLACE v_teacher AS
+SELECT t_name,d_name,c_name FROM teachers a,departments b,course c
+teach d WHERE a.d_no = b.d_no AND a.t_no = d.t_no AND d.c_no
+= b.c_no
+
+
+
+-- 练习周
+-- 1.创建视图v_stu，要求包含字段学号，学生姓名，性别，班级编号；
+CREATE OR REPLACE VIEW v_stu AS SELECT studentNO,studentname,sex,classno
+FROM tb_student;
+
+-- 2.修改视图v_stu,使其显示的字段再添加学生的出生日期，去掉班级编号；
+CREATE OR REPLACE VIEW v_stu AS SELECT studentno,studentname,
+sex,birthday FROM tb_student;
+
+-- 3.为视图添加数据(学号：001，姓名：张三，性别：男)；
+INSERT INTO v_stu(studentno,studentname,sex)VALUES(001,'张三','男');
+
+
+-- 4.删除v_stu视图；
+DROP VIEW v_stu;
+
+-- 5.创建视图v_score，要求显示分数倒数5名的数据，
+-- 包含字段：学号，学生姓名，课程名称，成绩；
+CREATE  OR REPLACE VIEW v_score AS SELECT a.studentno,c.studentname,
+b.coursename,a.score FROM tb_score a,tb_course b,tb_student c 
+WHERE a.studentno = c.studentno AND a.courseno = b.courseno
+ORDER BY score ASC LIMIT 5;
+
+-- 6.为视图v_score添加数据(学号：001，姓名：张三，课程名称：
+-- 管理学，分数：90)，如果添加失败，请解释失败原因；
+INSERT INTO v_score VALUES (001,'张三','管理学',90);
+-- 因为使用了limit语句限制了数据只能为5条
+
+
+-- 7.创建视图v_score2，显示学号，成绩，课程编号，
+-- 并且当成绩85分以上时，显示优秀，85分以下时，显示一般；
+CREATE OR REPLACE VIEW v_score2 AS SELECT a.studentno,
+(CASE WHEN score>=85 THEN '优秀' WHEN  score<85 THEN '一般' END) 
+AS 成绩,b.courseno FROM tb_student a,tb_score b WHERE a.studentno
+= b.studentno;
+
+
+
+
+

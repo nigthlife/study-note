@@ -1,0 +1,44 @@
+select 表达式,表达式....
+from 数据源(表名)
+where 条件表达式
+group by 表达式
+having 条件表达式
+order by 表达式
+-- 查询所有员工的姓名和薪水
+-- 查询薪水大于2000以上的员工信息（姓名和薪水）
+-- 查询每个部门的薪水大于1500员工数量（部门号和员工数量）
+-- 查询每个部门的薪水大于1500员工数量，且总员工数量大于等于2（部门号和员工数量）
+-- 查询每个部门的薪水大于1500员工数量，且总员工数量大于等于2（部门号和员工数量） 按总人数降序排序
+
+--Oracle注释  -- 和 /*...*/
+
+SQL优化：尽量不要使用!=
+         where条件：把能过滤大部分数据的条件放在后面
+         能用exists 就不要用 in
+
+-- where条件(条件从后往前解析过滤) 
+-- > < <= >= =  <>或!=
+
+select * from emp, dept
+where sal > 1000 and 
+ emp.deptno = dept.deptno
+
+-- like  '%_'    escape '转义字符'
+-- in (,,,)
+-- between  开始值 and结束值  < 
+-- exists (查询有没有结果)  重点
+
+
+-- Oracle中的空值问题：null 永远不等于 null
+-- 查询没有奖金的员工信息
+select * from emp where comm is null;
+
+select * from emp where comm is not null;
+
+
+--not and or
+
+
+
+
+

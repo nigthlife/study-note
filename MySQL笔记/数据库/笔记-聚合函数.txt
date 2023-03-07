@@ -1,0 +1,34 @@
+MySQL函数
+一、聚合函数
+常用的聚合函数包括 count()函数、sum()函数、avg()函数、max()函数和min()函数等。
+（1）Count()函数：用于查询指定记录的记录数，
+****写字段名函数会自动忽略字段为null的值;
+（（（写*号就不会，带*号查询会为null值分别分为一组）））
+语法：select count(*)  from 表名;
+          select count(字段名) from 表名
+例1：查看学生表中有多少学生
+select count(*) from tb_student;
+select count(studentno) from tb_student;
+
+（2）Sum()函数:可以求出表中某个字段取值的总和,使用在数据类型为数值型的字段上，
+
+	****自动忽略字段为null的值;*****
+
+语法格式：select sum(字段名) from 表名；
+例2：查询学生2013110101 的成绩总分；
+select studentno,sum(score) from tb_score where studentno='2013110101';
+
+（3）Avg()函数:可以求出表中某个字段取值的平均值，使用在数据类型为数值型的字段上；
+语法格式：select avg(字段名) from 表名；
+
+常和avg搭配的函数format（avg(),需保留位数），而且会四舍五入
+	truncate（avg（），需保留位数）不会四舍五入，直接截取
+例3：查询课程21001的平均分；
+select courseno 课程号,format(avg(score),0) 平均值 from tb_score where courseno='21001';
+
+（4）MAX()函数:可以求出表中某个字段取值的最大值,使用在数据类型为数值型的字段上;
+（5）MIN()函数:可以求出表中某个字段取值的最大值,使用在数据类型为数值型的字段上;
+例4：查询课程21001的最高分与最低分；
+select courseno 课程号,max(score) 最高分,min(score) 最低分 from tb_score where courseno='21001';
+
+

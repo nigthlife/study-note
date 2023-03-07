@@ -1,0 +1,246 @@
+1.创建库：
+(1)create database db_name; //创建数据库//
+
+(2)drop database db_name; //删除库//
+
+(3)show databases; //查看所有库//
+
+2.建表：
+(1)create table table_name(字段名  数据类型，....); //创建表//
+
+(2)show tables; //查看所有表//
+
+(3)desc t_name; //查看表结构//
+
+(4)show create table t_name\G //查看表的详细信息//
+
+(5)drop table t_name; //删除表//
+
+3.修改表：
+(1)alter table t_name rename new_t_name; //修改表的字段名//
+
+(2)alter table t_name add 字段名 数据类型; //通过修改表来增加字段//
+
+(3)alter table t_name change 字段名 新字段名 数据类型（也可以该） first/after 字段名; //修改表中的字段名同时还可以改数据类型已经指定位置//
+
+(4)alter table t_name  modify 字段名 新数据类型 first/after 字段名; //修改表的数据类型//
+
+(5)alter table t_name drop 字段名; //通过修改表来删除表中字段//
+
+(6)alter table t_name add primary key(字段名,.........) ; //通过修改表增加主键//
+
+(7)alter table t_name drop primary key; //通过修改表删除主键//
+
+(8)alter table t_name add constraint 约束名 foreign key(字段名,....)references t_name1(字段名,......); //通过修改表增加外键//
+
+(9)alter table t_name drop foreign key 约束名; //通过修改表删除外键//
+
+(10)alter table t_name add unique（字段名,....）; //通过修改表增加候选键//
+
+(11)alter table t_name drop index 字段名,....; //通过修改表删除候选键//
+
+(12)alter table t_name modify 字段名 数据类型 not null ; //通过修改表给字段增加非空约束//
+
+(13)alter table t_name modify 字段名 数据类型  default'值'; //通过修改表给字段设置默认值//
+
+(14)alter table t_name modify 字段名 int primary key/unique auto_increment; //通过修改表给字段设置自动增长约束//
+
+4.索引：
+(1)create table t_name(字段名  数据类型,....,index index_name(字段名,.....)); //创建表时创建索引//
+
+(2)alter table t_name add index  index_name(字段名,....); //通过修改表增加索引//
+
+(3)create index   index_name on t_name(字段名,....); //创建语句创建索引//
+
+(4)alter table t_name add unique index  index_name(字段名,....); //修改表增加唯一索引//
+
+(5)alter table t_name add fulltext index  index_name(字段名,....); //通过修改表增加全文索引，存储引擎改为myisam//
+
+(6)show index from t_name\G //查看索引//
+
+(7)show create table t_name\G //查看索引详细信息//
+
+(8)drop index index_name on t_name; //删除索引//
+
+(9)alter table t_name drop  index index_name; //通过修改表删除索引//
+
+5.数据操作
+(1)insert into t_name values('','','',........),('','','',........),('','','',........).......; //插入完整性数据//
+
+(2)insert into t_name(字段名) values(''),(''),('').......; //插入部分数据//
+delete from tb_name; //清空数据//
+
+(3)delete from tb_name where 字段名='值'; //删除指定数据//
+
+(4)update t_name set 字段名='值'  where 字段名1='值'; //修改指定数据//
+
+(5)update t_name set 字段名='值' ;  //修改全部数据//
+
+(6)select * from tb_name; //查询所有数据记录//
+
+(7)select 字段名,...from tb_name; //查询某一字段数据//
+
+(8)select 字段名,...from tb_name where 字段名='值' and 字段名1='值'and ...; //带多个条件的查询//
+
+(9)select 字段名,...from tb_name order by 字段名 asc/dese;  //按升降序排序查询//
+
+
+(10)select 字段名,...from tb_name group by 字段名;  //按分组查询//
+
+
+(11)select 字段名,...from tb_name where 字段名='值' order by 字段名 asc/dese
+group by 字段名 having 字段名;  //条件、排序、分组同时进行的查询结果//
+
+
+(12)select 字段名,...from tb_name where 字段名='值' limit a,b;  //查询指定位置的数据//
+
+(13)select 字段名,...from tb_name where 字段名 is null; //查询为空值的数据//
+
+(14)select 字段名,...from tb_name where 字段名 in(值1,值2,.....); //查询在集合范围里面数据//
+
+(15)select 字段名,...from tb_name where 字段名 like'A%'; //查询第一个字符为A的数据//
+
+(16)select 字段名,...from tb_name where 字段名 like'_A%'; //查询第二个字符为A的数据//
+
+(17)select 字段名,...from tb_name where 字段名 like'%A';  //查询最后一个字符为A的数据//
+
+(18)select 字段名,...from tb_name where 字段名 like'%A%';  //查询数据只要有A的数据//
+
+内连接：
+(19)select 字段名,...from tb_name1,tb_name2 where tb_name1.字段名=tb_name2.字段名 and 其他条件;  //多表查询记录//
+
+(20)select 字段名,...from tb_name1 join tb_name2 on tb_name1.字段名=tb_name2.字段名 where 条件; //多表查询记录//
+
+子查询
+(21)select 字段名,...from tb_name1 where 字段名 in(select 字段名 from tb_name2); //子查询，注意里面条件是在外层还是内层//
+
+6.视图
+(1)create view v_name as select 语句;
+
+(2)alter view v_name as slecet 语句;//修改select里面内容//
+
+(3)show create view v_name;//查看视图//
+
+(4)drop view v_name;//删除视图//
+
+7.触发器
+(1)delimiter $$
+create trigger tri_name befor/after insert/drop/update on tb_name for each row 
+begin 执行体 end $$//创建触发器//
+
+(2)show triggers;//查看所有触发器//
+
+(3)show create trigger tri_name\G//查看某一个触发器//
+
+(4)drop trigger tri_name;//删除触发器//
+
+8.事件
+(1)create event e_name on schedule at now()+interval 时间 do 事件内容（sql语句）;//创建一个某个时间的事件//
+
+(2)create event e_name on schedule every 时间 starts now()+interval 时间 ends now ()+interval 时间  do 事件内容（sql语句）//创建一个时间段每多少时间做的事件//
+
+(4)show events;//查看所有事件//
+
+(5)show create event e_name\G//查看某一个事件//
+
+(6)alter event e_name
+[on schedule 时间][rename to new_e_name][enable/disable][do 事件内容];//修改事件，修改哪个用哪个//
+
+(7)drop event e_name;//删除事件//
+
+9.存储过程
+(1)delimiter $$
+create procedure pro_name(in/out/inout 参数 数据类型,......)
+begin
+存储过程体
+end $$//创建存储过程//
+
+(2)call pro_name('参数的值');//调用存储过程//
+
+(3)show create procedure pro_name\G//查看某个存储过程//
+
+(4)drop procedure pro_name;//删除存储过程//
+
+(5)delimiter $$
+create function f_name(参数 数据类型,......)
+returns 返回的数据类型
+begin
+存储函数体 
+end $$//创建存储函数//
+
+(6)select f_name(参数值);//调用存储函数//
+
+(7)show create function f_name\G//查看某个存储函数//
+
+(8)drop function f_name;//删除存储函数//
+
+(9)if 条件 then 执行语句1 else 执行语句2//如果条件为真执行语句1否则执行语句2//
+
+(10)case when 条件 then 执行语句1 else 执行语句2//如果条件为真执行语句1否则执行语句 2//
+
+(11)while 条件 do 执行循环体 //一直循环直到条件为假//
+(12)repeat 执行循环体 until 条件 //一直循环直到条件为真//
+
+(11)游标步骤：
+1.声明游标：declare 游标名 cursor for select 语句
+2.打开游标：open 游标名
+3.读取游标：fetch 游标名 into 变量名
+4.关闭游标：close 游标名
+
+10.权限
+(1)create user 用户名@主机名 identified by '123'; //创建一个密码为123的用户，主机名一般为localhost//
+
+例子：
+创建一个aa1的用户并且设置口令为123
+create user aa1@localhost identifient by'123';
+
+(2)grant all/select/update/insert/create user,select(字段名1,字段名2.....)
+on *//当前库的所有的表的权限
+on *.*//所有库的所有表的权限
+on db_school.tb_student//具体的库的具体的某个表
+on db_school.*//db_school库的所有表
+on tb_student//当前的库里的tb_student；
+on db_name.routine_name//某个库的存储过程或者是函数
+to 用户名@localhost
+identified by '456'; //创建一个用户并且给用户拥有以上的权限//
+
+例子:
+授予用户lisi在数据库db_school中所有表select、update和insert的权限，并且指定口令为456
+grant select,update,insert on db_school.* to lisi@localhost identified by'456';
+ 
+例子：
+授予用户aa1在数据库db_school中的表tb_student的select和update和insert权限
+grant select,update,insert on db_school.tb_student to
+aa1@localhost;
+
+例子：
+授予用户aa1在数据库db_school中所有表的所有权限
+grant all on db_school.* to aa1@localhost;
+
+(3)with grant option//把自己权限下放给其他人//
+例子：
+给不存在的用户nba授予当前数据库中表tb_student的select权限，指定口令为123，并可以把自己拥有的权限分配给别人
+grant select on db_school.tb_student to nba@localhost ifentified by “123” with grant option;
+
+(4)show grants for 用户名@localhost;//查看该用户的权限//
+
+(5)revoke select,update,insert,.... on 库名.表名//回收权限//
+例子：
+回收用户aa1在数据库db_school中的表tb_student的select和update和insert权限
+revoke select,update,insert on db_school.tb_student from aa1@localhsot;
+
+例子：
+回收用户aa1的所有权限
+revoke all privileges on *.* from aa1;
+revoke grant option on *.* from aa1;
+
+
+
+
+
+
+
+
+
+
+ 

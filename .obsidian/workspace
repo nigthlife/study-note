@@ -1,0 +1,93 @@
+{
+  "main": {
+    "id": "4ee8cbcc33e9298b",
+    "type": "split",
+    "children": [
+      {
+        "id": "a212132a56def02f",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "Vue笔记/Vue.md",
+            "mode": "source"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "17fbd53189dedd08",
+    "type": "split",
+    "children": [
+      {
+        "id": "0a24d4ce57770101",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0b4b731f89bcc3d9",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "fc4b933a625d8205",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "09386b06b610d509",
+    "type": "split",
+    "children": [
+      {
+        "id": "5ee5b67637f5a80f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "733ad4103ca52298",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Vue笔记/Vue.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "a212132a56def02f",
+  "lastOpenFiles": [
+    "Vue笔记/Vue.md"
+  ]
+}

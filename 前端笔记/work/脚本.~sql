@@ -1,0 +1,101 @@
+
+-- 创建用户表
+create table usertable(
+ usId number primary key,
+ usName varchar2(16) not null,
+ usPaw varchar2(16) not null
+);
+
+-- 创建用户表序列
+create Sequence S_usertable;
+
+
+-- 向用户表中添加数据
+insert into usertable(usId,usName,usPaw) values(S_usertable.nextval,'yuanfang','123123');
+insert into usertable(usId,usName,usPaw) values(S_usertable.nextval,'fafa','654321');
+insert into usertable(usId,usName,usPaw) values(S_usertable.nextval,'dalao','666666');
+insert into usertable(usId,usName,usPaw) values(S_usertable.nextval,'caiJi','777777');
+insert into usertable(usId,usName,usPaw) values(S_usertable.nextval,'nb','888888');
+select * from usertable;
+
+select * from task ;
+drop table task;
+
+-- 创建任务表
+create table task(
+    taskid number primary key,           -- 任务id
+    usId number,                         -- 用户id
+    taskName varchar2(500),                -- 任务名称
+    taskDetail varchar2(500),              -- 任务细节
+    taskState number default 1 check(taskState in(1,2)),     -- 任务状态1:未完成,2:已完成
+    finishedDate date,                   -- 完成日期
+    isDelete number default 0 check(isDelete in(0,1)) ,      -- 是否删除0：未删除,1：删除
+    createUser number,             -- 任务创建用户
+    createDate date,                     -- 创建时间
+    lastUpdateUser number,         -- 任务最后更新的用户
+    lastUpdateDate date,                 -- 最后更新任务时间
+    constraint fk_task_usid foreign key(usId) references usertable(usId),
+    constraints fk_lastUpdateUser_usId foreign key (lastUpdateUser) references usertable(usId),
+    constraint fk_createUser_usId foreign key (createUser) references usertable(usId)
+);
+
+
+create Sequence S_task;
+
+insert into task
+values(S_task.nextval,2,'从奥特兰克山的破碎岭食人魔身上收集9个肮脏的指节骨，把它们带给南海镇的治安官雷德帕斯。'
+,'破碎岭食人魔在奥特兰克城废墟附近的山上挖了一座小丘。我的侦察兵告诉我，他们现在还占领了那片遗迹。
+我们可不能让他们在那儿享福，一旦他们觉得在那儿生活很安全，下一步就会转移到丘陵地带，然后就是我们南海镇了！
+到北方的奥特兰克山去猎杀几个食人魔。把他们那肮脏的指节骨带回来，我会给你奖赏的。',1,
+null,0,4,to_date('1999-12-21','yyyy-mm-dd'),3,to_date('1999-12-31','yyyy-mm-dd'));
+
+insert into task
+values(S_task.nextval,2,'将沙普塔隆的爪子交给灰谷碎木哨岗的塞娜尼·雷心。'
+,'强大的角鹰兽沙普塔隆已经被你杀死了，它的爪子将成为你胜利的象征。碎木哨岗的塞娜尼·雷心一定会对你的战利品感兴趣的。',2,
+to_date('1988-12-11','yyyy-mm-dd'),1,2,to_date('1988-11-01','yyyy-mm-dd'),4,to_date('1988-12-11','yyyy-mm-dd'));
+
+insert into task
+values(S_task.nextval,2,'米奈希尔港的考古学家弗拉冈特要你把雷鲁之石带给他。'
+,'嗯，我在那里会议之后把原始样品交给了勘察员维尔。最近，我在洛克莫丹发现了雷鲁之石，我认为它就是解开神秘化石的钥匙。
+当我准备赶往维尔加挖掘场的时候，遭到了迅猛龙的攻击，雷鲁之石也给弄丢了。
+我不知道是哪只迅猛龙吞掉了这块石头，但如果你能找回它，我应该就可以释放这些化石中的魔力了。当然，我们也需要最初从维尔加挖掘场取回的那枚化石。',1,
+null,0,5,to_date('2000-05-05','yyyy-mm-dd'),6,to_date('2001-11-11','yyyy-mm-dd'));
+/*
+insert into task
+values(S_task.nextval,2,'在暴风城的贸易区找到斯蒂芬妮·特纳。'
+,'你的任务就是在暴风城里找到一个需要帮助的人，一个心灵纯洁动机单纯的人。这也许是某个想要帮助别人的人，也许是某个需要指引的人。不管怎样，这个人必须心地纯朴，而且需要你的帮助。
+完成这件事之后再回到我这里来，那时我们再来谈关于你的修行之道，以及成为圣骑士的意义。',2,
+to_date('2001-08-07','yyyy-mm-dd'),0,3,to_date('2000-05-05','yyyy-mm-dd'),3,to_date('2001-11-11','yyyy-mm-dd'));
+*/
+insert into task
+values(S_task.nextval,2,'杀死阿鲁高，把他的头带给瑟伯切尔的达拉尔·道恩维沃尔。'
+,'现在我已经对整个诅咒有了一个全面的了解，并开始着手研究如何补救了。
+但阿鲁高依然好好地住在影牙城堡中。在干掉阿鲁高之前，我们还不能宣称银松森林已经是黑暗女士的地盘。
+但是，我得去搞明白怎样才能根除他的魔法影响，(玩家)。所以我只能把除掉阿鲁高的任务交给你了。
+到影牙城堡去，永远地结束阿鲁高的肮脏法术。把他的头给我带来！影牙城堡去，永远地结束阿鲁高的肮脏法术。把他的头给我带来！',1,
+null,0,4,to_date('1999-05-05','yyyy-mm-dd'),4,to_date('2000-11-11','yyyy-mm-dd'));
+
+insert into task
+values(S_task.nextval,2,'希利苏斯塞纳里奥要塞的比提克斯·斯巴格要求你带8个石鞭蝎之刺和8个掠沙蜘蛛的牙齿给他。'
+,'比提克斯·斯巴格为你效劳！我的堂兄诺格在为塞纳里奥要塞的炼金师进行稀有草药的采集工作，好吧，至少以前他在这么做。在他最后一次回来的时候，他的血液中带着一种强力毒液。
+我已经设法减缓毒性发作的时间，但是如果想要完全中和它的话，我就需要这种毒液的原始样本。
+诺格是从北面回来的，因此我想应该是石鞭蝎或者掠沙蜘蛛干的。带给我一些尖刺和毒牙，然后我就可以制作解毒剂了。',1,
+null,0,6,to_date('2002-11-02','yyyy-mm-dd'),8,to_date('2003-01-11','yyyy-mm-dd'));
+
+insert into task
+values(S_task.nextval,3,'把4份符文布卷、8块硬甲皮、2卷符文线和一份食人魔鞣酸交给诺特·希姆加克。他现在被拴在厄运之槌的戈多克食人魔那边。'
+,'如果你想要和那个笨蛋食人魔国王作战，那么首先你必须通过克罗卡斯那一关。好吧，你当然可以杀了他，但实际上你也可以留他一条命。
+你问我该怎么做？嗯，你真好运，，我想我知道如何制作一件可以把你伪装成食人魔的服装，用来迷惑那些四肢发达的笨蛋。唯一的问题可能就是稳定性——这种衣服的持续时间最多为10分钟。把我需要的东西给我拿来，然后我就可以帮你做一件。我就等在这里……',2,
+to_date('1998-10-22','yyyy-mm-dd'),0,4,to_date('1998-01-02','yyyy-mm-dd'),6,to_date('2000-01-11','yyyy-mm-dd'));
+
+insert into task
+values(S_task.nextval,3,'将玛尔戈的巨角交给巡山人贝波蒂。'
+,'这根巨大的角上有许多擦痕和裂缝，还有一块金属物体嵌在粗糙的表面上。
+仔细检查了一番之后，你发现这块金属实际上是一把断掉的斧头。金属上刻着一行字：
+巡山人贝波蒂的财产。
+当你试着把斧头拔出来的时候，它一下子变成了无数的碎片。
+真糟糕！',1,
+null,0,2,to_date('2000-01-02','yyyy-mm-dd'),6,to_date('2000-03-11','yyyy-mm-dd'));
+
+commit;
+

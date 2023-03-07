@@ -1,0 +1,304 @@
+			
+			      （一）数组		
+（1）数组排序 
+
+使用java.util.Arrays类对数组进行升序（从小到大）
+Arrays.sort(int [] array);
+import java.util.Arrays;
+引用方法：Arrays.sort(数组名);
+
+二分查找：Arrays.binarySeach(数组名，需要查的数);
+Arrays.binarySeach(int [] array,int value);
+
+数组转字符串输出：Arrays.toString(数组名);
+Arrays.toString(int [] array);
+
+复制数组：Arrats.copyOf(数组名，空间大小)
+Arrays.copyOf(int [] array,int length)
+Arrays.copyOf(int [] array,int int from, int to);截取长度
+
+
+判断两个数组的值是否相等：Arrays.equals(num2,newNum);
+
+使用指定元素填充数组：Arrays.fill(数组名，填充的数字)
+
+
+（2）二维数组foreach遍历
+for(int []x :str)
+   for(int y :x)
+	Sysotem.out.println(y);
+
+（3）打印三角形
+for（int i = 1;i<=line;i++）//外循环控制行数
+    for(int j =i;j<line;j++)//内循环输出空格
+    for(int j=1;j<=i*2-1;j++)//内循环输出星号*
+
+（4）生成伪随机数
+import java.util.Random;
+Random r = new Random(); //创建一个可以生成随机数的工具
+r.nextInt(50); //随机生成一个50以内的数
+
+（5）java中没有真正的多位数组
+多位数组的表示方式是数组中的元素是数组
+int [][][] score = { {{1},{2}} {{3}} {{4}} }
+
+
+（6）选择排序
+//判断需要交换的数小标是否为自己
+if(minIndex != i)
+{
+    nums[minIndex] = nums[minIndex] + nums[i];
+    nums[i] = nums[minIndex] - nums[i];
+    nums[minIndex] = nums[minIndex] - nums[i];
+}
+
+
+			（二）面向对象
+（1）
+面向过程：
+面向对象：
+
+（2）类（抽象）表示一个共性的产物，上一个综合的特征
+     对象：是一个个性的产物，是一个个体的特征
+类是一组具有相同特性（属性）与行为（方法）的事物
+特性：就是区别一种事物与另一种事物的特征
+如：人可以分为男人和女人
+行为：就是具有相同的爱好，都喜欢做某一件事，
+属性：就相当于一个个体的特征
+方法：就相当于一个个体的行为
+
+（3）语法：
+class 类名{
+	属性名称；
+	返回值类型 方法名称(){}
+}
+
+（4）通过类去创建一个对象
+类名称 对象名称 = new 类名称();
+
+
+（5）访问类中的属性；
+	对象.属性
+     访问类中的方法：
+	对象.方法();
+
+（6）栈内存存储变量名跟地址
+     堆内存存储对象
+     字符串的默认值是null
+     整数的默认值是0
+
+堆内存中字符串在32位操作系统中占4个字节，64位操作系统中占8个字节
+字符串是引用类型变量
+
+（7）new关键字
+表示向内存申请空间，也表示实例化一个对象，创建一个对象
+
+一个对象在内存的大小，由该对象所有属性所占内存大小的总和
+
+
+
+		（8）封装性的好处
+
+1.模块化
+2.信息隐藏
+3.代码重用
+4.插件化易于调试
+5.具有安全性
+
+封装缺点：会影响执行效率
+
+
+	（9）成员变量和局部变量
+
+1.在类中的位置不同
+成语变量：在类中定义
+局部变量：在方法中定义或者方法参数
+2.在内存的位置不同
+成语变量：在堆内存（成员变量属于对象，对象进堆内存）
+局部变量：在栈内存（局部变量属于方法，方法进栈内存）
+3.生命周期不同
+成员变量：随着对象的创建而存在，随着对象销毁而消失
+局部变量：随着方法的调用而存在，随着方法的调用完毕而消失
+4.初始化不同
+成员变量：有默认初始化值，引用类型默认为null
+局部变量：没有默认初始化值，必须定义，赋值，然后才能使用
+
+局部变量名称可以和成员变量名称一样，在方法中使用的时候
+采用的是就近原则
+
+
+		（10）构造方法
+
+(1)构造方法名称与类名相同，没有返回值声明( 包括void)
+(2)构造方法用于初始化数据(属性)
+(3)每一个类中都会有一个默认的无参的构造方法
+(4)如果类中有显示的构造方法，那么默认构造方法将无效
+(5)如果有显示的构造方法，还想保留默认构造方法，需要显示的写出来。
+(6)构造方法可以有多个，但参数不一样，称为构造方法的重载
+(7)在构造方法中调用另-一个构造方法，使用this(...)，该句代码必须在第一局
+(8)构造方法之间的调用，必须要有出口。
+(9)给对象初始化数据可以使用构造方法或setter方法，通常情况下，两者都会保留。
+(10)一个好的编程习惯是要保留默认的构造方法。(为 了方便一些框架代码使用反射来创建对象)
+(11) private Dog(){}，构造方法私有化，当我们的需求是为了保正该类只有一个对象时。
+什么时候一个类只需要一个对象?比如，工具类(没有属性的类，只有行为)并且该工具对象被频繁使用。权
+衡只用一个对象与产生多个对象的内存使用，来确定该类是否要定义为只需要一个对象。
+
+
+		（11）
+（1）String 传递只是改变指向，而字符串本身就是一个对象
+
+
+
+		（12）代码块：
+
+1、普通代码块，在方法中写的代码块
+2、构造块，是在类中定义的代码块，在创建对象时被调用，优于构造方法执行
+3、在类中使用static声明的代码块称为静态代码块
+在第一次使用的时候被调用( 创建对象)，只会执行一次，优于构造块执行
+我们在项目开发中，通常会使用静态代码块来初始化只调用一次的数据。比如说:
+小结:重点会使用的是静态代码块，普通代码块，同步代码块，构造代码块
+	
+		（13）继承
+(1)继承是发生在多个类之间
+(2)继承使用关键字extends
+(3) JAVA只能单继承，允许多层继承I
+(4)被继承的类叫父类(超类)，继承父类的类叫子类(派生类)
+(5)在父类中的非私有属性和方法可以被子类继承
+(6) protected (受保护的访问权限修饰符)，修饰的属性或方法可以被子类继承
+(7)构造方法不能被继承
+(8)创建对象会调用构造方法，调用构造方法不一定就是创建对象
+(9)实例化子类对象，会先调用父类的构造方法，如果父类中没有默认的构造方法，那么子类必须显示的通过
+super...)来调用父类的带参构造方法，super也只能在子类构造方法中的第一句
+
+继承的好处:
+1、提高代码的复用性
+2、提高代码的维护性
+3、让类与类之瓣产生关系，是多态的前提
+继承的缺点:
+增强了类与类之间的耦合性
+开发原则:高内聚，低耦合
+
+创建对象一定调用构造方法，调用构造方法不一定创建对象
+super（）表示父类的对象
+
+			（14）方法的重写
+
+面试题：overlording与overriding的区别？
+overlording：方法的重载，发生在同一个类中，方法名相同，参数列表不同，与返回值无关
+overriding： 方法的重写，发生在子父类中，方法名相同，参数列表相同，返回值相同
+子类的访问修饰符要大于或等于父类的访问修饰符，子类的异常声明要小于或等于父类的异常声明
+如果方法被private，static，final修饰，那么不能被重写
+
+
+			（15）super关键字
+
+1.使用super调用父类中的属性，可以从父类实力出获得信息 如：super.属性
+2.使用super调用父类中的方法，可以委托父类对象帮助完成某件事 super.方法	
+3.使用super调用父类的构造方法（super（实参）形式），
+必须在子类构造方法的第一条语句，调用父类相应的构造方法
+若不显示的写出来，默认调用父类的无参构造方法，比如super（）;
+
+			（16）instanceof
+1.转换异常（classCastException）
+
+
+			（17）异常类
+1.ArithmenticException 		算术运算异常
+2.ArrayIndexOutOfBoundsException数组下标越界
+3.NullPointerException		空指针
+4.InputMisMatchException	输入不匹配
+5.Exception			受检异常
+6.RuntimeException 		运行时异常
+7.ClassNotFoundException	类没有找到
+8.DataFormatException		数据格式
+9.ClassCastException		类型匹配异常
+10.StringIndexOutOfBoundsException 字符串下标越界异常
+11.CloneNotSupportedException	克隆不支持异常
+12.UnsupportedEncodingException
+13.NoSuchAlgorithmException
+14.ConcurrentModificationException 迭代器对象抛出的异常
+
+
+			（18）函数
+1.获取随机数：Random r = new Random（） 生成的数是0到
+2.long startTime = System.currentTimeMillis();	//记录开始时间
+
+			（19）常用类
+1.java.lang包中的Math类包含许多科学计算的方法，他还有两个静态常量
+Math.abs(double d):求绝对值
+Math.ceil(double d):返回不小于参数的最小整数
+Math.random():返回一个大于或者等于0.0小于 不等于1.0的随机数
+Math.sqrt(int i)：计算参数的平方根
+
+以下是Math类的常用类方法:
+public static long abs(double a)返回a的绝对值。
+public static double max(double a,double b)返回a、b的最大值。
+public static double min(double a,double b)返回a、b的最小值。
+public static double random()产生一个0到1之间的随机数 (不包括0和1)
+public static double pow(double a,double b)返回a的b次幂。
+public static double sqrt(double a)返回a的平方根。
+public static double log(double a)返回a的对数。
+public static double sin(double a)返回正弦值。
+public static double asin(double a)返回反正弦值。
+
+
+2.Random类中实现的随机算法是伪随机，也就是也规律的随机
+public int nextInt(int n) : 取出不大于n的整数
+public float nextFloat()  ：取出小数
+public double nextDouble()：生成一个随机的double值介于【0,1.0】 之间
+生成[1,2.5]区间的小数
+double d = r.nextDouble()*1.5+1
+生成任意整数
+int d = r.nextInt();
+生成[0,10]区间的整数
+int d = r.nextInt(10)
+d = Math.abs(r.nextInt()%10) 如果有小数求绝对值
+生成[-3,15]区间整数
+int i = r.nextInt(18)-3
+i = Math.abs(r.nextInt()%18)-3
+
+3.Arrays.sort排序默认升序
+<1>.所有元素赋值为10
+Arrays.fill(arr,10);
+<2>.比较俩个数组是否相等
+Arrays.equals(数组1，数组2)；
+<3>.复制数组
+Arrays.copyOf(数组，需要复制的长度)
+<4>.查找元素在数组中的位置
+Arrays.binarySearch(数组，元素值)
+
+
+4.11111118，
+在java中支持对象的克隆操作，直接使用Object类中的
+clone()方法即可
+protected Object clone() throws CloneNotSupportedException
+Cloneable接口
+>对象 所在的类中必须实现Cloneable接[才可以完成对象的
+克隆操作
+
+5.对象数组排序
+Comparable接口
+定义：public interface Comparable<T>{public intcompareTo;}
+
+6.System类的构造方法都是private，无法实例化，其内部成员方法都是静态的
+标准输入流（in）
+标准输出流（out）
+标准的错误输出流（err）
+
+public static void exit(int status):该方法的作用是退出程
+序statues的值为0时代表正常退出，非0代表异常退出)
+System.exit(0);
+
+7.垃圾回收机制
+垃圾回收机制回收任何对象之 前，总会先调用它的finalize()方
+法，该方法可能使该对象重新复活，从而导致垃圾回收机制取
+消回收该对象。
+
+8.获取日期函数
+导包：DateFormat SimpleDateFormat,都是在text包下
+DateFormat df = new SimpleDateFormat(yyyy年MM月dd日 HH:mm:ss SSS毫秒)
+再使用一个字符串类型的变量接收，获取当前日期时间 df.format(new Date())
+
+9.MD5工具类
+<1>:MessageDugest
+MessageDigest md = MessageDigest.getInstance("md5");

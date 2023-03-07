@@ -1,0 +1,153 @@
+--作业
+--1查询所有学生的姓名，年龄（年龄显示为：15，16，17，18岁的显示为'春'，19为‘夏’20为‘秋’其它为'冬'）
+
+```mysql
+select "name" (case 
+               age between 13 and 18 then '春'
+               when age = 19 then '夏'
+               when age = 20 then '秋'
+               else '冬'
+            
+```
+
+--2查询所有产品名称，产品价格(取整数，不需要四舍五入),生产日期（只显示年月，如：2017-01）
+
+```plsql
+select proname,to_char(price,'99'),to_date(createdate,'yyyy-mm') from product;
+```
+
+--3查询客户名称（客户名称的第二个字以 (/)代替，其它照常显示），客户电话号码（最后四位显示），客户地址（地址超过10个字之后显示"..."）
+
+```plsql
+select replace(cusname,substr(cusname,2,1),'*'),
+			 substr(phonenumber,1,7) || '****',
+			 substr(address,1,10) || '.....'
+			 from customer;
+			 
+```
+
+-- 4统计产品表中所有产品的总数量
+
+```plsql
+select sum(count) from product;
+```
+
+-- 5查询产品表中的价格平均值
+
+```plsql
+select avg(price) from product;
+```
+
+-- 6查询产品表中最贵的产品信息
+
+```plsql
+select * from product where price = (select max(price) from product);
+```
+
+-- 7查询所有客户消费的总金额
+
+```plsql
+select sum(procount*price) from orders o,product p where p.proid = o.proid;
+```
+
+-- 8查询每个客户消费的总金额
+
+```plsql
+select o.proid,procount * price 
+from orders o,product p 
+where o.proid = p.proid 
+group by o.cusid,priocount,price;
+```
+
+--9修改产品表中价格最贵的产品的价格为原来的一半。
+
+```plsql
+update product set price = (price/2)
+where price = (select max(price) from product);
+commit;
+```
+
+--10查询购买过同一件产品两次以上的客户信息和产品信息。
+
+```plsql
+select distinct p.*,c.* 
+from customer c,product p,orders o 
+where p.proid=o.proid and o.cusid=c.cusid 
+and (select count(PROID) 
+     from Orders o where o.Cusid=c.cusid and o.proid=p.proid )>2;
+```
+
+--11查询两门以上不及格课程的同学的学号及其平均成绩
+
+```plsql
+select stuno,avg(score) from student s,Sc 
+where (select count(1) from Sc where sc.stuid = s.stuid 
+      and score < 60 group by stuid) > 2 group by stuno;
+```
+
+--12:使用一条删除语句，删除proId为3和9的产品信息
+
+```plsql
+delete from product where proid = 3 or prold = 9;
+commit;
+```
+
+--13:使用一条删除语句，删除proId大于5且产品名称为“联想电脑”的信息
+
+```plsql
+delete from product where prold > 5 and priname = '联想电脑';
+commit;
+```
+
+--14:修改产品价格小于10的产品价格为20；
+
+```plsql
+update product set price = 20 where price < 10;
+commit;
+```
+
+--15:修改所有产品价格为原来的8折
+
+```plsql
+update product set price = (price*0.8);
+commit;
+```
+
+--16:查询数量小于10的 产品编号，产品名称，产品数量
+
+```plsql
+select prono,proname,count from product where "count" < 10;
+```
+
+--17:查询产品表中所有产品名称，和产品总金额（价格*数量）
+
+```plsql
+select proname,price*"count" ,from product group by proname, price*"count";
+```
+
+--18:查询产品表中所有产品名称，产品类型，产品库存信息
+ （格式：'单价：数量'），产品生产地（如果为空时，显示'江西南昌'）
+
+```plsql
+select proname,protype,"count" 库存,decode(address,null,'江西南昌',address)
+from product;
+```
+
+
+
+1. 
+
+
+> -- 预习（要有预习的笔记-重点查）
+> -- case when   end case;
+> -- while 条件表达式  loop  循环体  end loop;
+> -- for(隐式游标) for ... in ...
+> -- 函数
+> -- 存储过程
+> -- 事务
+> -- 异常处理
+> -- 视图
+> -- 索引
+> -- 触发器
+> -- 同义词
+> -- ...........

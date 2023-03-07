@@ -1,0 +1,102 @@
+Thumbnails 		缩略图
+FileRecv 		文件接收
+
+@qqwvi11240208
+@qqwvi36148
+
+[detached from 101701.master]
+
+
+./dontstarve_dedicated_server_nullrenderer -console -persistent_storage_root /home/dstsave -conf_dir dst -cluster World1 -shard Master
+
+饥荒的启动脚本
+dontstarve_dedicated_server_nullrenderer
+
+控制台参数
+-console
+
+饥荒存档位置参数，空格之后一般跟存档绝对路径
+-persistent_storage_root /home/dstsave 
+
+在之前存档位置的基础上，指定配置文件目录，空格后跟配置文件相对路径
+-conf_dir dst 
+
+在之前配置文件目录的基础上，指定世界配置参数目录，空格后跟世界配置目录的相对路径
+-cluster World1 
+
+
+分区，一般会分地上和洞穴，这里主要为单服务器启动多个世界做区分，
+比如我一个服务器启动饥荒地面和洞穴，就需要分别启动Master和Cave,空格后跟分区目录名
+-shard Master
+
+
+
+cp /usr/lib/libcurl.so.4 /home/bin/lib32/libcurl-gnutls.so.4
+systemsystem
+
+
+
+
+首先英语中所有的句子成分在划分为最简单的简单句后，
+	其结构式为：什么 + 怎么样
+	其中什么为：主语
+		主语：一般是人或物，不管抽象还是具体
+	其中怎么样：谓语
+		谓语都有一个广义上的动作，或发生了什么事
+			其中：动作并不是真的要动起来，而是形容动作的词语也就是动词
+
+		因为动作是多种多样的，所以可分为
+			独立完成的动作
+				主语+不及物动词
+			有一个动作的承受者
+				主语+单及物动词+动作的承受者（宾语）
+			有俩个动作的承受者
+				主语+双及物动词+简介宾语+直接宾语
+					案例：Papa Rabbit teaches you English
+						其中：  you  		是间接宾语
+							： English 	    是直接宾语
+							： teaches		是双及物动词
+							： papa rabbit	是主语
+							意思就是：兔老爹教你英语
+
+			只有一个动作的承受者，但是需要补充
+			非动作
+
+
+
+动词
+	谓语动词
+		分5种，分别决定了简单句的5种基本句型
+			同时有囊括5中句子成分
+		除此之外句子成分还有
+			定语
+			状语
+			同位语
+
+		简单句可以组合成
+			复合句（并列关系）
+			复杂句（主从关系）
+				主句
+				从句
+					可以充当除谓语动词外的所有句子成分
+					句子成分可以由不同的词类充当
+						动词
+						名词
+						代词
+						冠词
+						形容词
+						数词
+						副词
+						介词
+						叹词
+						连词
+
+		可以表达动作的时间、状态、语气等
+			需要用到助动词（包括情态动词）
+				助动词还可以帮助：否定动词
+					表达动词的被动，可能性，义务性
+
+	非谓语动词
+		视为改动后的谓语动词
+		可以充当除谓语动词外所有句子成分
+		取代几乎所有从句，简化句子

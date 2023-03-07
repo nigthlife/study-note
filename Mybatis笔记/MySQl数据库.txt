@@ -1,0 +1,673 @@
+ 				第一次课
+
+（1）MySQL是关系（二维表）数据库
+（2）SQL：结构化查询语言
+	（在所有的关系数据库中是通用的）
+
+（4）DDL（数据定义语言）：-- create drop alter
+（5）DML（数据操作语言）：-- insert update delete select
+（6）DCL (数据控制语言) ：
+     操作对象都针对表且操作的行数据
+	-- insert  （插入数据）
+	-- insert into 表名（字段名1，字段名2....字段名n）values （值1，值2，值n）；
+	-- sudate （更新数据）
+	-- update 表名
+ 	-- set 字段名1='数据值1'，
+   	-- 字段名2='数据值2'，
+    	-- 字段名3='数据值3'，
+	-- where 条件
+	-- delete （删除数据）
+	-- delete from 表名 ；（删除所有数据）
+	-- delete from 表明 【where 条件表达式】
+	-- select（查询数据）
+	-- select * from 表名 ；（查看所有的数据）
+	-- select 字段名1，字段名2，....字段名n from 表名 [where 条件表达式](查看指定数据）
+	-- select department  from tb_class where classNum>30；
+
+ 	自定义起始数值
+CREATE TABLE USER(
+id INT PRIMARY KEY AUTO_INCREMENT,
+NAME CHAR(10) DEFAULT 'admin'
+)AUTO_INCREMENT=1001;
+
+=============================================
+
+
+
+
+
+	        第三次课 MySQL数据库和表的基本操作
+
+	(1)创建数据库，基本语法格式
+CREATE {DATABASE | SCHEMA} [IF NOT EXISTS] 数据库名;
+CREATE {DATABASE| SCHEMA} [IF ont EXISTS] 数据库名；
+	(2)如果数据库DB_B不存在，则创建该数据库。
+CREATE DATABASE IF NOT EXISTS DB_B;
+CREATE DATABASE IF NOT EXISTS 数据库名；
+或者
+CREATE SCHEMA IF NOT EXISTS DB_B;
+CREATE SCHEMA IF NOT EXISTS 数据库名；
+	(3)创建数据库时，指定默认数据库字符集和字符集校对规则，基本语法格式：
+CREATE {DATABASE | SCHEMA} [IF NOT EXISTS] 数据库名
+CREATE {DATABASE | SCHEMA} [ IF NOT EXISTS] 数据库名；
+[DEFAULT] CHARACTER SET [=] 字符集
+[DEFAULT ] CHARACTER SET = 字符集；
+| [DEFAULT] COLLATE [=] 校对规则
+| [DEFAULT ] COLLATE = 校队规则；
+	(4)查看数据库，基本语法格式：
+SHOW DATABASES；
+	(5)修改数据库，基本语法格式：
+ALTER DATABASE 数据库名
+ALTER DATABASE 数据库名;
+DEFAULT CHARACTER SET 字符集名称
+defautl CHARACTER SET 字符集名称
+DEFAULT COLLATE  校对规则的名称；
+DEFAULT COLLATE 校队规则名称
+	(6)删除数据库，基本语法格式：
+DROP DATABASE 数据库名；
+	(7)查看默认的存储引擎
+SHOW VARIABLES LIKE 'storage_engin%';
+SHOW VARIABLES LIKE 'storage_engin%';
+	(8)查看MySQL所支持的存储引擎和默认存储引擎。
+SHOW ENGINES \G
+SHOW ENGINE\G
+	(9)创建表，基本语法格式：
+CREATE  TABLE 表名（字段名1 数据类型，字段名2 数据类型，... ...字段名n 数据类型）
+ENGINE=引擎类型;
+	(10)查看表的名称，基本语法格式：
+SHOW  TABLES; (查看当前数据库的所有表名）
+SHOW  TABLES  FROM|IN  db_school;(查看非当前数据库的所有表名）
+SHOW TABLES FROM 数据库 （查看非当前数据库的所有表名）
+	(11)查看数据表的本结构，基本语法格式：
+DESCRIBE|DESC  表名;
+	(12)查看数据表的详细结构，基本语法格式：
+SHOW CREATE TABLE 表名 \G
+	(13)删除数据表，基本语法格式：
+DROP TABLE 表名1 ;
+============================================
+
+		   第四课 修改表的操作
+
+	(1)修改表的名称,基本语法格式
+ALTER TABLE 原表名 RENAME [TO] 新表名；
+ALTER TABLE 源表名 RENAME 新表名
+	(2)增加表的字段,基本语法格式：
+ALTER TABLE表名 ADD 列名 数据类型 [FIRST|AFTER 已有的列名]；
+	(3)删除表中的字段,基本语法格式：
+ALTER TABLE表名 DROP 字段名；
+	(4)修改表中的数据类型,基本语法格式：
+ALTER TABLE表名MODIFY 列名 数据类型 [FIRST|AFTER 已
+有列名]；
+	(5)修改表中的列名,基本语法格式：
+ALTER TABLE表名CHANGE 原列名 新列名 数据类型；
+	(6)同时修改列名和属性,基本语法格式：
+ALTER TABLE表名CHANGE 原列名 新列名 新数据类型；
+	(7)修改字段顺序,基本语法格式：
+ALTER TABLE 表名 MODIFY 列名 数据类型 FIRST;
+           ALTER TABLE 表名 MODIFY 列名1 数据类型 AFTER 列名2;
+	(8)修改表的存储引擎和字符集,基本语法格式：
+ALTER TABLE 表名 ENGINE=存储引擎,CHARSET=字符集;
+
+MySQL 添加列，修改列，删除列
+ALTER TABLE：添加，修改，删除表的列，约束等表的定义。
+
+查看列：desc 表名;
+修改表名：alter TABLE t_book RENAME TO bbb;
+添加列：alter TABLE 表名 ADD COLUMN 列名 VARCHAR(30);
+删除列：alter TABLE 表名 DROP COLUMN 列名;
+修改列名MySQL： ALTER TABLE bbb CHANGE nnnnn hh INT;
+修改列名SQLServer：exec sp_rename't_student.name','nn','column';
+修改列名Oracle：lter TABLE bbb RENAME COLUMN nnnnn TO hh INT;
+修改列属性：alter TABLE t_book MODIFY NAME VARCHAR(22); 
+1、修改表名
+例：修改tb_student的表名为student
+alter talbe tb_student rename to student;
+例：修改表tb_score,tb_class的表名分别为score,class
+rename table tb_score to score,tb_class to class;
+===========================================
+
+		   第五次课 操作表的约束
+
+
+（1）列级完整性约束方式定义主键，及在某个字段后加关键字primary key。
+（2）表级完整性约束方式定义主键，表中所有字段定义后添加一条primary key（列名1，...,列名n）,适合定义多列所构成的主键。
+（3）表级完整性约束方式定义主键，并指定主键约束名称,适合定义多列所构成的主键。
+语法：constraint 约束名字 PRIMARY KEY(列名1,..,列名n)。
+（4）添加主键约束方式，定义完数据表后可以再添加。
+语法：alter TABLE 表名 ADD CONSTRAINT 约束名字 PRIMARY KEY(列名1,..,列名	
+（5）    删除主键约束用法：alter table语句中使用关键字primary key来实现。
+删除主键约束时，表中只能定义一个主键，无论主键约束有没有名称，都使用以下用法：
+语法：alter TABLE 表名 DROP PRIMARY KEY;
+（6）表级完整性约束方式定义候选键，并指定候选键约束名称,适合定义多列所构成的候选键。
+语法：constraint 约束名字 UNIQUE(列名1,..,列名n)。
+（7）添加候选键约束用法：alter table语句中使用关键字unique来实现。
+添加候选键约束方式，定义完数据表后可以再添加。
+语法：
+ALTER TABLE 表名 ADD CONSTRAINT 约束名字 UNIQUE(列名1,..,列名				n);
+ALTER TABLE 表名 ADD UNIQUE(列名1,..,列名	n);
+（8）删除候选键约束时，实际删除的是唯一性索引，应使用drop index子句删除，如果没有给约束命名，自动将字段名定义为索引名，其用法如下：
+
+	语法：alter TABLE 表名 DROP INDEX 约束名|候选键字段名;
+
+   修改表，对表中已有的字段设置默认值，方法如下：
+ ALTER TABLE 表名 ALTER 字段名 SET DEFAULT  默认值;
+（10） 修改表，在表中新增字段且为该字段设置默认值，方法如下：
+ ALTER TABLE 表名 add字段名 数据类型 DEFAULT  默认值
+（11） 删除表中某个字段的默认值，方法如下：
+     ALTER table 表名 ALTER 字段名 DROP DEFAULT;
+
+
+===========================================
+
+		    第六次课 操作表的约束
+
+
+	(1)创建表时，给字段增加自增约束，方法如下：
+creat TABLE 表名(字段 数据类型 PRIMARY KEY|UNIQUE AUTO_INCREMENT)；
+	(2) 修改表，为表中已有的字段增加自增约束，方法如下：
+ALTER TABLE tablename  modify字段名 数据类型 AUTO_INCREMENT  PRIMARY key；
+	(3) 修改表，为表中新增字段并同时增加自增约束，方法如下：
+ALTER TABLE 表名 add字段名 数据类型primary KEY AUTO_INCREMENT ；
+	(4)删除表的自增主键约束，分两步：
+第一步：修改该字段的数据类型方法，去除自增约束属性，方法如下：
+ALTER TABLE 表名 modify字段名 数据类型;
+第二步，删除该字段的主键约束，方法如下：
+ALTER TABLE 表名 DROP PRIMARY KEY;
+注：这两步不能颠倒顺序
+	(5)创建表的同时，创建外键约束，
+	参照完整性约束方式定义外键，语法：
+CONSTRAINT 外键约束名字 FOREIGN KEY (列名1,..,列名n) REFERENCES 
+被参照表(列名1,......,列名n)。
+	(6)添加表约束，用alter table...add constraint语句为参照表添加外键约束，语法如下：
+alter table  参照表  add  constraint  外键约束名  foreign key(参照表外键字段1,....字段名n) references 被参照表表名(被参照表字段名1,...字段名n);
+	(7)删除表外键约束，语法如下：
+ALTER TABLE 参照表 DROP FOREIGN KEY 外键约束名;
+==========================================
+
+		       第七次课 索引的操作
+
+
+	(1)创建表时创建普通索引，语法格式如下：
+CREATE TABLE 表名 (
+属性名 数据类型,
+属性名 数据类型,
+....
+属性名 数据类型，
+index│key [索引名] (字段名[asc│desc]）
+	(2)使用create在已经存在的表上创建普通索引，语法格式如下： 
+
+CREATE INDEX 索引名 ON 表名（字段名[ASC|DESC]）;
+
+	(3)使用alter table在已经存在的表上创建普通索引，其语法格式如下：
+
+ALTER TABLE table_name  ADD index│key [索引名]
+（字段名【asc│desc】);
+	(4)创建完成之后，可用语句查看所创建的索引：
+
+SHOW INDEX FROM 表名 \g
+	(5)创建表时创建唯一索引，其语法格式如下：
+
+CREATE TABLE table_name (
+属性名 数据类型,
+属性名 数据类型,
+....
+属性名 数据类型，
+UNIQUE index│key [索引名] (字段名【asc│desc】));
+	(6)在已经存在的表上使用create创建唯一索引，语法格式如下：
+
+ CREATE UNIQUE INDEX 索引名 ON 表名（字段名【asc│desc】);
+	(7)通过sql语句alter table创建唯一索引，其语法格式如下：
+
+ALTER TABLE table_name ADD UNIQUE index│key [索引名]（字段名【asc│desc】);
+	(8) 创建表时创建全文索引，其语法格式如下：
+CREATE TABLE table_name (
+属性名 数据类型,
+属性名 数据类型,
+....
+属性名 数据类型，
+FULLTEXT index│key [索引名] (属性名1【ASC│DESC】));
+	(9)通过create在已经存在的表上创建全文索引，语法格式如下：
+CREATE  FULLTEXT INDEX 索引名 ON 表名（属性名1【ASC│DESC】);
+	(10)通过alter table在已经存在的表上创建全文索引，其语法格式如下：
+ALTER TABLE table_name ADD FULLTEXT index│key [索引名]（属性名1【ASC│DESC】);
+	(11)创建表时创建多列索引，语法格式如下：
+CREATE TABLE table_name (
+属性名 数据类型,
+属性名 数据类型,
+....
+属性名 数据类型，
+ index│key [索引名] (列名1【asc│desc】,
+ ......，
+ 列名n【asc│desc】));
+	(12)在已经存在的表上使用create创建多列索引，语法格式如下：
+CREATE INDEX 索引名 ON 表名（属性名1【asc│desc】，
+...,属性名nasc│desc】);
+	(13)通过alter table创建多列索引，其语法格式如下：
+ALTER TABLE table_name
+ ADD index│key [索引名]（属性名1【asc│desc】，
+...,属性名n【（长度）】【asc│desc】);
+	(14)删除索引的语法格式如下：
+DROP INDEX 索引名 ON 表名;
+或者 ALTER TABLE table_name DROP INDEX indext_name;
+
+（15）删除索引
+show index from 表名 \G
+drop index 索引名 no 表名
+drop index 索引名 no 表名 不能同时删除多个索引
+
+同时删除多个索引：alter table 表名 drop index 
+
+（16）使用create在已经存在的表上创建普通索引
+create index 索引名 no 表名（字段名）；
+
+alter table 表名 add index 索引名 （字段名）；
+
+（17）创建表时创建唯一索引
+create table 表名（
+字段名 1 数据类型1
+unique index [索引名]（字段名））
+这里的unique  index = unique key
+普通索引可以创建在任意字段上
+
+（18）使用create 在已经存在的表上创建唯一索引 unique index
+create unique index 索引名 no 表名（字段名）
+（19）使用later table 在已经存在的表上创建唯一索引
+alter table 表名 add unique index 索引名 （字段名）
+
+（20）使用create 在已经存在的表上创建多列索引
+create index 索引名 no 表名 （字段名n.....）
+alter table 表名 add index 索引名 （字段名n......）
+最左依赖原则
+（21）全文索引（目前只有存储引擎为MySAM）
+(22)explain 解释一定要用and
+像select * from student where sex = ‘男’
+select * from student where studentname = '江山' or sex = ‘女’用不上
+============================================
+
+		          第八次课 数据的操作
+
+
+	(1)插入完整数据，基本语法格式：
+INSERT INTO 表名（字段名1,字段名2,...字段名n）
+          values（数据1,数据2,...数据n）;
+或者  INSERT INTO 表名
+          values（数据1,数据2,...数据n）;
+	(2)插入部分数据，基本语法格式：
+INSERT INTO 表名（字段名,字段名2,字段名3）
+          values（数据1,数据2,数据3）;
+	(3)插入多条完整数据，基本语法格式：
+INSERT INTO 表名（字段名1,字段名2,...字段名n）
+values（数据11,数据21,...数据n1），
+                  （数据12,数据22,...数据n2），
+                  （数据13,数据23,...数据n3），
+                  ... ...,
+                  （数据1m,数据2m,...数据nm）;
+	(4)插入多条部分数据，基本语法格式：
+INSERT INTO 表名（字段名1,字段名2,字段名3）
+            values（数据11,数据21,数据31）
+                  （数据12,数据22,数据32）
+                  （数据13,数据23,数据33）
+                  ... ...,
+                  （数据1m,数据2m,...数据3m）;
+	(5)插入查询结果，基本语法格式：
+INSERT INTO 表名1（字段名11,字段名12,...字段名1n）
+            select（字段名21,字段名22,...字段名2n）from 表名;
+	(6)更新特定数据记录，基本语法格式：
+UPDATE 表名
+   SET 字段名1='数据值1'，
+     字段名2='数据值2'，
+     字段名3='数据值3'，
+WHERE CONDITION;  -- condition表示where条件：字段名=数据值
+	(7)更新所有数据记录，基本语法格式：
+UPDATE 表名
+   SET 字段名1='数据值1'，
+      字段名2='数据值2'，
+        ......,
+     字段名n='数据值n';
+	(8)删除特定数据记录，基本语法格式：
+DELETE FROM 表名 WHERE 字段名='数据值';
+	(9)删除所有数据记录，基本语法格式：
+DELETE FROM 表名;
+==========================================
+
+				第九次课 
+给列定别名
+SELECT 表达式；
+SELECT  表达式 AS 列名 ，表达式2 AS 列名 FROM 表
+SELECT NAME ， age-1 FROM 表名
+1.查询所有字段数据：
+语法：
+SELECT 字段名1，字段名2，…from 表名;
+或
+SELECT * FROM 表名;
+2.简单指定数据，语法格式如下：
+语法：
+SELECT 字段名1，字段名2，…from 表名;
+3.避免重复数据查询：其语法格式如下：
+语法：select  DISTINCT 字段名 FROM 表名;
+4.数学四则运算数据查询：其语法格式如下：
+语法：select 字段名*数值 FROM 表名;
+5.设置显示格式数据查询： 
+例子: 查询员工年薪，且以“员工的年薪为：salary*12”显示：
+SELECT CONCAT (NAME,'员工的年薪为:',salary*12) AS 年薪 FROM tb_employee;
+
+	三、mysql条件数据记录查询
+
+(1)单条件数据查询
+语法： SELECT  字段名 FROM 表名 WHERE 字段名1=‘数据’;
+
+(2)多条件数据查询：
+语法：
+SELECT 字段名 FROM 表名 WHERE 字段名=数据值&&字段名=数据值;
+SELECT 字段名 FROM 表名 WHERE 字段名=数据值and字段名=数据值;
+
+2.带between AND 关键字范围查询：
+(1)符合范围的数据记录查询
+语法：select  字段名 FROM 表名 WHERE 字段名 BETWEEN 数据值 AND 数据值;
+
+(2)不符合范围的数据记录查询
+语法：select  字段名 FROM 表名 WHERE 字段名 NOT BETWEEN 数据值 AND 数据值;
+
+3.带is null关键字的空值查询：
+(1)空值数据记录查询
+
+语法：select  字段名 FROM 表名 WHERE 字段名 IS NULL;
+(2)不是空值数据记录查询
+语法：select  字段名 FROM 表名 WHERE 字段名 IS NOT NULL;
+
+4.带in关键字的集合查询：
+(1)在集合中数据记录查询
+
+例子：查询员工id为234、345的员工姓名
+SELECT NAME FROM tb_employee WHERE id=234 OR id=345; 
+
+(2)不在集合中数据记录查询
+例子：查询员工id不是234、345的员工姓名
+SELECT NAME FROM tb_employee WHERE id NOT IN(234,345);
+
+\\ in查询包括null值，下面两句查询结果一样\\
+SELECT NAME FROM tb_employee WHERE id IN(234,345,NULL);
+SELECT NAME FROM tb_employee WHERE id IN(234,345);
+
+5.带like关键字的模糊查询：
+(1)带有%通配符的查询
+例1：查询员工中以A开头的姓名有哪些
+SELECT NAME FROM tb_employee WHERE NAME LIKE 'A%';
+
+(2)带有_通配符的查询
+例3：查询员工中第二个字母是A的姓名有哪些？
+SELECT NAME FROM tb_employee WHERE NAME LIKE '_A%';
+
+（3）带like关键字的模糊查询注意点
+例5：查询员工中不带A字符的全部员工姓名
+SELECT NAME FROM tb_employee WHERE NAME NOT LIKE '%A%'
+
+6.比较大小查询：
+例子：查询月工资大于2000的员工信息
+SELECT NAME FROM tb_employee WHERE salary >2000;
+
+mysql排序数据记录查询
+(1)升序排序
+例子：查询结果按照月工资升序排序
+SELECT * FROM tb_employee ORDER BY salary ASC;  
+或者
+SELECT * FROM tb_employee ORDER BY salary;
+(2)降序排序
+例子：查询结果按照月工资降序排序
+SELECT * FROM tb_employee ORDER BY salary DESC;
+
+2.按照单字段排序：
+查询结果按照月工资降序排序
+SELECT * FROM tb_employee ORDER BY salary DESC;
+
+
+
+
+-- 查看
+SELECT classNO,className FROM tb_class;
+
+-- null 列查询不能使用 “=” ，要使用is null或者is not null
+SELECT * FROM tb_class WHERE className IS NULL;
+
+-- where 条件是用来过滤行的
+SELECT * FROM tb_class WHERE className IS NOT NULL;
+
+-- 基本的条件运算符：= !=(<>) > >= < <=
+SELECT * FROM tb_class WHERE grade != '2013'
+
+-- 逻辑条件运算符：and(&&)  or(||) not 
+SELECT * FROM tb_class WHERE classNUm != '35' OR classNum IS NULL;
+
+-- 例句
+SELECT * FROM tb_class WHERE department ='会计学院'
+AND classNum > 40;
+
+CREATE TABLE tb_employee
+(
+id INT,
+NAME VARCHAR(20),
+job VARCHAR(40),
+salary  DOUBLE(10,2),-- 月工资//
+award  DOUBLE(10,2),-- 月奖金//
+age  INT
+);
+
+-- % 表示0个或多个字符
+
+INSERT INTO tb_employee
+       VALUES(567,'ALLEN','店员',900.00,200,31),
+             (678,'ANDY','店员',900.00,200,33);
+
+SELECT NAME FROM tb_employee WHERE NAME LIKE 'A%';
+
+-- 在某个范围之间可以使用between ？ and？
+SELECT NAME,age FROM student WHERE age BETWEEN 19 AND 22;
+
+-- 在某个范围之间使用 or
+SELECT * FROM student WHERE age =18 OR age =20 OR age = 22;
+
+-- 在某个几个固定的值之间可以使用 in
+SELECT * FROM student WHERE age IN (18,20,22);
+
+-- 不在什么什么范围之间就加上   not like 
+-- 				not berween and
+--				not in
+
+-- 排序：对查询的结果再按’指定的列‘对所有的’行‘重新排序
+-- order by 列名 asc(升序) desc(降序)
+=====================================================
+
+			第  11  次课
+=== 
+计算年份  year（now()）-year(当前年份也就是birthday)
+
+
+
+
+
+
+
+=========================================
+CREATE DATABASE db1217;
+
+USE db1217;
+CREATE TABLE tb_student(
+studentNo INT(10),
+studentName VARCHAR(10),
+sex CHAR(1),
+birthday DATE,
+native VARCHAR(10),
+nation VARCHAR(10),
+chassNo VARCHAR(10));
+
+INSERT INTO tb_student VALUES(2013110101,'张晓勇','男','1997-12-11','山西','汉','AC1301');
+INSERT INTO tb_student VALUES(2013110103,'王一敏','女','1996-03-25','河北','汉','AC1301');
+INSERT INTO tb_student VALUES(2013110201,'江山','女','1996-09-17','内蒙古','锡伯','AC1302');
+INSERT INTO tb_student VALUES(2013110202,'李明','男','1996-01-14','广西','壮','AC1302');
+INSERT INTO tb_student VALUES(2013310101,'黄菊','女','1995-09-30','北京','汉','IS1301');
+INSERT INTO tb_student VALUES(2013310103,'吴昊','男','1995-11-17','河北','汉','IS1301');
+INSERT INTO tb_student VALUES(2014210101,'刘涛','男','1997-04-17','湖南','侗','CS1401');
+INSERT INTO tb_student VALUES(2014210102,'郭志坚','男','1997-02-21','上海','汉','CS1401');
+INSERT INTO tb_student VALUES(2014310101,'王林','男','1996-10-07','河南','汉','IS1401');
+INSERT INTO tb_student VALUES(2014310101,'李怡然','女','1996-12-22','辽宁','汉','IS1401');
+
+SELECT studentName,sex,birthday FROM tb_student;
+
+SELECT * FROM tb_student WHERE studentName LIKE '李_';
+
+SELECT studentName,sex,nation FROM tb_student WHERE nation ='汉';
+
+SELECT * FROM tb_student WHERE nation !='汉';
+
+SELECT * FROM tb_student WHERE native ='北京' OR native ='天津' OR native ='上海';
+
+SELECT * FROM tb_student WHERE native !='北京' OR native !='天津';
+
+SELECT * FROM tb_student WHERE studentNo =2013110201;
+
+SELECT * FROM tb_student WHERE studentName NOT LIKE '%江%' OR sex = '男' OR native ='汉' ORDER BY studentNO DESC;
+
+DROP TABLE tb_student;
+
+DROP TABLE students;
+
+CREATE TABLE students(
+s_no CHAR(20) PRIMARY KEY, -- 学号
+s_name CHAR(6)UNIQUE,-- 姓名
+sex CHAR(2)DEFAULT '男',-- 性别
+birthday DATE,-- 出生年月
+D_NO CHAR(6)DEFAULT 'null',-- 院系编号
+address VARCHAR(20)DEFAULT 'null',-- 地址
+phone VARCHAR(20),-- 联系电话
+photo BLOB);-- 照片
+
+CREATE TABLE score(
+s_no CHAR(8),-- 学号
+c_no CHAR(4),-- 课程编号
+report FLOAT(5,1),-- 成绩
+CONSTRAINT PK_s_no_c_no PRIMARY KEY(s_no,c_no)
+);
+
+INSERT INTO students(s_no,s_name,sex)
+VALUES ('180302001','林志颖','男');
+
+UPDATE students SET address = '北京' WHERE s_no = '180301002';
+
+SELECT s_no,s_name,phone FROM students;
+
+SELECT DISTINCT D_NO FROM students;
+
+SELECT * FROM students WHERE sex = '男';
+
+SELECT * FROM score WHERE s_no = 'A001';
+
+SELECT s_no,s_name FROM students WHERE  birthday = '1992-5';
+
+SELECT s_no,s_name,address,phone FROM students WHERE D_NO ='D001'OR D_NO = 'D002';
+
+SELECT s_no,c_no,report FROM score WHERE report =
+
+CREATE DATABASE db_school;
+DROP TABLE tb_class;
+DROP TABLE tb_student;
+DROP TABLE tb_course;
+
+CREATE TABLE tb_class(
+ClassNo VARCHAR(10)DEFAULT NULL,
+ClassName VARCHAR(20)DEFAULT NULL,
+deparment VARCHAR(20)DEFAULT NULL,
+grade INT(11)DEFAULT NULL,
+classNum INT(11)DEFAULT NULL
+);
+
+CREATE TABLE tb_student(
+studentNo INT(11)DEFAULT NULL,
+studentName VARCHAR(10)DEFAULT NULL,
+sex CHAR(1)DEFAULT NULL,
+birthday DATE DEFAULT NULL,
+native VARCHAR(10)DEFAULT NULL,
+nation VARCHAR(10)DEFAULT NULL,
+classNo VARCHAR(10)DEFAULT NULL
+);
+
+CREATE TABLE tb_course(
+courseNo INT(11)DEFAULT NULL,
+courseName VARCHAR(20)DEFAULT NULL,
+credit INT(11)DEFAULT NULL,
+courseHour INT(11)DEFAULT NULL,
+term INT(11)DEFAULT NULL,
+priorCourse INT(11)DEFAULT NULL
+);
+
+CREATE TABLE tb_score(
+studentNo INT(11)DEFAULT NULL,
+courseNo INT(11)DEFAULT NULL,
+score INT(11)DEFAULT NULL
+);
+INSERT INTO tb_class VALUES('AC1302','会记13-2班','会记学院',2013,35),
+			   ('CS1401','计算机14-1班','计算机学院',2014,35),
+			   ('IS1301','信息系统13-1班','信息学院',2013,NULL),
+			   ('IS1401','信息系统14-1班','信息学院',NULL,30),
+			   ('AC1301','会计13-4班','会计学院',2013,35);
+INSERT INTO tb_student VALUES(2013110101,'张晓勇','男','1997-12-11','山西','汉','AC1301'),
+			     (2013110103,'王一敏','女','1996-03-25','河北','汉','AC1301'),
+			     (2013110201,'江山','女','1996-09-17','内蒙古','锡伯','AC1302'),
+			     (2013110202,'李明','男','1996-01-14','广西','壮','AC1302'),
+			     (2013310101,'黄菊','女','1995-09-30','北京','汉','IS1301'),
+			     (2013310103,'吴昊','男','1995-11-17','河北','汉','IS1301'),
+			     (2014210101,'刘涛','男','1997-04-17','湖南','侗','CS1401'),
+			     (2014210102,'郭志坚','男','1997-02-21','上海','汉','CS1401'),
+			     (2014310101,'王林','男','1996-10-07','河南','汉','IS1401'),
+			     (2014310102,'李怡然','女','1996-12-22','辽宁','汉','IS1401');
+DESC tb_student;
+SHOW CREATE TABLE tb_student; 
+SELECT * FROM tb_student;
+INSERT INTO tb_score VALUES(2013110101,11003,90),
+			   (2013110101,21001,86),
+			   (2013110103,11003,89),
+			   (2013110103,21001,88),
+			   (2013110201,11003,78),
+			   (2013110201,21001,92),
+			   (2013110202,11003,82),
+			   (2013110202,21001,85),
+			   (2013310101,21004,83),
+			   (2013310101,31002,68),
+			   (2013310103,21004,80),
+			   (2013310103,31002,76),
+			(2014210101,21002,93),
+			(2014210101,21004,89),
+			(2014210102,21002,95),
+			(2014210102,21004,88),
+			(2014310101,21001,79),
+			(2014310101,21004,80),
+			(2014310102,21001,91),
+			(2014310102,21004,87);+
+SELECT studentNo,COUNT(*)课程数,SUM(score)总分,
+FORMAT(AVG(score),1)平均分,MAX(score)最高分,MIN(score)最低分
+FROM tb_score WHERE score >=85 GROUP BY studentNo
+HAVING COUNT(*)>=2 ORDER BY FORMAT(AVG(score),1) DESC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,192 @@
+```java
+package com.shenx.One;
+
+import java.sql.*;
+import java.util.Scanner;
+
+/**
+
+ * Description:
+
+ * className: ${}
+
+ * date : 2020/10/28 10:13
+   *
+
+ * @author 武乐萍
+   */
+   public class JDBC_Tow {
+
+   static Scanner input = new Scanner(System.in);
+   public static void main(String[] args) {
+       meun();	//输出菜单
+       int indexNumber = 0;  //接收用户输入数字
+
+       Connection con = null;
+       Statement st = null;
+       PreparedStatement perpared = null;
+       try {
+           // 加载驱动
+           Class.forName("oracle.jdbc.OracleDriver");
+           //创建连接
+           con = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521:orcl","java2019","888888");
+           //创建statement对象，用户执行SQL指令
+           //
+           while (true) {
+               System.out.print("请输入：");
+               indexNumber = input.nextInt();
+               switch (indexNumber) {
+       
+                   case 1:
+                       Insert(con,perpared);  //插入数据
+                       break;
+                   case 2:
+                       Update(con,perpared);  //更新数据
+                       break;
+                   case 3:
+                       Delete(con,perpared);	 //删除数据
+                       break;
+                   case 4:
+                       Select(con);  //查询数据
+                       break;
+                   default:
+                       System.out.println("请输入正确的数字");
+               }
+           }
+       
+       } catch (Exception e) {
+           e.printStackTrace();
+       }finally {
+       
+           try {
+               if(st != null) {
+                   st.close();
+               }
+           } catch (SQLException e) {
+               // TODO Auto-generated catch block
+               e.printStackTrace();
+           }
+       }
+
+   }
+   public static void meun() {
+       System.out.println("1.插入学生信息");
+       System.out.println("2.修改学生信息");
+       System.out.println("3.删除学生信息");
+       System.out.println("4.查询学生信息");
+
+   }
+   //查询数据
+   public static void Select(Connection con) {
+
+       PreparedStatement ps = null;
+       ResultSet rs = null;
+       try {
+           String select = "select stuid,stuno,\"name\",age,sex from student";
+           ps = con.prepareStatement(select);
+       
+           ResultSet resultSet = ps.executeQuery();
+           while (resultSet.next()){
+               System.out.println(resultSet.getInt("stuid") +"\t"+
+                       resultSet.getString("stuno") +"\t"+
+                       resultSet.getString("name")+"\t"+
+                       resultSet.getInt("age") +"\t"+
+                       resultSet.getString("sex"));
+           }
+       
+       } catch (SQLException e) {
+           // TODO Auto-generated catch block
+           e.printStackTrace();
+       }finally {
+       
+           try {
+               if(rs != null) {
+                   rs.close();
+               }
+           } catch (SQLException e) {
+               // TODO Auto-generated catch block
+               e.printStackTrace();
+           }
+       
+           try {
+               if(ps != null){
+                   ps.close();
+               }
+           } catch (SQLException throwables) {
+               throwables.printStackTrace();
+           }
+       }
+
+   }
+   //删除数据
+   public static void Delete(Connection con,PreparedStatement ps) {
+
+
+        try {
+            String sql = "delete from student where stuno = ?";
+            System.out.print("请输入需要删除学生的学号:");
+            String stuno = input.next();
+            ps = con.prepareStatement(sql);
+            ps.setString(1,stuno);
+            ResultSet resultSet = ps.executeQuery();
+            System.out.println("数据删除成功！");
+    
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    //更新数据
+    public static void Update(Connection con,PreparedStatement ps) {
+    
+        try {
+            String sql = "update student set age = 22 where \"name\" = '神仙'";
+            ps = con.prepareStatement(sql);
+            ps.executeQuery();
+            System.out.println("更新数据成功！");
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // 插入一条信息
+    public static void Insert(Connection con,PreparedStatement ps) {
+    
+        String name = null;
+        int No = 0;
+        String studentNo = null;
+        int age = 0;
+        String sex = null;
+        System.out.print("请输入编号:");
+        No = input.nextInt();
+        System.out.print("请输入学号:");
+        studentNo = input.next();
+        System.out.print("请输入姓名:");
+        name = input.next();
+        System.out.print("请输入年龄:");
+        age = input.nextInt();
+        System.out.print("请输入性别:");
+        sex = input.next();
+        String insert = "insert into student values(" + No + "," + "'" +
+                studentNo + "'" + "," + "'" +
+                name + "'" + ","+
+                age + "," + "'" +
+                sex + "'" + ")";
+        try {
+            ps = con.prepareStatement(insert);
+            ResultSet resultSet = ps.executeQuery();
+            System.out.println("数据插入成功 ");
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+
+
+```
+
+

@@ -1,0 +1,220 @@
+一、事件 event
+
+在指定的时刻才被执行的某些特定任务就是事件，这些特定任务通常是一些确定的SQL语句.
+也可以理解为“定时任务”
+
+Mysql服务器存在功能模块--事件调度器 event_scheduler
+
+事件调度器可以在指定的时刻执行某些特定的任务，并可以取代原先只能由操作系统
+的计划任务来执行的工作。
+
+例如：Mysql的事件调度器可以精确到每秒钟执行一个任务，对于一些对数据实时性要求较高的应用非常适合，例如股票、赔率和比分等。
+
+查看事件调度器是否开启：
+方法一：
+SHOW VARIABLES Like 'EVENT_SCHEDULER';
+show varlables like 'event_scheduler'
+show porresslist
+方法二：
+
+查看系统变量：Select @@EVENT_SCHEDULER;
+
+如果event_scheduler 是off 的状态，那么我们要开启件调度器：
+
+Set Global EVENT_SCHEDULER=1;  //关闭是0
+或者
+Set Global EVENT_SCHEDULER=True;  //关闭是false
+
+1.创建事件  事件名称、什么时间、干什么
+
+Delimiter $$
+
+Create event if not exists 事件名称
+On Schedule 时间调度
+Do
+Begin
+事件语句1;
+事件语句2;
+end
+$$
+
+时间调度（Schedule）：用于指定事件何时发生或者每搁多久发生一次；
+
+时间调度的语法：
+
+AT timestamp [+INTERVAL interval]...
+
+|EVERY interval
+
+               [STARTS timestamp [+INTERVAL interval]...]
+
+               [ENDS timestamp [+INTERVAL interval]...]
+
+interval的语法：
+               quantity|YEAR|MONTH|WEEK|DAY|HOUR|MINUTE|SECOND|
+                        YEAR_MONTH|DAY_HOUR|DAY_MINUTE|
+                        DAY_SECOND|HOUR_MINUTE|HOUR_SECOND|MINUTE_SECOND|
+
+timestamp--表示具体的时间点，后面可以加上一个时间间隔，表示在这个时间间隔后事件发生；
+
+interval--表示这个时间间隔，由数值和单位构成,例如：1 MONTH；
+
+quantity--间隔时间的数值；
+
+例：每分钟:Every 1 minute(时间频率) //every 60 second
+
+    当前时间：At now()
+
+    一分钟后:At now()+interval 1 minute
+
+    从2019-5-20起  starts [TIMESTAMP] '2019-5-20 00:00:00'
+
+    10天后停止执行  ends current_timestamp+interval 10 day
+
+    10天后开始，一个月停止执行
+    starts current_timestamp+interval 10 day
+    ends current_timestamp+interval 1 month
+
+    开始于下个月并且在2019年5月20日结束
+    Starts curdate()+interval 1 month
+    ends '2019-5-20'
+
+例:在数据库db_event中创建一个表tb_test实现每10秒插入一个条记录；
+
+     步骤：1.创建数据库 Create database db_event;
+
+           2.创建表：Create table tb_test(time_line TIMESTAMP)
+
+
+           3.创建事件：Create EVENT IF NOT EXISTS e_test_insert
+                       ON SCHEDULE EVERY 10 SECOND
+                       DO INSERT INTO tb_test VALUES(now());
+
+           查看事件是否执行：Select * from tb_test; 
+
+
+2.修改事件
+ALTER EVENT 事件名称
+ON SCHEDULE schedule
+[RENAME TO 新的事件名称]
+Do
+Begin
+事件语句1;
+事件语句2;
+end
+$$
+
+3.让某个事件失效和开启
+
+Alter event 事件名 disable; //让事件失效
+
+Alter event 事件名 enable;//让事件开启
+
+4.事件重命名
+alter event 原事件名 rename to 新事件名;
+
+例：在数据库db_event中修改表tb_test的事件实现每分钟插入一个条记录；
+   步骤:
+
+    1.修改以创建的事件：
+    ALTER EVENT e_test_insert
+    ON SCHEDULE EVERY 1 MINUTE
+    DO INSERT INTO tb_test VALUES(now());
+
+    2.临时关闭已创建的事件：
+    ALTER EVENT e_test_insert DISABLE；
+
+    3.再次开启已创建的事件：
+    ALTER EVENT e_test_insert ENABLE；
+
+    4.查看事件是否执行
+    Select * from tb_test;
+
+3.删除事件
+
+  DROP EVENT [IF EXISTS] event_name
+  
+  删除e_test_insert事件：
+  DROP EVENT IF EXISTS e_event_insert;
+
+例：创建一个事件，在当前数据库下，当前时间创建一个test表，包含字段name,date
+use db_school
+Create event if not exists event_create
+on schedule at now()
+Do create table test(name varchar(20),date varchar(20));
+
+
+例子1：从2019-5-19起每分钟定时清空表tb_test中内容:
+
+Create event e_clear_day
+on schedule every 1 minute
+starts timestamp  '2019-5-19 20:12:00'
+DO Truncate table tb_test;
+
+例子1.1：从2018-4-10起每天定时清空表tb_test中内容:
+
+Create EVENT e_clear_day
+ON SCHEDULE EVERY 1 DAY
+starts TIMESTAMP '2018-4-10 00:00:00'
+DO TRUNCATE TABLE tb_test;
+   
+例子2：每2分钟定时清空表，5分钟后停止执行:
+Create event e_stop_min
+on schedule every 2 minute
+ends CURRENT_TIMESTAMP+INTERVAL 5 minute
+Do
+TRUNCATE TABLE tb_test;
+
+
+例子2.2：每天定时清空表，5天后停止执行:
+
+Create EVENT e_stop_day 
+ON SCHEDULE EVERY 1 DAY
+ENDS CURRENT_TIMESTAMP+INTERVAL 5 DAY
+DO TRUNCATE TABLE tb_test;
+
+例子3：2分后开启每分钟定时清空表，6分钟停止执行
+Create event e_clear_two
+on schedule every 1 minute
+starts current_timestamp+interval 2 minute
+ends current_timestamp+interval 6 minute
+do truncate table tb_test;
+
+
+例子3.3：5天后开启每天定时清空表，一个月停止执行
+Create EVENT e_clear_table
+ON SCHEDULE EVERY 1 DAY 
+STARTS CURRENT_TIMESTAMP+INTERVAL 5 DAY  (CURRENT_TIMESTAMP等价于CURDATE())
+ENDS CURRENT_TIMESTAMP+INTERVAL 1 MONTH
+DO TRUNCATE TABLE tb_test;
+
+例4：创建一个事件从现在开始到2分钟后结束，每隔5s往test表中插入数据
+create event event_insert 
+on schedule Every 5 second 
+Starts now()
+Ends now() + interval 2 minute
+Do insert into test values(now());
+
+
+例5：创建一个一分钟后清空test数据表中的数据
+
+create event evetn_delete on schedule
+At now() + interval 1 minute
+Do delete from test;
+
+
+例6：在数据库db_school中创建一个事件，用于每个月向表tb_student中插入数据，该事件开始于下个月并且在2020年8月8日结束。
+delimiter $$  //修改mysql的结束符
+create event if not exists event_insert
+on schedule every 1month
+starts curdate()+interval 1 month
+Ends ‘2020-08-08’
+Do
+Begin//语句块的开始
+Insert into tb_student values(null,’张晓勇’,’男’,’1977-12-11’,’山西’,’汉’,’AC1301’);
+update tb_student set studentno='111' where studentno is null;
+End$$ //语句块的结束
+delimiter ;
+
+例7、修改例6中事件名称且临时开启
+  alter event event_insert rename to event_insert1 enable;
