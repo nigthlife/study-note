@@ -693,9 +693,7 @@ servlet生命周期，可参考https://blog.csdn.net/javaloveiphone/article/deta
 >
 > 5. **Servlet容器（如果访问的该servlet不是在服务器启动时创建的，则先创建servlet实例并调用init()方法初始化对象）调用HttpServlet的service()方法,把HttpRequest和HttpResponse对象为service方法的参数传给HttpServlet对象;**
 >
->    
->
-> 6. **HttpServlet调用HttpRequest的有关方法,获取HTTP请求信息;**
+>    6. **HttpServlet调用HttpRequest的有关方法,获取HTTP请求信息;**
 >
 > 7. **HttpServlet调用HttpResponse的有关方法,生成响应数据;**
 >
