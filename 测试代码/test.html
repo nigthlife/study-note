@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>读取 JSON 数据并渲染到表格中</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 20px;
+            width: 100%;
+        }
+    
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-align: left;
+        }
+    
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <table id="myTable"></table>
+
+    <script>
+
+        // 读取 JSON 文件并将其解析为 JavaScript 对象
+        function loadJSON(path, success, error) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var data = JSON.parse(xhr.responseText);
+                        success(data);
+                    } else {
+                        error(xhr);
+                    }
+                }
+            };
+            xhr.open('GET', path, true);
+            xhr.send();
+        }
+
+        // 将数据渲染到表格中
+        function renderTable(data) {
+            // 获取表格元素
+            var table = document.getElementById('myTable');
+
+            // 创建表头
+            var thead = document.createElement('thead');
+            var tr = document.createElement('tr');
+            var fields = Object.keys(data[0]);
+            for (var i = 0; i < fields.length; i++) {
+                var th = document.createElement('th');
+                th.textContent = fields[i];
+                tr.appendChild(th);
+            }
+            thead.appendChild(tr);
+            table.appendChild(thead);
+
+            // 创建表格主体
+            var tbody = document.createElement('tbody');
+            for (var i = 0; i < data.length; i++) {
+                var tr = document.createElement('tr');
+                for (var j = 0; j < fields.length; j++) {
+                    var td = document.createElement('td');
+                    td.textContent = data[i][fields[j]];
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            }
+            table.appendChild(tbody);
+
+            // 保存数据到表格元素的 dataset 中
+            table.dataset.data = JSON.stringify(data);
+        }
+
+        // 加载数据并渲染表格
+        loadJSON('test.json', function (data) {
+            renderTable(data);
+        }, function (xhr) {
+            console.error('读取数据时发生错误：' + xhr.status);
+        });
+    </script>
+
+</body>
+
+</html>

