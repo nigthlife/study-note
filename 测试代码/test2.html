@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>读取 JSON 数据并渲染到表格中</title>
+    <style>
+         /* 设置全局字体和背景颜色 */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    /* 设置表单的样式 */
+    form {
+      max-width: 500px;
+      padding: 20px;
+      margin: 0 auto;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    /* 设置表单元素的样式 */
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-bottom: 16px;
+    }
+
+    /* 设置提交按钮的样式 */
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+        /* 添加样式代码 */
+        table {
+            border-collapse: collapse;
+            margin: 20px;
+            width: 100%;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 添加表格 -->
+    <table id="myTable"></table>
+
+    <!-- 添加表单 -->
+    <form id="myForm">
+        <input type="text" name="name" placeholder="姓名">
+        <input type="number" name="age" placeholder="年龄">
+        <button type="submit">添加</button>
+    </form>
+
+    
+
+    <script>
+        // 读取 JSON 文件并将其解析为 JavaScript 对象
+        function loadJSON(path, success, error) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var data = JSON.parse(xhr.responseText);
+                        success(data);
+                    } else {
+                        error(xhr);
+                    }
+                }
+            };
+            xhr.open('GET', path, true);
+            xhr.send();
+        }
+
+        // 将数据渲染到表格中
+        function renderTable(data) {
+            // 获取表格元素
+            var table = document.getElementById('myTable');
+
+            // 创建表头
+            var thead = document.createElement('thead');
+            var tr = document.createElement('tr');
+            var fields = Object.keys(data[0]);
+            for (var i = 0; i < fields.length + 2; i++) { // 多两列操作列
+                var th = document.createElement('th');
+                if (i == fields.length) {
+                    th.textContent = '操作';
+                } else if (i == fields.length + 1) {
+                    continue;
+                } else {
+                    th.textContent = fields[i];
+                }
+                tr.appendChild(th);
+            }
+            thead.appendChild(tr);
+            table.appendChild(thead);
+
+            // 创建表格主体
+            var tbody = document.createElement('tbody');
+            for (var i = 0; i < data.length; i++) {
+                var tr = document.createElement('tr');
+                for (var j = 0; j < fields.length + 2; j++) { // 多两列操作列
+                    var td = document.createElement('td');
+                    if (j == fields.length) {
+                        // 创建编辑按钮
+                        var editBtn = document.createElement('button');
+                        editBtn.textContent = '编辑';
+                        editBtn.dataset.index = i;
+                        editBtn.addEventListener('click', function () {
+                            editRow(this.dataset.index);
+                        });
+                        td.appendChild(editBtn);
+                        // 创建删除按钮
+                        var delBtn = document.createElement('button');
+                        delBtn.textContent = '删除';
+                        delBtn.dataset.index = i;
+                        delBtn.addEventListener('click', function () {
+                            delRow(this.dataset.index);
+                        });
+                        td.appendChild(delBtn);
+                    } else if (j == fields.length + 1) {
+                        continue;
+                    } else {
+                        td.textContent = data[i][fields[j]];
+                    }
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            }
+            table.appendChild(tbody);
+
+            // 保存数据到表格元素的 dataset 中
+            table.dataset.data = JSON.stringify(data);
+        }
+
+        // 加载数据并渲染表格
+        loadJSON('test.json', function (data) {
+            renderTable(data);
+        }, function (xhr) {
+            console.error('读取数据时发生错误：' + xhr.status);
+        });
+
+        // 添加数据行
+        var form = document.getElementById('myForm');
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var name = this.name.value.trim();
+            var age = parseInt(this.age.value);
+            if (!name || isNaN(age)) {
+                alert('请输入有效的数据！');
+                return;
+            }
+            var data = JSON.parse(document.getElementById('myTable').dataset.data);
+            data.push({ name: name, age: age });
+            renderTable(data);
+            this.reset();
+        });
+
+        // 编辑数据行
+        function editRow(index) {
+            var data = JSON.parse(document.getElementById('myTable').dataset.data);
+            var row = data[index];
+            var fields = Object.keys(row);
+            var tr = document.createElement('tr');
+            for (var i = 0; i < fields.length + 2; i++) { // 多两列操作列
+                var td = document.createElement('td');
+                if (i == fields.length) {
+                    // 创建保存按钮
+                    var saveBtn = document.createElement('button');
+                    saveBtn.textContent = '保存';
+                    saveBtn.addEventListener('click', function () {
+                        saveRow(index);
+                    });
+                    td.appendChild(saveBtn);
+                    // 创建取消按钮
+                    var cancelBtn = document.createElement('button');
+                    cancelBtn.textContent = '取消';
+                    cancelBtn.addEventListener('click', function () {
+                        cancelEdit(index);
+                    });
+                    td.appendChild(cancelBtn);
+                } else if (i == fields.length + 1) {
+                    continue;
+                } else {
+                    var input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = fields[i];
+                    input.value = row[fields[i]];
+                    td.appendChild(input);
+                }
+                tr.appendChild(td);
+            }
+            var tbody = document.querySelector('#myTable tbody');
+            tbody.replaceChild(tr, tbody.children[index]);
+        }
+
+        // 保存编辑数据行
+        function saveRow(index) {
+            var data = JSON.parse(document.getElementById('myTable').dataset.data);
+            var row = data[index];
+            var fields = Object.keys(row);
+            for (var i = 0; i < fields.length; i++) {
+                var input = document.querySelector('#myTable tbody input[name="' + fields[i] + '"]');
+                row[fields[i]] = input.value;
+            }
+            renderTable(data);
+        }
+
+        // 取消编辑数据行
+        function cancelEdit(index) {
+            var data = JSON.parse(document.getElementById('myTable').dataset.data);
+            renderTable(data);
+        }
+
+        // 删除数据行
+        function delRow(index) {
+            if (!confirm('确定要删除该行数据吗？')) {
+                return;
+            }
+            var data = JSON.parse(document.getElementById('myTable').dataset.data);
+            data.splice(index, 1);
+            renderTable(data);
+        }
+    </script>
+
+</body>
+
+</html>

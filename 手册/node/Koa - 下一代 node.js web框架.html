@@ -1,0 +1,1102 @@
+﻿<!DOCTYPE html><html><head>
+<link rel="icon" data-savepage-href="http://koajs.emptystack.net/favicon.ico" href=""><title>Koa - 下一代 node.js web框架</title><style data-savepage-href="public/style.css">
+* {
+  -webkit-box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font: 17px/1.5 "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
+  background: white;
+  margin: 0;
+  color: #33333d;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+a {
+  color: #33a0c0;
+}
+
+section {
+  min-height: 50%;
+}
+
+section:not(:last-child) {
+  border-bottom: 1px solid #eee;
+}
+
+section:not(#top) {
+  padding: 150px 100px;
+  text-align: center;
+}
+
+pre {
+  background: white;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 25px;
+  font-size: .9em;
+  font-family: monospace;
+  overflow-x: auto;
+}
+
+.content img {
+  width: 100%;
+}
+
+p {
+  font-weight: 300;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
+}
+
+code {
+  font-family: monospace;
+  font-size: .9em;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 2em;
+}
+
+h1:not(:first-child) {
+  margin-top: 50px;
+}
+
+h2 {
+  margin-top: 80px;
+  font-size: 1.2em;
+}
+
+h3 {
+  margin-top: 40px;
+  font-size: 1em;
+}
+
+ul li {
+  font-size: .8em;
+}
+
+section:nth-child(2n) {
+  background: #fdfdfd;
+  box-shadow: inset 0 1px 0 0 white;
+}
+
+.content {
+  margin: 0 auto;
+  max-width: 750px;
+  text-align: left;
+}
+
+#top {
+  height: 100%;
+}
+
+#heading {
+  -webkit-user-select: none;
+  position: absolute;
+  top: 50%;
+  margin-top: -150px;
+  text-align: center;
+  width: 100%;
+}
+
+#logo {
+  font: 150px 'Italiana', sans-serif;
+  text-transform: lowercase;
+}
+
+#tagline {
+  font-size: 16px;
+}
+
+#menu {
+  position: fixed;
+  top: 35px;
+  right: 30px;
+  z-index: 50;
+}
+
+#menu:hover ul {
+  display: block;
+}
+
+#menu a {
+  color: inherit;
+}
+
+#menu a#toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  background: rgba(255,255,255,.9);
+  border-radius: 2px;
+  border: 1px solid transparent;
+  z-index: 5;
+}
+
+#menu:hover a#toggle {
+  border: 1px solid #efefef;
+  border-bottom: none;
+}
+
+#menu ul {
+  display: none;
+  position: absolute;
+  top: 35px;
+  right: 0;
+  margin: 0;
+  border: 1px solid #efefef;
+  border-bottom: 1px solid #ddd;
+  border-radius: 2px;
+  padding: 25px;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 1px 3px 0 #eee;
+}
+
+#menu ul li {
+  list-style: none;
+}
+
+#menu ul li a {
+  display: block;
+  text-decoration: none;
+  padding: 3px 0;
+  width: 30px;
+}
+
+#menu ul li a:hover {
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 700px) {
+  section:not(#top) {
+    padding: 50px 25px;
+  }
+
+  #heading {
+    margin-top: -75px;
+  }
+
+  #logo {
+    font-size: 75px;
+  }
+
+  #tagline {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  body {
+    font-size: 13px;
+  }
+}
+</style><style data-savepage-href="public/icons/css/slate.css">@font-face {
+  font-family: 'slate';
+  src: /*savepage-url=../font/slate.eot?78386359*/ url();
+  src: /*savepage-url=../font/slate.eot?78386359#iefix*/ url() format('embedded-opentype'),
+       /*savepage-url=../font/slate.woff?78386359*/ url(data:font/woff;base64,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) format('woff'),
+       /*savepage-url=../font/slate.ttf?78386359*/ url() format('truetype'),
+       /*savepage-url=../font/slate.svg?78386359#slate*/ url() format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'slate';
+    src: url('../font/slate.svg?78386359#slate') format('svg');
+  }
+}
+*/
+ 
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "slate";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+     
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+ 
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+ 
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+ 
+.icon-cancel:before { content: '\e803'; } /* '' */
+.icon-menu-1:before { content: '\e811'; } /* '' */
+.icon-plus:before { content: '\e804'; } /* '' */
+.icon-plus-circled:before { content: '\e805'; } /* '' */
+.icon-minus:before { content: '\e800'; } /* '' */
+.icon-minus-circled:before { content: '\e806'; } /* '' */
+.icon-attention-alt:before { content: '\e809'; } /* '' */
+.icon-attention:before { content: '\e808'; } /* '' */
+.icon-attention-circled:before { content: '\e80a'; } /* '' */
+.icon-cancel-circled:before { content: '\e802'; } /* '' */
+.icon-cog:before { content: '\e807'; } /* '' */
+.icon-resize-full:before { content: '\e810'; } /* '' */
+.icon-signal:before { content: '\e80b'; } /* '' */
+.icon-smile:before { content: '\e80c'; } /* '' */
+.icon-frown:before { content: '\e80d'; } /* '' */
+.icon-meh:before { content: '\e80e'; } /* '' */
+.icon-github:before { content: '\e80f'; } /* '' */
+.icon-menu:before { content: '\e801'; } /* '' */</style><style data-savepage-href="http://fonts.googleapis.com/css?family=Italiana&subset=latin">/* latin */
+@font-face {
+  font-family: 'Italiana';
+  font-style: normal;
+  font-weight: 400;
+  src: /*savepage-url=https://fonts.gstatic.com/s/italiana/v16/QldNNTtLsx4E__B0XQmWaXw.woff2*/ url(data:font/woff2;base64,d09GMgABAAAAACd0AA8AAAAAZ5QAACcaAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGhYbsHQcGAZgAIEsEQgKgYdg5EELgygAATYCJAOGTAQgBYM+B4NIDAcbSVNFB2LYOACg7T9zIxHBxkExBj48EiFsHAi4tzn4/5K8GCHao6sGKyeirasSxBxTN7WDoZ69RWeMaxxUvp/F0pZeqbyUR8GTx2yOGgz/ccUg4Y1yyHz5eCHkD5juUiLsr5mNGz4D3GFFjK489K2Vv6q7F6jnABWQPh1UFkiiP9BRETovRkaYyFU6eobnt/l/COWCkRhYiAgYhYFiTMKLiFJhFFgxI3v5N6MX9ubeptvTt+f0RaZrF+/t/7/x/Ms9eu59P2lSqjWplZcMZMADGegGMh3QDAsjHfhg/n58Z6UUzxy8F1/JsAQDSwS2lYl31kPX9DZlsFqW2r+ZLGKydLRALMsHwL+Ft/97bKu2To+o/LXDw4/D4XD40u6pluIEolPk97tQap+y7AmAZjfQZVgA/w0O8N1/SmfZah+pCpAfsAoUDQAVdbrw3q6t12qtv9PJRzpC3z0YQrYD1ko6kD0TU4jIfvQf/TvAVKbLpOg+qRjbFH3akoq2CfRfJ/LNTii0hAdWxZtM5fqAPmDmsBTnAhWLEePy8P70FR85i25uWBjAS8GX7Vi9erKMnYnXQN1eyQawA+FiVp0hbaV7LkmcXuV5xtC38b2of8ddtOhJSBMn8mjnEXxexltXlFf96qwYMeIZ8Y+x2fPRjhWRFiAoKKdbTgKwAkBCQPj45J4BC448IT7elBUCCBrgEUN9/1DScoLq4wINCSinhvY9Q8gOQQP1u/iyZAqM3QigLft8X8ZWoozUcQcGC7EwU4Koa9CBpLYGQ3uMQEoJyk54SZ5QP1LKg2vsaN0rhyHcY4jL0ID5oqq8PbsPxeND9gy3ORkG3p6OT8ZM4zG8jpT3DmDb0upkxKfPj2gMDzFqi+jaNBeq1kd9XiUrERjs9bkvIpGvKBQ0aB5fVww/dFgB0ECwhsI0EqGxyF9McPGZEohjRUTOllo8J4mHJCm6KL+LrEk7V51O8nDGeaEmrYi0ZpPYdduUbh3G21kJkJg6C80MMYQy4gqxKKcBKjdMd2jAQyzP3pg3H1h+YtHF8X8aKpxABGsLEyDQDT0gQpRosCg8kaJF4YsW0yMJCKGJej1iEmhS9clEk4ukEE31rkcjHsYfMIWmxUTBDkZ3dDLQpRdWn0HGhg3DGnESzhnnmDgPIePfYU2ag7DgEpTLVqCtHupbG5nrNg9v0QNdaLsmzvvLEFKgzzHZBzGkhhgUiRYUgI6eq6Cj72f0nXzEYIIJWHAYYIhRGROIWLEaiosJNsMBsSQvU1d3ZuDKhBoxJyywiMk+i7mTIECVniEGSaDR3zAHDsx5amThNLDoUvbpsiWGlq0wdhVTzDAE998aQgiDBpxc3i3jm51oWL+72lzRFl3z+/MvZx/PSNP8KSXQ+k0Tq9ZWn9VRPp9vDSkZCgRbrty48+LNhy9/gYIwhGAKFS6GkIKSSoIk4yYcwIDizuRMzfTMzOzMjRnyDSvuNt3m23Jbb9ttvx33fE3u1E7vzM7u3BqAO7o1Ez+Jo+2FXuwLfbEvtSP6Biw38ESPtLMyUmdiVI054WQ+mSnTZsyayxcm+qILLrpk1boNV1y1eX93C0I2CwCzNhAex+T+cdmpy/L4tg3SIcCUYGpq8rjf7tO9rsd3eY/ont2xW65frnutzVeeS6tF1yJ99iezCWfBU/qUOGlp77aOVie1lFbRilvuIG2pTVl/TGECK1IDtJpaXNM7MA0pvxZljuVAJoRdsT0CBlmOWpuv0x0X6aOmxL22ulZRltpylyGVsDZI15qyGFhD0Srbn4r1s+iAZAPFBCb8FMGCQ3pK5soYB+5Mp/pDS9584Q/C2Mxw5oJ8oOI6aUI2k4Sm8Mfw+xG6DOFOVIp7JM+kmSrLygqy412JA/m8lBehMijDhS5AhEhRYNH4BGLFEZ6KVhxDAjKKU+VHVUuhNWI0xuCEkxYsuuCiSy5bsmzFWn59b9iyHbdgJ3Zx2xJz4DKiQbpbGc3GS6S1YNEFF12yat2GK67a/DdCUnwZjOEhQmQxsxEV6xnCJ4hYiCMkJklSR+T16GpSZm/OfE/PmcuWLFtJqw4VRETU6RbtdC4MwFCESFH4BBFLcYTEJLk0stcUbkqQWFxGCly2ZNlKrNZpzVUAWMCt2NFzJ2bf9eEIxhOdYpQdWa5LgqT3ahGNecygiJmZv/b73yjKD27noBDhqAQQmevqQ1LnYjhO7TyzbjswQGeoIkSKwicQK45wt4glMToJGUWuYkmdp6C7bMmyFWv5dZZu2LKd30K3k5DVQ42E1FsJSIzXetJSQib/vG6G8TzY9NBMIl4lFs0446z/ODfZxm0v5A/FuQe9iADF7QlP+nb0RNM8mlWLVm3adUQnYqQfo2bMiXeedGVOS29rNnYT9fpeKNuwR5qUl360JkM698px/uaen4vmG8ZMTmBN/GuzSz6+0t0Xd/ZlnZZH+HpjZjKQKeSRgrp24SChfYgkLSiotBhjjDHGdV33zVt/ipRMk0rqc7r7vs+kp+a1EGY7CoqH+8WzNrFyfL0hl8wOY6+aPtDRadFn+mNADU4amE7PQlWPep7EKQ5L27pkBkkY6m7y47pUNG48wpO59/rwCzr4CxCYGFnCMjgqL4PBz1MM9AAWSkRMElKEjCGPFK+pREQKkna5OY7jOM4C0dWLbtWjN++bfgMGYxiTw4hxm87fnFQvAAD6NtjG9TpuqC3bbtkphgQrjT1YT2gTnrhmKA/rLijJvY8WFALOUrS+MbpKaxTA29RPp2sCwPsIx4I7jeqjSudiHK7/N+TD/A67dqxQmzFqxbgRoUAFM3NrGwqApzbceBJ+6fxN5pM23G/0XCFcxXShxqApt2L04WHhbXz4FdLC3wQIFDzYjI1IRDUDY5op36XLolv16DU8QwgRdRq3B+/OaX/3yjaohCf8bBlGNEEU/I2w5mClw5OUOt5XG5x/qvkWDY+v+brdNippyPX46pRVJbO+Hb1jy0b7z8tu2aRyvCFdD/jrnjPgRxQwnjVpeLgBvczt7TOsA3V0hSyAl+jkRZIWMWyWhPQ0KqFDsBDtAYXbZbmBZ1hdYa25zRYh7LLANoWxDNCVvTU4tizXdmWLqiMzLN7SYATcBmbZWuoqWYFENazRHw3VSqwWqlkNjFQMQ2MrjdV0ZqsdYTOg1u8+Ek52MWJhQa2wK4c6oV8XFq/MIyEW0Zwi4MhDAAsrqb97AJzbXSGzEUP0gPzJHsBPvOL4RfciER4Abvn+pfvyWVIKIhHvJNTkGBBwH4jM4j9PA84ggRwUsm8UUY5HO/3Jv0CEhtTgslevu5Dmnfw6vz2zJBKIjkQSkUJkErnnpFdfzky5j0PcSRar0Wo26O/L4Ktf7t45uOj/7/9//U/rViy7ZNFJ/VuNSiAmxRh0sO1J/CFxb9+44bTipOuPXprZ3i+aFFZZk0ofvuIlHKB3xXcZzTCPIc2DORG2IgdYVrnwPloyXGIAdWh2KqDlWgWja8iAwlcNACha4vWzbeERPK5gFTDD+ZcwmZYR49HIUd65mY82pddLGndLgJuALrymG+p/o5/7FNa17bZ3L85krhQWlsNeg9z3BpwQvZ6fS3brj2OPnX5cZrk8P1dSthJ7+96qDvvT9hLLPjThdaQlMF9qW226cxI9fNCQ4IMJloOg6hIJL/AhynIo/eCKIzctlHKv+rOuDicczb6lpte3qVOkHLkp3lSmAUTm4Lk/arhdMogjNyJy+BPyZerXHoEca6UMIbxXN9JqqhOSIzcFGgh5BcpclXBArKHmoW2tAmICiS2tiJKNGOEqUHy/LMf7RFTvAdNZQhcZeiMtGAnM0f5t3QwUROCeSKRLj+65ueekc4jyFJEiSXxLB5kjR5L+Z2Ll5U/4hlLxyynXASlgG+R5ipI8KBDp+fiMvMTPNjQCfkGRgPLuv1qDkw813Zijz+y25xKZrkzZO1qoQYp0P9+d6fb9q2+dnLJhCB9ub5GB5+pdu739vPLUm0lCYqXUgZpdNU5qcN1DD3Dcjt0FoJ7DgGLg+hQJsz0k4FtBiBQJEiBA7425JskeqTgUhBAh46kUXjGhWZzIlHItVAEySICiobWhWOY04XmnHsqedrzO2gXZ9H6akIPwnBTlaBF53hUK45bofI8n9GLdLsu5lrYSJ2ct2CqHIeYYB4YEPLk0k5RH3ZRdevVeC9lBUM5SlqIlvPNep22kQ/B84CBuHwjNlzwnDVsKsZckvWN1Wgl99vkNnKZM0xHInlLKfvBEh7y1/3DXrfz5k0e1n1ItCx10gDz0333kyru3hQ4KnECGgCvZJdZ153jhP8xDee9w4hXplbiRXr0Vc15rbbWbmi3fEXLpHzY3Oa0t0SmDd1opApwdHtrlCq/mdeUslT/E6ry6rK46FUoPBD1LiW8ceI7tlbWUb6ic9N5KrF27d2/9MZQk49oORDl1f9dXW6H/+5KQbHWS2bs0oGgBHz6kB0mbTHvSPaJGnSexnSAU3UYIsmHOjJJN9KKjDoCh/3wDCMWsDOoOaBbBIc3TpcJ1SW2t1V/1vretLeHKIKC+3lbRMZmcZY/VIgViDlQ37pZ7r516NFQLROhVUVMk2YxJLudUk1KGavPqXAoJn40ohGrMmAZWgZGNaLQqukg16QFWxffFAvcEyhdodZQp2N7TkPcIVJvZaqwy45M0no+D1auQMfIMMwjWhDz9X/JXBy3krH5V/TWR6d+0H44y7YACyEA0fBouMTF5e2RX/BPjEyQi0DMqhyog9BTN/ooypX8Dobx4ogbI6/EoaqFI/Ad2DzlVaUCqfjw4qfWECEzrm1AN1CTwG8wkMqIT4566vHxDobvflMlDp1XWamwMN3LnD1jJ536ceaqMQAhqCDHXAPkiZ22OAGUgke+OiJrkB6Y81dVubz8OWVr0H0cCjyExYTVG+BhQfBwK/QLPYcwk2cj3wRQDKpSmnVza+KEKVTNf5cnl05WWbRtJS1TVRpg5zOdBnrIiCCfjumVuVBi8MEsqmK1mkU8yHHbcZYSG+QZWmWsFcbZLl1gP0kymPQ0N3rNg8itBYrJa964WyjMjggQyUFr8KU8ZUcqs4mccnfduSU2KpqU6g0/YQxQzSUW3mnaMhyKfhETpjcWreu6J5MKxJv2fBVHIMNikH6pDMaTEZ1eu+AV/3opgvIERdAtCsjWVNw6ufy+9Ut6Mzjlqbc+wFHe4JOns4vJE85LpekXlsqoQiZPFBZHGN3aPcjQRGGOvDOnx7jTsTOdiYclcKGkBl8/HZ24kdy5E5oQlbrkH/lDrh/xS/S2U40Oa8bNm4ufkRPu6eEgNFo/fjW0kwEzo0grdpUINLLgd6zsS0AmfnX5Btv/QgO6BVJ5ymVHfm3cj8Nrb91n7fAWiju5GOZIZGeJcIKQmads0VoIWQsoXHptLLndbR8ReQjK0Wkt05NbxOfRaZAusmnHei7PotZ4bZaavsg3YU0eT/mUink0uh1tn9t2Se7vam0a1izGlMUfFrk4+RKhDXdMMVGfzUkaRJK0KkIlI0ZsSH98IKT7v/Jf1hl3ubFt8S+UmCPIwHAmsH5yQeBKSLMV7lF/UXcKzfOoUd/I5OXmqPelMPGmyNeW0mDLJeTW4YmHIdeVu6zpttPwamxtF2gUo5rGBYQYiMLC1/71symeOTm5xuaYuxN8/HV9IykwlX/rm6KT0tlzqv5VA6Y38p+REHfFbrda2jopdx0+rODlTewTlWNd+MRQVx6EHRJ8S5fX7UdpUrC05JTHOOYWSiDtsJEGM8lxXWgLRr72VtLSSpmYSMOKFJgGafTWa734O6DGU8SwfAmDCIniN8sgk2TfFg/Tp+Iw8x88WpM4G6KiIOLSOVn4Y7ryrvQ7gXBpZzt7DlGdcjbO3LJ535UcY9S7oEa9EzAN/sRtL3jOOKUp/DQk1QOghFyn3HdyExtVX4c1ykcTrrH0AVMq17loahWsExaJXH/Z+ZVR8Qab8YittbaHNTZQF1F+BOjdBoAzPEOgFfSG0FXhk8qV9Wkxyzsk7sVqGsmCr+wDqILyOMQy0ruEgRrmkoPbIWoZ35Ax5ULPosZTyMe1fgeealdCUs3NGBLznOjCoBMv1b2QBNLLwbf9Mq30f7m+NeTTaGDRiq1B0czYOXOvW701GH5H7u9rbatqFI26WSlrY6o2k0/Cwplr+DfEDvlz5LAUPihkj1yyZU7NLiataa943XVnaVbduDzQouK3OkxqcsEnR1BZnYr4P5F1oZR4emaaxSjutARhnCnwfyLvAmIeNahorjbgwgYHQaBuNBpJBYfVJlMzXusAF9VWfve3Ms/ddX7EdO8Accl3B85fZuHnBSp+hU7R/qhq5WOWIa4KnL4DS0gCi+eEYaKw+6CETFCEXiWwNryJM1n1z8t9ioaRUnidVFYay8FSV3haPv9P/js0PlAFuOZGPKL94s05DpY6DWccP80zQovM6pIm4OklOlzotzDLzBXMbOCYazTtba0ekIfzYtA/HkHK2ocuh+Mn3gGVwm0wHXgzEpH3G9IGrVS4HGQSp5zTv+yC0XZlHw3AZbJhpzqhgcW7XMjDWIgfWNlafGFd+EndBlb5WWdTZCe6Nycz2kuSd9dwUhI1yTV5By8DqNXBwMkXmsXB3mU2UkQWmDBP+MMXQjpwXkV66vSjmFOz3xE1VwGj9MSe6/ZhnX6dMNcwCbLSGRkWDP5gxdw9G5aN/I9HCV2/64kHYXkXWr5L11VHh/Ov0MZe1QYSnY174LfJUNMQaAP9NQ099UOXSKb0XzhkZVayEPJvJg1L+2ZWVvKWtAJYyGAeAhlW5NwEfGPrAPg4Cb6XXfD7ne9kenbfW/KbmXzX/riHs06/zpvmLF4vDkZnvPN5Yc38Z6O+h5ZeP/7LutbPmV/2/ERutQSHxJvwkLCP3+9c2GcmECabjr1YZxoOyneGh/xJ4d4rON2RT2WkJaWZpuHQlSmUfInFUo6DzAxwSuNlewUpEVtVm8az1eAg1q+RRr8YnWxoRR3gOPj6CpCNc1KCbgBnUonOLZQay5fV2WWGYn2yDvLP5ooPMTtxzHCNwpK7sYAZWybhOxw+oqcdqTy6mLuudnWvJeNDem8jt74ODs0vdu3UR7kkZ3AB3kjTdLvbN5xeBnfnXFhg7TNKKgn7CPIaZxZ8UEuacEsg8cxWlNdHvbTeCykBlnANaZ7w0Xgcz7oZNtim0uGfJQl6QVpQ0Zrt76BDfdDIxLR4QEqCF8nLuHs1C+ZKAHGjutvj2CrTylfirOeAqfuS5aQS8yN6QN/iFZGdmRyKQQCHuxV0c8Ps3Z3zs7lhN62GjopaGnMr5osHM9yJwPPT5NQw6gMJ+9YGWwaeHsV1RbOaoILS6/6EyajfqCyn64/ZGd+ck+ORTViH4Z1TNCmXZBbHs2aQQngU7QA7fbhcxs4Pkl9VhiaaYGIv6Fgnj91+sVoOOccWgBwP5GmhFOO29jCPt6HsHtt8TLcT2/xp8dfnEiNnaqnAZm/AFesw/MHFdGplCxM4l+/vH5oKhxBe1ZZr1osacncNCRjwru5HGw2v018THbxonRPcHqNlJ+TGVG1yxn/PeHeD3hP/WN/y6EmHnVIMDAPrH/KpjLCNWCJZIhN+Ldy4XOihpOAsD/fQxdq6DhlUIj2Yxn+3L4Vx3C9bk8I9uyPs69q1jph+ksMyzrf04We4e7HCvlmsR8O8OnkKgOaVpfwuOj8xuosJWnhkokp0zgSSy56WAoBJIFyoKihPVsrUeKfuZ5F3yrSwwnHEHuvO5loLcI6sfx6XsZ8EbTw1wWRDbzGSJJSKNTBLDC0gKwKWyNLPTbHk/Sx7uzTEtD6h01v1fDYQTX0Q6Jm2wHBksYHyWY443FwQG9hscN7BJMEd1Yh8HSVb1xzEldumx1KC937O/QDK8ZtNFbnEnMBjvm1UO2qiy4CVSho7xJfJaefBypq7Zd1xNUYyn2vrfrtb+zF2rvqGPufFGTdYv3JVf85hyHql6ijEdC+264XAGOcDd0H1r9r87irhvyJOl53IcQNRGKUbzfC6CpxaaCCAVP3H3+StSbKcmJnFHcCwGMVYdzXwWPNandy5WJgYDqC1NzlNq/RXmACU9uo8mMKRYuXEI0lyYK8Wn7097dTFZMgqepzHKyHQTEMCJG2uKZLNE38hY1bvnms7v85PRt6TrrMhHDf+ySe6StuSX5bJ/Bp9s4UI9yThyiQQ3u00EkSeZLdtuf995KQxh2C2OkBgYder9atxznMfej3e7bFvGjmLf3FlxFIhaw63j/Bb9Xmq9F4Hn22MfLHrSbE597E/KYfmA01s32Ncr1o+wO0k/1Oh6Hsq2wRt127J1NyA0Um45f9TxYYfzFSDj+lzxObZJo7ZskyY6Ovlk8Ks4wC92c3XbanYme+XaaKM4+oR3xye3mzYSqyfeabqiqZny85tJ/c+K5Jw4gcIaY8jeXWM+yx3r03tTLFMCv4SZlZ2OHglPI35nZOBaidk9dRShRhPajNvUUeUksd70pgWc43RVI5S+q/4lvenaJOKDlxHmFEjN9sVJt2OaBRaAUrwRsAewORxPmtJwwvgCqqnYXuLC8XIT10ep0h3Z5foNg80mMiQlMXyxwNNC7CwhWwn8Evlp8XsZzsBRtr6EW8YtA8qW0dD52hHdMZVVoSh8e0g2uJl/c88jtaTvLLDfIjnaXnjFIirdh6JPDxeD7gO/j7ep3KFH6/T0+dnvGl7rogaW3Oia7nDmFmZ0JWNPIb9EPUE1POv/S6f8rXjwi8aM67n3ZF/s/6q49cZSssKDXcOdxqUueDkclZRaDnzp3IxLXgDK/c3PoPb5dggMFMqKrnufUd5o4CyTU9VcWqfrGgJCjDFkDDL2eAivPiOwx+3OMMX7qvMbTI/b2dY7y5owj4Mk86a+F20/jkkn5AepaYlZ6HNEkUPh6pQT5IQKlEc7L5rpBdBHnhAWemtQ78LlRgkS5jv3jfXjdDaHX0doc5nH7njvYn4DZg94yZ0PlaU8DdeBAjveqq980dqdGZLqr4v88QNA/aOlvr8h9KYFPN/KUxfuNoMApiRVYNg76HeRnBQeKRV29Ndoeup/BnlHdcpSni7OgSJyfMvckyotSkvV08twJ7XwEkrUWgMVEdSTfESQ6C58Fw/hfQqSErMBxAWh8YBk88MlpRB/Afc+KBHzMxS8zJ7ftS9rpfEc6OK73XmgTNGJEKeIdB1NC9+D815oYoLTItmBIQ6Fk2tOEBjgrViCl+4/gtNF5CpyF7mTDEJ/pz5OeouVB+eKnjRjOLnse1x57/Grz2H62ueh8Gsmy4/g+2BBXcCHljxwx6ClKfyRV1iilqaDm5NVmZ2YEpwFP4GPv1Dwc38+lWT3QhadOnH7N2urEI+5wLUO29r5TpEZeZKLKMElxBRyLR8P+EmEgkuo1soXXd2f3Gxo+Ujb8Sih9PR84HcE103gFfrsGcKHf33wQboEBPg+LAnNG/33A/wuP9/JB34CT/yryWxGW16kXaCdAYIP/zfHjIwSP2Gf+zPa6cfxZBZLjPfJ9FTQhdauobGRaWelRBnxrND3K6K/8hXpEMLrYN0Z6Ew+662kx1Tz5ieiPFBQEojCY+kO6bw0+GfEg5AQU8C1/HncrwkGp+8p/G77YOy2Xh/EXT+CT58/G3KFCb5kclcbBltWWnhqB4PJumtxSPDxdYHwKyt119ZQ/NPfj36PO/PbdSP+5F95U+YaxuJXYHrdCfbBb0IZ5v5LsnWEkZqzk6fDnue/tHpUEHoIJUBevzyoJ0jg3U82ONX4MvqZARkrPMG2f5lfYFlglfsyROp0DavGvvWN78u8CCgCKO+JR8TgeauCkOvwss5/fSCDXst0WqR5tAkjmdfco011u/8z4wKjCAarH4HTYkZtivVsJMEJ0xDVlUc13anoaFw0epm9hl3Rd5UcBwrLPh4Reyhv/0NWxkEcAjcXiPaiPym12FV3a8UK22L4tIrsUn8xLHcUGupi0CRuzN++g4SQyJZBwDBj/wukPLOteluxvdB0ckuxRW2sfql4mWVK71YkkyXSOlFsxc2f4ODJ0b6g++WZ0aYldS83oGtD16BrCpliG9qubduAVgfTFSPJQLkvHhKLVOIkMTgpjolQMdzEHC+Ji9jeVEDlh2k4U/GkkAznvbR4fqLAz0pCFjtzqOMqdxHQnOKQCnXTxlegcEkW7VrfyQ0c7ZyxfnPe+epZq+vz/4hOz2BOnvvx7T2gOtzfzzuepPA8nEEXhr7xtJYgzLWNxdcYOwT13tZbBkdPu65hIExtWSUabeVQJjduliJsEgMn4jgWv7iLfeeMV1ZN0K+Fh3kQRk1Dp4zDUWfBjShI+aZyD8LfvNIGHfVJP6H1NqCFZlPEKjm44d6VeaOv6PPuLNxR4UpXSs5GknYwJfv4dulKQx2O3rBVlwngcmduqZd7vd2jqgAEiwG0KZ6QJ+jCsT2lXL9MlqeM4xuz6MjD+XnzCKAzbxaajYLNfwz+vM4gE+1JRuTYEBJcOZ3qonWOog39ElMNsjvXzRW71q72NlvmW/ahkjdOeLkKgk6hnsMhQWD0Ng+RPWAERP/C9+HmGXhDZQbAXakpxYwChHtsPcZKoKT2SVaeYWUypfjNPr2x3GdgSAFkf9zS4Qa9qmqeXzhkjn8mf0kGC3/bHDmiM9BORzZoNag/evEHNic7knnjrXzqy6r8MuY9/QFAhkP4bfxNSLn31JXiulMLwceb2+eQNcpG5qSfre8ks9GPb1vRc8jxzun5wIWtrCibbbaY9DafFH8omaeCMv3/yeQr0ud3On3/Q0fG/Gj7dqRfziWvWKVk+Usan6GBCn+Kc6NFKsVMsUVhyO2QHzsHZAkuoi/xBT5hn7PXLL5qAB+8Bm5HSaXrS2Opr0yzFH2HoAjMygJG4DIbXirvnNqK2WzFbWxS2KjY0341Z+OP+ZZHYEtJHC/rcRlSY8nIjvRVNs/9sGk5ZN3kG8k3kUv4xGm2sHmTd0Oxt8y6LdxPnm/j3i55jov5dif5G+XvyM/Xt9bAACpPQHDLzNAY8fAyCpPl1TW9j0+XwtxcKYfgZkURGNL60qMpzIEr1PqnmpxhVHx0uVThuqp3PKSluhC3TlpUnB11YuDEMH+k2krXdeytlrRUV/g+0qLiZSFi4CS5MnSxRRCRI67rd7VYmnXm4KvQ1Zq5qPf96dy2UpSpilr5/M7gTPErvm8O1xQq9hA4wBSOvZOQhMclT937xK+WOtTzQdrw8Mjwdzt0QYFxg4Pfwd+3OEjTvdjUueVoTRG8hOZKgMhNhnmV6TgXGUbFUZ+5xzBOnPTl4PQreml0ShZ3+uIl2bZssACpr7cjirWt+f45mFr0sp5vy+cWiO/6Q/4VMsNTFXI2uwxoQ78vaws5q43kOygtXlPQRdaS93hUXf5NljPE/yvgd3cLysLro+1gjcXo9CB0ME7uwVpw5/NfSpvjVhJT8tIg6VZYYT1et3+zGQvS90g3kFHDFBH53n4PTd6nxBKV7cux2tAFf5x1TvTpyUNUxn0fn2gf4xqQUM8IfCJi4hiXMOBBKTd/VHM9H44u81KuhMEIMo9KAD1KzOPEVqFTJXUf7+w+l/Z2ywymJKiauq6hEkJmJ7r+gCNgKtMqvVc1B7MH9baPkNNfmJ0dGJUV4Ps6rXenIDgoN6hSVf+A3hMCYSCc6q9ie/Z8qWdkbyHOq4NKrYR5LHRKBhhlpWD+ymBTa32Eo1/rT2oe+RqsWzyW2kGCVOkwdEeKttokiq2tfHwLKREZZw513McazO8wFfxHPjOvoqx94D3zqNi4xI/mcULzWseYPaJKcJyeI+o9uOKQb1ZfhM747br58CMG7NWEFSwLs0dx4jvP7ELJG8euWugWXKwfysWAmAUSeTQXHguwl8CiKOR5N4K7fHSgwchziZBFqnTuNEVZDoDee1kEzyUjywGUaadzJTipvc+S6prGJbDxf7vEHsPOZtS2bDmr1Kk79AJNis7+asJKXp4AqOrfBeaXv5EZwOsHGHxoc0BH1aHomfsom7exYTdEwDJ3G4sp/ynzgLXmBMBwAEvgASAdg79c4Nn+5d1Ug4G85k0YfAYvhNbzTOIf/vtreX3BJR/W2/Z2orxTDr7fugQB5Pdo//G3I+ph/4WoPwH+fV1PWOSrz7fycZkEzO5eRQB/qZHrc4sbutIma24dkONVwdP9vckIl7pq9uURtB88bazp2MdT1DGM0hcuqwNyJTLMEG+F7HNI1w70DNLlGloqUbPNMYnweYKWcfTaC63VeiFDWXRDpuovRsoVyAry4U3cQo5lgpszI4WwGQE4z0l3bhOhJ8LtOrYaCD/qDEPAqoR82CsPAyPQBKKAS/7m2PLMJuQ4QkIlwBPnjvcyVdW6eX+662skV4niIbMY4FII0PITWpWRO3J79XMZzlBPdEfuP/bmKtx/8R9inxgb8HWboxc75bKGZx4IiXHGfS6PVU7+R/A7+NR3iC72VL7VNdaQ/2h0bZ5xt/WnddFxL1TERe+saFjoGUbp5oyoUaZCr5etSw24s7oSKyeeApF7Zh7CNZy/CvZBA7xH/FSKkAjdJu8D8kHGQ8t81yWwSXIg/Bi1OD5CAIABYT62A+AY2FBepYsEd9MiwKPISDSR7zx1dqpxf2NfLI5wdV8Ai/YPFoB4Y1kvlBjYUD8A/KpZGAOKwlWo9PM8ta88trEzQOLZVA1xb3LtoIF0UlLSSMGQ+2u6xEC9QgcZ6PbzOgJDTNb4dBhqFkE0Aa8lPc1kQkEcWAD8dqU2BcHU7BQkYyenoJCUdUZzp+ghkhN9DA4gxu4GPisTWzEmH+9SWiVyclLG8d5KSX4kRSXJ6nmLwGLxnaTVJCeQQnd7kcrokfKKpA2IMqUlEqSoV0bkK5V+vMsVIYKJCMnFYmFjEmUzwqKoiYl0aWXZY/05ihSrVkyzjHgT0Wi5RUofhU7K0lUHKuulZRIkaz6eSDRrkRpaRSS7UxapbOQulqFgEV0k3otWCZPK3oxlshGV0FKLpILlOkRVpOCyJGp1PLYWGh8BdBO6jb0KCbWs9V0EgoVjwJARYyZMmTFnwRKeFWs2bBHYsefAkRMiZyQuyFxRUNG4cefBcykXWoEH/O2ruaTgk7Iw4QaOoRBsHFxRD4cnGl8MgVhxhETEJKRk5Iu8qHq10sAEkLxiqdLMaNPuppP+1GFAr/99uGBWj6+1GvX4qN8pXW773qNxFz198mzakrfsW5ZOa4jOOzIceNsH3vWe9/0l0yc+9JEVWR4O+9ynPpPt0D3dcuXIUyBfoUlFjitWolS5MhUq/a1KjWq16tV5zZRGDZo0u+u+G76w6kvf+cq6DZuuedMVV+3pdMktr3uwvgd91T5V/QA=) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style><meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>img[src='http://icon.cnzz.com/img/pic.gif'] {
+  display: none;
+}</style><style data-id="immersive-translate-input-injected-css">.immersive-translate-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.immersive-translate-input-loading {
+  --loading-color: #f78fb6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: block;
+  margin: 12px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: immersiveTranslateShadowRolling 1.5s linear infinite;
+}
+
+@keyframes immersiveTranslateShadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color);
+  }
+
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color);
+  }
+
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color), 120px 0 var(--loading-color);
+  }
+
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 var(--loading-color);
+  }
+
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}
+
+
+.immersive-translate-search-recomend {
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  position: relative;
+  font-size: 16px;
+}
+/* dark */
+@media (prefers-color-scheme: dark) {
+  .immersive-translate-search-recomend {
+    border: 1px solid #3c4043;
+  }
+  .immersive-translate-close-action svg {
+    fill: #bdc1c6;
+  }
+}
+
+
+.immersive-translate-search-settings {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  cursor: pointer;
+}
+
+.immersive-translate-search-recomend::before {
+  /* content: " "; */
+  /* width: 20px; */
+  /* height: 20px; */
+  /* top: 16px; */
+  /* position: absolute; */
+  /* background: center / contain url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAxlBMVEUAAADpTInqTIjpSofnSIfqS4nfS4XqS4nqTIjsTYnrTInqTIroS4jvQIDqTIn////+/v7rSYjpTIn8/v7uaZzrTIr9/f3wfansWJL88/b85e73qc39+/v3xNnylrvrVI/98fb62Obva5/8+fr76vH4y9zpSIj74e353Oj1ocTzm77xhK/veKbtYpjsXJTqU47oTInxjrXyh7L99fj40eH2ttH1udD3sc31ssz1rMnykLXucqPtbqD85e/1xdn2u9DzqcXrUY6FaJb8AAAADnRSTlMA34BgIM8Q37/fz7+/EGOHcVQAAAGhSURBVDjLhZPncuowEEZFTW7bXVU7xsYYTO/p7bb3f6lICIOYJOT4h7/VnFmvrBFjrF3/CR/SajBHswafctG0Qg3O8O0Xa8BZ6uw7eLjqr30SofCDVSkemMinfL1ecy20r5ygR5zz3ArcAqJExPTPKhDENEmS30Q9+yo4lEQkqVTiIEAHCT10xWERRdH0Bq0aCOPZNDV3s0xaYce1lHEoDHU8wEh3qRJypNcTAeKUIjgKMeGLDoRCLVLTVf+Ownj8Kk6H9HM6QXPgYjQSB0F00EJEu10ILQrs/QeP77BSSr0MzLOyuJJQbnUoOOIUI/A8EeJk9E4YUHUWiRyTVKGgQUB8/3e/NpdGlfI+FMQyWsCBWyz4A/ZyHXyiiz0Ne5aGZssoxRmcChw8/EFKQ5JwwkUo3FRT5yXS7q+Y/rHDZmFktzpGMvO+5QofA4FPpEmGw+EWRCFvnaof7Zhe8NuYSLR0xErKLThUSs8gnODh87ssy6438yzbLzxl012HS19vfCf3CNhnbWOL1eEsDda+gDPUvri8tSZzNFrwIZf1NmNvqC1I/t8j7nYAAAAASUVORK5CYII='); */
+}
+
+.immersive-translate-search-title {}
+
+.immersive-translate-search-title-wrapper {}
+
+.immersive-translate-search-time {
+  font-size: 12px;
+  margin: 4px 0 24px;
+  color: #70757a;
+}
+
+.immersive-translate-expand-items {
+  display: none;
+}
+
+.immersive-translate-search-more {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.immersive-translate-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.immersive-translate-modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  font-family: system-ui, -apple-system, "Segoe UI", "Roboto", "Ubuntu",
+    "Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.immersive-translate-modal-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: hsl(205, 20%, 32%);
+}
+
+.immersive-translate-modal-body {
+  color: hsl(205, 20%, 32%)
+}
+
+.immersive-translate-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.immersive-translate-close:hover,
+.immersive-translate-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.immersive-translate-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.immersive-translate-btn {
+  color: #fff;
+  background-color: #ea4c89;
+  border: none;
+  font-size: 14px;
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.immersive-translate-cancel-btn {
+  /* gray color */
+  background-color: rgb(89, 107, 120);
+}
+
+.immersive-translate-btn:hover {
+  background-color: #f082ac;
+}
+
+.immersive-translate-cancel-btn:hover {
+  background-color: hsl(205, 20%, 32%);
+}
+
+
+.immersive-translate-btn svg {
+  margin-right: 5px;
+}
+
+.immersive-translate-link {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-drag: none;
+  text-decoration: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, .1);
+}
+
+.immersive-translate-modal input[type="radio"] {
+  margin: 0 6px 16px;
+  cursor: pointer;
+}
+
+.immersive-translate-modal label {
+  cursor: pointer;
+}
+
+.immersive-translate-close-action {
+  position: absolute;
+  top: 2px;
+  right: 0px;
+  cursor: pointer;
+}
+</style>
+<style id="savepage-cssvariables">
+  :root {
+  }
+</style>
+<script id="savepage-shadowloader" type="text/javascript">
+  "use strict";
+  window.addEventListener("DOMContentLoaded",
+  function(event) {
+    savepage_ShadowLoader(5);
+  },false);
+  function savepage_ShadowLoader(c){createShadowDOMs(0,document.documentElement);function createShadowDOMs(a,b){var i;if(b.localName=="iframe"||b.localName=="frame"){if(a<c){try{if(b.contentDocument.documentElement!=null){createShadowDOMs(a+1,b.contentDocument.documentElement)}}catch(e){}}}else{if(b.children.length>=1&&b.children[0].localName=="template"&&b.children[0].hasAttribute("data-savepage-shadowroot")){b.attachShadow({mode:"open"}).appendChild(b.children[0].content);b.removeChild(b.children[0]);for(i=0;i<b.shadowRoot.children.length;i++)if(b.shadowRoot.children[i]!=null)createShadowDOMs(a,b.shadowRoot.children[i])}for(i=0;i<b.children.length;i++)if(b.children[i]!=null)createShadowDOMs(a,b.children[i])}}}
+</script>
+<meta name="savepage-url" content="http://koajs.emptystack.net/#">
+<meta name="savepage-title" content="Koa - 下一代 node.js web框架">
+<meta name="savepage-pubdate" content="Unknown">
+<meta name="savepage-from" content="http://koajs.emptystack.net/#">
+<meta name="savepage-date" content="Sun Jul 02 2023 08:28:45 GMT+0800 (中国标准时间)">
+<meta name="savepage-state" content="Standard Items; Retain cross-origin frames; Merge CSS images; Remove unsaved URLs; Load lazy content - scroll steps = 0.2s; Load lazy images in existing content; Max frame depth = 5; Max resource size = 50MB; Max resource time = 10s;">
+<meta name="savepage-version" content="33.9">
+<meta name="savepage-comments" content="">
+  </head><body><section id="top"><div id="menu"><a id="toggle" data-savepage-href="#" href="http://koajs.emptystack.net/#"><i class="icon-menu"></i></a><ul><li><a data-savepage-href="#introduction" href="http://koajs.emptystack.net/#introduction">简介</a></li><li><a data-savepage-href="#application" href="http://koajs.emptystack.net/#application">应用</a></li><li><a data-savepage-href="#context" href="http://koajs.emptystack.net/#context">上下文</a></li><li><a data-savepage-href="#request" href="http://koajs.emptystack.net/#request">请求</a></li><li><a data-savepage-href="#response" href="http://koajs.emptystack.net/#response">响应</a></li><li><a data-savepage-href="#links" href="http://koajs.emptystack.net/#links">链接</a></li></ul></div><div id="heading"><div id="logo">Koa</div><div id="tagline">下一代 node.js web 框架</div></div></section><section><div class="content"><h1 id="introduction">框架简介</h1><p>Koa 是由Express原班人马设计的全新web框架，意在为web应用打造一个更小、更简洁、更健壮的基础框架。通过引入 <a href="http://jlongster.com/A-Study-on-Solving-Callbacks-with-JavaScript-Generators" target="_blank">generator</a> ，Koa允许您避免过度使用回调函数并极大提高错误处理能力。 Koa核心库中不绑定任何中间件，只提供使您能快速、有趣低撰写服务器应用的核心方法。
+</p></div></section><section><div class="content"><h1 id="-">安装</h1>
+<p>  Koa 目前需要 &gt;=0.11.x版本的 node 环境。并需要在执行 node 的时候附带 --harmony 来引入 generators 。 如果您安装了较旧版本的 node ，您可以安装 <a href="https://github.com/visionmedia/n">n</a> (node版本控制器)，来快速安装 0.11.x</p>
+<pre><code>$ npm install -g n
+$ n 0.11.12
+$ node --harmony my-koa-app.js</code></pre>
+<h1 id="-">应用</h1>
+<p>  Koa 应用是一个包含一系列中间件 generator 函数的对象。
+  这些中间件函数基于 request 请求以一个类似于栈的结构组成并依次执行。
+  Koa 类似于其他中间件系统（比如 Ruby's Rack 、Connect 等），
+  然而 Koa 的核心设计思路是为中间件层提供高级语法糖封装，以增强其互用性和健壮性，并使得编写中间件变得相当有趣。</p>
+<p>  Koa 包含了像 content-negotiation（内容协商）、cache freshness（缓存刷新）、proxy support（代理支持）和 redirection（重定向）等常用任务方法。
+  与提供庞大的函数支持不同，Koa只包含很小的一部分，因为Koa并不绑定任何中间件。</p>
+<p>  任何教程都是从 hello world 开始的，Koa也不例外^_^  </p>
+<pre><code class="lang-js">var koa = require('koa');
+var app = koa();
+
+app.use(function *(){
+  this.body = 'Hello World';
+});
+
+app.listen(3000);</code></pre>
+<h2 id="-">中间件级联</h2>
+<p>  Koa 的中间件通过一种更加传统（您也许会很熟悉）的方式进行级联，摒弃了以往 node 频繁的回调函数造成的复杂代码逻辑。
+  我们通过 generators 来实现“真正”的中间件。
+  Connect 简单地将控制权交给一系列函数来处理，直到函数返回。
+  与之不同，当执行到 <code>yield next</code> 语句时，Koa 暂停了该中间件，继续执行下一个符合请求的中间件('downstrem')，然后控制权再逐级返回给上层中间件('upstream')。</p>
+<p>  下面的例子在页面中返回 "Hello World"，然而当请求开始时，请求先经过 <code>x-response-time</code> 和 <code>logging</code> 中间件，并记录中间件执行起始时间。
+  然后将控制权交给 <code>reponse</code> 中间件。当中间件运行到 <code>yield next</code> 时，函数挂起并将控制前交给下一个中间件。当没有中间件执行 <code>yield next</code> 时，程序栈会逆序唤起被挂起的中间件来执行接下来的代码。</p>
+<pre><code class="lang-js">var koa = require('koa');
+var app = koa();
+
+// x-response-time
+
+app.use(function *(next){
+  var start = new Date;
+  yield next;
+  var ms = new Date - start;
+  this.set('X-Response-Time', ms + 'ms');
+});
+
+// logger
+
+app.use(function *(next){
+  var start = new Date;
+  yield next;
+  var ms = new Date - start;
+  console.log('%s %s - %s', this.method, this.url, ms);
+});
+
+// response
+
+app.use(function *(){
+  this.body = 'Hello World';
+});
+
+app.listen(3000);</code></pre>
+<h2 id="-">配置</h2>
+<p>  应用配置是 <code>app</code> 实例属性，目前支持的配置项如下：</p>
+<ul>
+<li><code>app.name</code> 应用名称（可选项）</li>
+<li><code>app.env</code> 默认为 <strong>NODE_ENV</strong> 或者 <code>development</code></li>
+<li><code>app.proxy</code> 如果为 <code>true</code>，则解析 "Host" 的 header 域，并支持 <code>X-Forwarded-Host</code></li>
+<li><code>app.subdomainOffset</code> 默认为2，表示 <code>.subdomains</code> 所忽略的字符偏移量。</li>
+</ul>
+<h2 id="app-listen-">app.listen(...)</h2>
+<p>  Koa 应用并非是一个 1-to-1 表征关系的 HTTP 服务器。
+  一个或多个Koa应用可以被挂载到一起组成一个包含单一 HTTP 服务器的大型应用群。</p>
+<p>  如下为一个绑定3000端口的简单 Koa 应用，其创建并返回了一个 HTTP 服务器，为 <code>Server#listen()</code> 传递指定参数（参数的详细文档请查看<a href="http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback">nodejs.org</a>）。</p>
+<pre><code class="lang-js">var koa = require('koa');
+var app = koa();
+app.listen(3000);</code></pre>
+<p>  <code>app.listen(...)</code> 实际上是以下代码的语法糖:</p>
+<pre><code class="lang-js">var http = require('http');
+var koa = require('koa');
+var app = koa();
+http.createServer(app.callback()).listen(3000);</code></pre>
+<p>  这意味着您可以同时支持 HTTPS 和 HTTPS，或者在多个端口监听同一个应用。</p>
+<pre><code class="lang-js">var http = require('http');
+var koa = require('koa');
+var app = koa();
+http.createServer(app.callback()).listen(3000);
+http.createServer(app.callback()).listen(3001);</code></pre>
+<h2 id="app-callback-">app.callback()</h2>
+<p>  返回一个适合 <code>http.createServer()</code> 方法的回调函数用来处理请求。
+  您也可以使用这个回调函数将您的app挂载在 Connect/Express 应用上。</p>
+<h2 id="app-use-function-">app.use(function)</h2>
+<p>  为应用添加指定的中间件，详情请看 <a href="https://github.com/koajs/koa/wiki#middleware">Middleware</a></p>
+<h2 id="app-keys-">app.keys=</h2>
+<p>  设置签名Cookie密钥，该密钥会被传递给 <a href="https://github.com/jed/keygrip">KeyGrip</a>。</p>
+<p>  当然，您也可以自己生成 <code>KeyGrip</code> 实例：</p>
+<pre><code class="lang-js">app.keys = ['im a newer secret', 'i like turtle'];
+app.keys = new KeyGrip(['im a newer secret', 'i like turtle'], 'sha256');</code></pre>
+<p>  在进行cookie签名时，只有设置 <code>signed</code> 为 <code>true</code> 的时候，才会使用密钥进行加密：</p>
+<pre><code class="lang-js">this.cookies.set('name', 'tobi', { signed: true });</code></pre>
+<h2 id="-">错误处理</h2>
+<p>  默认情况下Koa会将所有错误信息输出到 stderr，除非 <strong>NODE_ENV</strong> 是 "test"。为了实现自定义错误处理逻辑（比如 centralized logging），您可以添加 "error" 事件监听器。</p>
+<pre><code class="lang-js">app.on('error', function(err){
+  log.error('server error', err);
+});</code></pre>
+<p>  如果错误发生在 请求/响应 环节，并且其不能够响应客户端时，<code>Contenxt</code> 实例也会被传递到 <code>error</code> 事件监听器的回调函数里。</p>
+<pre><code class="lang-js">app.on('error', function(err, ctx){
+  log.error('server error', err, ctx);
+});</code></pre>
+<p>  当发生错误但仍能够响应客户端时（比如没有数据写到socket中），Koa会返回一个500错误(Internal Server Error)。</p>
+<p>  无论哪种情况，Koa都会生成一个应用级别的错误信息，以便实现日志记录等目的。</p>
+</div></section><section><div class="content"><h1 id="context-">Context(上下文)</h1>
+<p>  Koa Context 将 node 的 <code>request</code> 和 <code>response</code> 对象封装在一个单独的对象里面，其为编写 web 应用和 API 提供了很多有用的方法。</p>
+<p>  这些操作在 HTTP 服务器开发中经常使用，因此其被添加在上下文这一层，而不是更高层框架中，因此将迫使中间件需要重新实现这些常用方法。</p>
+<p>  <code>context</code> 在每个 request 请求中被创建，在中间件中作为接收器(receiver)来引用，或者通过 <code>this</code> 标识符来引用：</p>
+<pre><code class="lang-js">app.use(function *(){
+  this; // is the Context
+  this.request; // is a koa Request
+  this.response; // is a koa Response
+});</code></pre>
+<p>  许多 context 的访问器和方法为了便于访问和调用，简单的委托给他们的 <code>ctx.request</code> 和 <code>ctx.response</code> 所对应的等价方法，
+  比如说 <code>ctx.type</code> 和 <code>ctx.length</code> 代理了 <code>response</code> 对象中对应的方法，<code>ctx.path</code> 和 <code>ctx.method</code> 代理了 <code>request</code> 对象中对应的方法。</p>
+<h2 id="api">API</h2>
+<p>  <code>Context</code> 详细的方法和访问器。</p>
+<h3 id="ctx-req">ctx.req</h3>
+<p>  Node 的 <code>request</code> 对象。</p>
+<h3 id="ctx-res">ctx.res</h3>
+<p>  Node 的 <code>response</code> 对象。</p>
+<p>  Koa <em>不支持</em> 直接调用底层 res 进行响应处理。请避免使用以下 node 属性：</p>
+<ul>
+<li><code>res.statusCode</code></li>
+<li><code>res.writeHead()</code></li>
+<li><code>res.write()</code></li>
+<li><code>res.end()</code></li>
+</ul>
+<h3 id="ctx-request">ctx.request</h3>
+<p>  Koa 的 <code>Request</code> 对象。</p>
+<h3 id="ctx-response">ctx.response</h3>
+<p>  Koa 的 <code>Response</code> 对象。</p>
+<h3 id="ctx-app">ctx.app</h3>
+<p>  应用实例引用。</p>
+<h3 id="ctx-cookies-get-name-options-">ctx.cookies.get(name, [options])</h3>
+<p>  获得 cookie 中名为 <code>name</code> 的值，<code>options</code> 为可选参数：</p>
+<ul>
+<li>'signed': 如果为 true，表示请求时 cookie 需要进行签名。</li>
+</ul>
+<p>注意：Koa 使用了 Express 的 <a href="https://github.com/jed/cookies">cookies</a> 模块，options 参数只是简单地直接进行传递。</p>
+<h3 id="ctx-cookies-set-name-value-options-">ctx.cookies.set(name, value, [options])</h3>
+<p>  设置 cookie 中名为 <code>name</code> 的值，<code>options</code> 为可选参数：</p>
+<ul>
+<li><code>signed</code>: 是否要做签名</li>
+<li><code>expires</code>: cookie 有效期时间</li>
+<li><code>path</code>: cookie 的路径，默认为 <code>/'</code></li>
+<li><code>domain</code>: cookie 的域</li>
+<li><code>secure</code>: false 表示 cookie 通过 HTTP 协议发送，true 表示 cookie 通过 HTTPS 发送。</li>
+<li><code>httpOnly</code>: true 表示 cookie 只能通过 HTTP 协议发送</li>
+</ul>
+<p>注意：Koa 使用了 Express 的 <a href="https://github.com/jed/cookies">cookies</a> 模块，options 参数只是简单地直接进行传递。</p>
+<h3 id="ctx-throw-msg-status-">ctx.throw(msg, [status])</h3>
+<p>  抛出包含 <code>.status</code> 属性的错误，默认为 <code>500</code>。该方法可以让 Koa 准确的响应处理状态。
+  Koa支持以下组合：</p>
+<pre><code class="lang-js">this.throw(403)
+this.throw('name required', 400)
+this.throw(400, 'name required')
+this.throw('something exploded')</code></pre>
+<p>  <code>this.throw('name required', 400)</code> 等价于：</p>
+<pre><code class="lang-js">var err = new Error('name required');
+err.status = 400;
+throw err;</code></pre>
+<p>  注意：这些用户级错误被标记为 <code>err.expose</code>，其意味着这些消息被准确描述为对客户端的响应，而并非使用在您不想泄露失败细节的场景中。</p>
+<h3 id="ctx-respond">ctx.respond</h3>
+<p>  为了避免使用 Koa 的内置响应处理功能，您可以直接赋值 <code>this.repond = false;</code>。如果您不想让 Koa 来帮助您处理 reponse，而是直接操作原生 <code>res</code> 对象，那么请使用这种方法。</p>
+<p>  注意： 这种方式是不被 Koa 支持的。其可能会破坏 Koa 中间件和 Koa 本身的一些功能。其只作为一种 hack 的方式，并只对那些想要在 Koa 方法和中间件中使用传统 <code>fn(req, res)</code> 方法的人来说会带来便利。</p>
+<h2 id="request-aliases">Request aliases</h2>
+<p>  以下访问器和别名与 <a data-savepage-href="#request" href="http://koajs.emptystack.net/#request">Request</a> 等价：</p>
+<ul>
+<li><code>ctx.header</code></li>
+<li><code>ctx.method</code></li>
+<li><code>ctx.method=</code></li>
+<li><code>ctx.url</code></li>
+<li><code>ctx.url=</code></li>
+<li><code>ctx.originalUrl</code></li>
+<li><code>ctx.path</code></li>
+<li><code>ctx.path=</code></li>
+<li><code>ctx.query</code></li>
+<li><code>ctx.query=</code></li>
+<li><code>ctx.querystring</code></li>
+<li><code>ctx.querystring=</code></li>
+<li><code>ctx.host</code></li>
+<li><code>ctx.hostname</code></li>
+<li><code>ctx.fresh</code></li>
+<li><code>ctx.stale</code></li>
+<li><code>ctx.socket</code></li>
+<li><code>ctx.protocol</code></li>
+<li><code>ctx.secure</code></li>
+<li><code>ctx.ip</code></li>
+<li><code>ctx.ips</code></li>
+<li><code>ctx.subdomains</code></li>
+<li><code>ctx.is()</code></li>
+<li><code>ctx.accepts()</code></li>
+<li><code>ctx.acceptsEncodings()</code></li>
+<li><code>ctx.acceptsCharsets()</code></li>
+<li><code>ctx.acceptsLanguages()</code></li>
+<li><code>ctx.get()</code></li>
+</ul>
+<h2 id="response-aliases">Response aliases</h2>
+<p>  以下访问器和别名与 <a data-savepage-href="#response" href="http://koajs.emptystack.net/#response">Response</a> 等价：</p>
+<ul>
+<li><code>ctx.body</code></li>
+<li><code>ctx.body=</code></li>
+<li><code>ctx.status</code></li>
+<li><code>ctx.status=</code></li>
+<li><code>ctx.length=</code></li>
+<li><code>ctx.length</code></li>
+<li><code>ctx.type=</code></li>
+<li><code>ctx.type</code></li>
+<li><code>ctx.headerSent</code></li>
+<li><code>ctx.redirect()</code></li>
+<li><code>ctx.attachment()</code></li>
+<li><code>ctx.set()</code></li>
+<li><code>ctx.remove()</code></li>
+<li><code>ctx.lastModified=</code></li>
+<li><code>ctx.etag=</code></li>
+</ul>
+</div></section><section><div class="content"><h1 id="-request-">请求(Request)</h1>
+<p>  Koa <code>Request</code> 对象是对 node 的 request 进一步抽象和封装，提供了日常 HTTP 服务器开发中一些有用的功能。</p>
+<h2 id="api">API</h2>
+<h3 id="req-header">req.header</h3>
+<p>  请求头对象</p>
+<h3 id="req-method">req.method</h3>
+<p>  请求方法</p>
+<h3 id="req-method-">req.method=</h3>
+<p>  设置请求方法，在实现中间件时非常有用，比如 <code>methodOverride()</code>。</p>
+<h3 id="req-length">req.length</h3>
+<p>  以数字的形式返回 request 的内容长度(Content-Length)，或者返回 <code>undefined</code>。</p>
+<h3 id="req-url">req.url</h3>
+<p>  获得请求url地址。</p>
+<h3 id="req-url-">req.url=</h3>
+<p>  设置请求地址，用于重写url地址时。</p>
+<h3 id="req-originalurl">req.originalUrl</h3>
+<p>  获取请求原始地址。</p>
+<h3 id="req-path">req.path</h3>
+<p>  获取请求路径名。</p>
+<h3 id="req-path-">req.path=</h3>
+<p>  设置请求路径名，并保留请求参数(就是url中?后面的部分)。</p>
+<h3 id="req-querystring">req.querystring</h3>
+<p>  获取查询参数字符串(url中?后面的部分)，不包含 ?。</p>
+<h3 id="req-querystring-">req.querystring=</h3>
+<p>  设置查询参数。</p>
+<h3 id="req-search">req.search</h3>
+<p>  获取查询参数字符串，包含 ?。</p>
+<h3 id="req-search-">req.search=</h3>
+<p>  设置查询参数字符串。</p>
+<h3 id="req-host">req.host</h3>
+<p>  获取 host (hostname:port)。 当 <code>app.proxy</code> 设置为 <strong>true</strong> 时，支持 <code>X-Forwarded-Host</code>。</p>
+<h3 id="req-hostname">req.hostname</h3>
+<p>  获取 hostname。当 <code>app.proxy</code> 设置为 <strong>true</strong> 时，支持 <code>X-Forwarded-Host</code>。</p>
+<h3 id="req-type">req.type</h3>
+<p>  获取请求 <code>Content-Type</code>，不包含像 "charset" 这样的参数。</p>
+<pre><code class="lang-js">var ct = this.request.type;
+// =&gt; "image/png"</code></pre>
+<h3 id="req-charset">req.charset</h3>
+<p>  获取请求 charset，没有则返回 <code>undefined</code>:</p>
+<pre><code class="lang-js">this.request.charset
+// =&gt; "utf-8"</code></pre>
+<h3 id="req-query">req.query</h3>
+<p>  将查询参数字符串进行解析并以对象的形式返回，如果没有查询参数字字符串则返回一个空对象。</p>
+<p>  注意：该方法<strong>不</strong>支持嵌套解析。</p>
+<p>  比如 "color=blue&amp;size=small":</p>
+<pre><code class="lang-js">{
+  color: 'blue',
+  size: 'small'
+}</code></pre>
+<h3 id="req-query-">req.query=</h3>
+<p>  根据给定的对象设置查询参数字符串。</p>
+<p>  注意：该方法不支持嵌套对象。</p>
+<pre><code class="lang-js">this.query = { next: '/login' };</code></pre>
+<h3 id="req-fresh">req.fresh</h3>
+<p>  检查请求缓存是否 "fresh"(内容没有发生变化)。该方法用于在 <code>If-None-Match</code> / <code>ETag</code>, <code>If-Modified-Since</code> 和 <code>Last-Modified</code> 中进行缓存协调。当在 response headers 中设置一个或多个上述参数后，该方法应该被使用。</p>
+<pre><code class="lang-js">this.set('ETag', '123');
+
+// cache is ok
+if (this.fresh) {
+  this.status = 304;
+  return;
+}
+
+// cache is stale
+// fetch new data
+this.body = yield db.find('something');</code></pre>
+<h3 id="req-stale">req.stale</h3>
+<p>  与 <code>req.fresh</code> 相反。</p>
+<h3 id="req-protocol">req.protocol</h3>
+<p>  返回请求协议，"https" 或者 "http"。 当 <code>app.proxy</code> 设置为 <strong>true</strong> 时，支持 <code>X-Forwarded-Host</code>。</p>
+<h3 id="req-secure">req.secure</h3>
+<p>  简化版 <code>this.protocol == "https"</code>，用来检查请求是否通过 TLS 发送。</p>
+<h3 id="req-ip">req.ip</h3>
+<p>  请求远程地址。 当 <code>app.proxy</code> 设置为 <strong>true</strong> 时，支持 <code>X-Forwarded-Host</code>。</p>
+<h3 id="req-ips">req.ips</h3>
+<p>  当 <code>X-Forwarded-For</code> 存在并且 <code>app.proxy</code> 有效，将会返回一个有序（从 upstream 到 downstream）ip 数组。
+  否则返回一个空数组。</p>
+<h3 id="req-subdomains">req.subdomains</h3>
+<p>  以数组形式返回子域名。</p>
+<p>  子域名是在host中逗号分隔的主域名前面的部分。默认情况下，应用的域名假设为host中最后两部分。其可通过设置 <code>app.subdomainOffset</code> 进行更改。</p>
+<p>  举例来说，如果域名是 "tobi.ferrets.example.com":</p>
+<p>  如果没有设置 <code>app.subdomainOffset</code>，其 subdomains 为 <code>["ferrets", "tobi"]</code>。
+  如果设置 <code>app.subdomainOffset</code> 为3，其 subdomains 为 <code>["tobi"]</code>。</p>
+<h3 id="req-is-type-">req.is(type)</h3>
+<p>  检查请求所包含的 "Content-Type" 是否为给定的 type 值。
+  如果没有 request body，返回 <code>undefined</code>。
+  如果没有 content type，或者匹配失败，返回 <code>false</code>。
+  否则返回匹配的 content-type。</p>
+<pre><code class="lang-js">// With Content-Type: text/html; charset=utf-8
+this.is('html'); // =&gt; 'html'
+this.is('text/html'); // =&gt; 'text/html'
+this.is('text/*', 'text/html'); // =&gt; 'text/html'
+
+// When Content-Type is application/json
+this.is('json', 'urlencoded'); // =&gt; 'json'
+this.is('application/json'); // =&gt; 'application/json'
+this.is('html', 'application/*'); // =&gt; 'application/json'
+
+this.is('html'); // =&gt; false</code></pre>
+<p>  比如说您希望保证只有图片发送给指定路由：</p>
+<pre><code class="lang-js">if (this.is('image/*')) {
+  // process
+} else {
+  this.throw(415, 'images only!');
+}</code></pre>
+<h3 id="content-negotiation">Content Negotiation</h3>
+<p>  Koa <code>request</code> 对象包含 content negotiation 功能（由 <a href="http://github.com/expressjs/accepts">accepts</a> 和 <a href="https://github.com/federomero/negotiator">negotiator</a> 提供）：</p>
+<ul>
+<li><code>req.accepts(types)</code></li>
+<li><code>req.acceptsEncodings(types)</code></li>
+<li><code>req.acceptsCharsets(charsets)</code></li>
+<li><code>req.acceptsLanguages(langs)</code></li>
+</ul>
+<p>  如果没有提供 types，将会返回<strong>所有的</strong>可接受类型。</p>
+<p>  如果提供多种 types，将会返回最佳匹配类型。如果没有匹配上，则返回 <code>false</code>，您应该给客户端返回 <code>406 "Not Acceptable"</code>。</p>
+<p>  为了防止缺少 accept headers 而导致可以接受任意类型，将会返回第一种类型。因此，您提供的类型顺序非常重要。</p>
+<h3 id="req-accepts-types-">req.accepts(types)</h3>
+<p>  检查给定的类型 <code>types(s)</code> 是否可被接受，当为 true 时返回最佳匹配，否则返回 <code>false</code>。<code>type</code> 的值可以是一个或者多个 mime 类型字符串。
+  比如 "application/json" 扩展名为 "json"，或者数组 <code>["json", "html", "text/plain"]</code>。</p>
+<pre><code class="lang-js">// Accept: text/html
+this.accepts('html');
+// =&gt; "html"
+
+// Accept: text/*, application/json
+this.accepts('html');
+// =&gt; "html"
+this.accepts('text/html');
+// =&gt; "text/html"
+this.accepts('json', 'text');
+// =&gt; "json"
+this.accepts('application/json');
+// =&gt; "application/json"
+
+// Accept: text/*, application/json
+this.accepts('image/png');
+this.accepts('png');
+// =&gt; false
+
+// Accept: text/*;q=.5, application/json
+this.accepts(['html', 'json']);
+this.accepts('html', 'json');
+// =&gt; "json"
+
+// No Accept header
+this.accepts('html', 'json');
+// =&gt; "html"
+this.accepts('json', 'html');
+// =&gt; "json"</code></pre>
+<p>  <code>this.accepts()</code> 可以被调用多次，或者使用 switch:</p>
+<pre><code class="lang-js">switch (this.accepts('json', 'html', 'text')) {
+  case 'json': break;
+  case 'html': break;
+  case 'text': break;
+  default: this.throw(406, 'json, html, or text only');
+}</code></pre>
+<h3 id="req-acceptsencodings-encodings-">req.acceptsEncodings(encodings)</h3>
+<p>  检查 <code>encodings</code> 是否可以被接受，当为 <code>true</code> 时返回最佳匹配，否则返回 <code>false</code>。
+  注意：您应该在 encodings 中包含 <code>identity</code>。</p>
+<pre><code class="lang-js">// Accept-Encoding: gzip
+this.acceptsEncodings('gzip', 'deflate', 'identity');
+// =&gt; "gzip"
+
+this.acceptsEncodings(['gzip', 'deflate', 'identity']);
+// =&gt; "gzip"</code></pre>
+<p>  当没有传递参数时，返回包含所有可接受的 encodings 的数组：</p>
+<pre><code class="lang-js">// Accept-Encoding: gzip, deflate
+this.acceptsEncodings();
+// =&gt; ["gzip", "deflate", "identity"]</code></pre>
+<p>  注意：如果客户端直接发送 <code>identity;q=0</code> 时，<code>identity</code> encoding（表示no encoding） 可以不被接受。虽然这是一个边界情况，您仍然应该处理这种情况。</p>
+<h3 id="req-acceptscharsets-charsets-">req.acceptsCharsets(charsets)</h3>
+<p>  检查 <code>charsets</code> 是否可以被接受，如果为 <code>true</code> 则返回最佳匹配， 否则返回 <code>false</code>。</p>
+<pre><code class="lang-js">// Accept-Charset: utf-8, iso-8859-1;q=0.2, utf-7;q=0.5
+this.acceptsCharsets('utf-8', 'utf-7');
+// =&gt; "utf-8"
+
+this.acceptsCharsets(['utf-7', 'utf-8']);
+// =&gt; "utf-8"</code></pre>
+<p>  当没有传递参数时， 返回包含所有可接受的 charsets 的数组：</p>
+<pre><code class="lang-js">// Accept-Charset: utf-8, iso-8859-1;q=0.2, utf-7;q=0.5
+this.acceptsCharsets();
+// =&gt; ["utf-8", "utf-7", "iso-8859-1"]</code></pre>
+<h3 id="req-acceptslanguages-langs-">req.acceptsLanguages(langs)</h3>
+<p>  检查 <code>langs</code> 是否可以被接受，如果为 <code>true</code> 则返回最佳匹配，否则返回 <code>false</code>。</p>
+<pre><code class="lang-js">// Accept-Language: en;q=0.8, es, pt
+this.acceptsLanguages('es', 'en');
+// =&gt; "es"
+
+this.acceptsLanguages(['en', 'es']);
+// =&gt; "es"</code></pre>
+<p>  当没有传递参数时，返回包含所有可接受的 langs 的数组：</p>
+<pre><code class="lang-js">// Accept-Language: en;q=0.8, es, pt
+this.acceptsLanguages();
+// =&gt; ["es", "pt", "en"]</code></pre>
+<h3 id="req-idempotent">req.idempotent</h3>
+<p>  检查请求是否为幂等(idempotent)。</p>
+<h3 id="req-socket">req.socket</h3>
+<p>  返回请求的socket。</p>
+<h3 id="req-get-field-">req.get(field)</h3>
+<p>  返回请求 header 中对应 field 的值。</p>
+</div></section><section><div class="content"><h1 id="-response-">响应(Response)</h1>
+<p>  Koa <code>Response</code> 对象是对 node 的 response 进一步抽象和封装，提供了日常 HTTP 服务器开发中一些有用的功能。</p>
+<h2 id="api">API</h2>
+<h3 id="res-header">res.header</h3>
+<p>  Response header 对象。</p>
+<h3 id="res-socket">res.socket</h3>
+<p>  Request socket。</p>
+<h3 id="res-status">res.status</h3>
+<p>  获取 response status。不同于 node 在默认情况下 <code>res.statusCode</code> 为200，<code>res.status</code> 并没有赋值。</p>
+<h3 id="res-statusstring">res.statusString</h3>
+<p>  Response status 字符串。</p>
+<h3 id="res-status-">res.status=</h3>
+<p>  通过 数字状态码或者不区分大小写的字符串来设置response status：</p>
+<ul>
+<li>100 "continue"</li>
+<li>101 "switching protocols"</li>
+<li>102 "processing"</li>
+<li>200 "ok"</li>
+<li>201 "created"</li>
+<li>202 "accepted"</li>
+<li>203 "non-authoritative information"</li>
+<li>204 "no content"</li>
+<li>205 "reset content"</li>
+<li>206 "partial content"</li>
+<li>207 "multi-status"</li>
+<li>300 "multiple choices"</li>
+<li>301 "moved permanently"</li>
+<li>302 "moved temporarily"</li>
+<li>303 "see other"</li>
+<li>304 "not modified"</li>
+<li>305 "use proxy"</li>
+<li>307 "temporary redirect"</li>
+<li>400 "bad request"</li>
+<li>401 "unauthorized"</li>
+<li>402 "payment required"</li>
+<li>403 "forbidden"</li>
+<li>404 "not found"</li>
+<li>405 "method not allowed"</li>
+<li>406 "not acceptable"</li>
+<li>407 "proxy authentication required"</li>
+<li>408 "request time-out"</li>
+<li>409 "conflict"</li>
+<li>410 "gone"</li>
+<li>411 "length required"</li>
+<li>412 "precondition failed"</li>
+<li>413 "request entity too large"</li>
+<li>414 "request-uri too large"</li>
+<li>415 "unsupported media type"</li>
+<li>416 "requested range not satisfiable"</li>
+<li>417 "expectation failed"</li>
+<li>418 "i'm a teapot"</li>
+<li>422 "unprocessable entity"</li>
+<li>423 "locked"</li>
+<li>424 "failed dependency"</li>
+<li>425 "unordered collection"</li>
+<li>426 "upgrade required"</li>
+<li>428 "precondition required"</li>
+<li>429 "too many requests"</li>
+<li>431 "request header fields too large"</li>
+<li>500 "internal server error"</li>
+<li>501 "not implemented"</li>
+<li>502 "bad gateway"</li>
+<li>503 "service unavailable"</li>
+<li>504 "gateway time-out"</li>
+<li>505 "http version not supported"</li>
+<li>506 "variant also negotiates"</li>
+<li>507 "insufficient storage"</li>
+<li>509 "bandwidth limit exceeded"</li>
+<li>510 "not extended"</li>
+<li>511 "network authentication required"</li>
+</ul>
+<p><strong>注意</strong>：不用担心记不住这些字符串，如果您设置错误，会有异常抛出，并列出该状态码表来帮助您进行更正。</p>
+<h3 id="res-length-">res.length=</h3>
+<p>  通过给定值设置 response Content-Length。</p>
+<h3 id="res-length">res.length</h3>
+<p>  如果 Content-Length 作为数值存在，或者可以通过 <code>res.body</code> 来进行计算，则返回相应数值，否则返回 <code>undefined</code>。</p>
+<h3 id="res-body">res.body</h3>
+<p>  获得 response body。</p>
+<h3 id="res-body-">res.body=</h3>
+<p>  设置 response body 为如下值：</p>
+<ul>
+<li><code>string</code> written</li>
+<li><code>Buffer</code> written</li>
+<li><code>Stream</code> piped</li>
+<li><code>Object</code> json-stringified</li>
+<li><code>null</code> no content response</li>
+</ul>
+<p>  如果 <code>res.status</code> 没有赋值，Koa会自动设置为 <code>200</code> 或 <code>204</code>。</p>
+<h4 id="string">String</h4>
+<p>  Content-Type 默认为 text/html 或者 text/plain，两种默认 charset 均为 utf-8。 Content-Length 同时会被设置。</p>
+<h4 id="buffer">Buffer</h4>
+<p>  Content-Type 默认为 application/octet-stream，Content-Length同时被设置。</p>
+<h4 id="stream">Stream</h4>
+<p>  Content-Type 默认为 application/octet-stream。</p>
+<h4 id="object">Object</h4>
+<p>  Content-Type 默认为 application/json。</p>
+<h3 id="res-get-field-">res.get(field)</h3>
+<p>  获取 response header 中字段值，field 不区分大小写。</p>
+<pre><code class="lang-js">var etag = this.get('ETag');</code></pre>
+<h3 id="res-set-field-value-">res.set(field, value)</h3>
+<p>  设置 response header 字段 <code>field</code> 的值为 <code>value</code>。</p>
+<pre><code class="lang-js">this.set('Cache-Control', 'no-cache');</code></pre>
+<h3 id="res-set-fields-">res.set(fields)</h3>
+<p>  使用对象同时设置 response header 中多个字段的值。</p>
+<pre><code class="lang-js">this.set({
+  'Etag': '1234',
+  'Last-Modified': date
+});</code></pre>
+<h3 id="res-remove-field-">res.remove(field)</h3>
+<p>  移除 response header 中字段 <code>filed</code>。</p>
+<h3 id="res-type">res.type</h3>
+<p>  获取 response <code>Content-Type</code>，不包含像 "charset" 这样的参数。</p>
+<pre><code class="lang-js">var ct = this.type;
+// =&gt; "image/png"</code></pre>
+<h3 id="res-type-">res.type=</h3>
+<p>  通过 mime 类型的字符串或者文件扩展名设置 response <code>Content-Type</code></p>
+<pre><code class="lang-js">this.type = 'text/plain; charset=utf-8';
+this.type = 'image/png';
+this.type = '.png';
+this.type = 'png';</code></pre>
+<p>  注意：当可以根据 <code>res.type</code> 确定一个合适的 <code>charset</code> 时，<code>charset</code> 会自动被赋值。
+  比如 <code>res.type = 'html'</code> 时，charset 将会默认设置为 "utf-8"。然而当完整定义为 <code>res.type = 'text/html'</code>时，charset 不会自动设置。</p>
+<h3 id="res-redirect-url-alt-">res.redirect(url, [alt])</h3>
+<p>  执行 [302] 重定向到对应 <code>url</code>。</p>
+<p>  字符串 "back" 是一个特殊参数，其提供了 Referrer 支持。当没有Referrer时，使用 <code>alt</code> 或者 <code>/</code> 代替。</p>
+<pre><code class="lang-js">this.redirect('back');
+this.redirect('back', '/index.html');
+this.redirect('/login');
+this.redirect('http://google.com');</code></pre>
+<p>  如果想要修改默认的 [302] 状态，直接在重定向之前或者之后执行即可。如果要修改 body，需要在重定向之前执行。</p>
+<pre><code class="lang-js">this.status = 301;
+this.redirect('/cart');
+this.body = 'Redirecting to shopping cart';</code></pre>
+<h3 id="res-attachment-filename-">res.attachment([filename])</h3>
+<p>  设置 "attachment" 的 <code>Content-Disposition</code>，用于给客户端发送信号来提示下载。filename 为可选参数，用于指定下载文件名。</p>
+<h3 id="res-headersent">res.headerSent</h3>
+<p>  检查 response header 是否已经发送，用于在发生错误时检查客户端是否被通知。</p>
+<h3 id="res-lastmodified">res.lastModified</h3>
+<p>  如果存在 <code>Last-Modified</code>，则以 <code>Date</code> 的形式返回。</p>
+<h3 id="res-lastmodified-">res.lastModified=</h3>
+<p>  以 UTC 格式设置 <code>Last-Modified</code>。您可以使用 <code>Date</code> 或 date 字符串来进行设置。</p>
+<pre><code class="lang-js">this.response.lastModified = new Date();</code></pre>
+<h3 id="res-etag-">res.etag=</h3>
+<p>  设置 包含 <code>"</code>s 的 ETag。注意没有对应的 <code>res.etag</code> 来获取其值。</p>
+<pre><code class="lang-js">this.response.etag = crypto.createHash('md5').update(this.body).digest('hex');</code></pre>
+<h3 id="res-append-field-val-">res.append(field, val)</h3>
+<p>  在 header 的 <code>field</code> 后面 追加 <code>val</code>。</p>
+<h3 id="res-vary-field-">res.vary(field)</h3>
+<p>  相当于执行res.append('Vary', field)。</p>
+</div></section><section><div class="content"><h1 id="links">链接</h1><p>提供Koa 第三方中间件的社区链接。社区里又很多完整可运行的例子，详尽的文档。如果您有任何问题，请在IRC中联系我们。</p><ul><li><a href="https://github.com/koajs/koa">GitHub项目</a></li><li><a href="https://github.com/koajs/examples">示例</a></li><li><a href="https://github.com/koajs/koa/wiki">中间件</a></li><li><a href="https://github.com/koajs/koa/wiki">Wiki</a></li><li><a href="https://plus.google.com/communities/101845768320796750641">G+ 社区</a></li><li><a href="https://groups.google.com/forum/#!forum/koajs">邮件列表</a></li><li><a href="https://github.com/koajs/koa/blob/master/docs/guide.md">文档</a></li><li><a href="https://github.com/koajs/koa/blob/master/docs/faq.md">FAQ</a></li><!-- li: <strong>#koajs</strong> on freenode --></ul></div></section><script data-savepage-type="" type="text/plain"></script><span id="cnzz_stat_icon_5911607"></span><script data-savepage-src=" http://s4.cnzz.com/stat.php?id=5911607&show=pic" data-savepage-type="text/javascript" type="text/plain"></script></body></html>
