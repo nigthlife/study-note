@@ -4,8 +4,6 @@
 
 >    Thinkphp v5.1.41 反序列化漏洞
 
->   
-
 >   工具burpsuite
 
 

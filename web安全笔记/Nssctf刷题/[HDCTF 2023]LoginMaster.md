@@ -56,8 +56,6 @@ select replace('replace(".",char(46),".")',char(46),'replace(".",char(46),".")')
 
 **解决单双引号不同的问题**
 
-
-
 ```sql
 # char(34) = "      	char(39) = '
 # object  = replace('"."',char(34),char(39)) == 【'.'】
