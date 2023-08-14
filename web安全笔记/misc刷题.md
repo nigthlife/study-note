@@ -184,6 +184,8 @@ https://3gstudent.github.io/%E9%9A%90%E5%86%99%E6%8A%80%E5%B7%A7-%E5%88%A9%E7%94
 
 ### 常见文件头hex
 
+https://blog.csdn.net/weixin_44604541/article/details/110082054
+
 ####图片
 
 ```nginx
