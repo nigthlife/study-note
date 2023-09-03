@@ -76,7 +76,6 @@ file_exists($_GET['file']);
 >       没有这个，PHP就无法识别出它是Phar文件。
 >   ```
 >
->   
 
 ### 2、manifest
 
@@ -128,7 +127,7 @@ $tttang=new phar('tttang.phar',0);
 //开始缓冲 Phar 写操作
 $tttang->startBuffering();
 
-//自定义的meta-data存入manifest
+//自定义的meta-data存入manifest，phar反序列在这里
 $tttang->setMetadata($a);
 
 //设置stub，stub是一个简单的php文件。PHP通过stub识别一个文件为PHAR文件，可以利用这点绕过文件上传检测

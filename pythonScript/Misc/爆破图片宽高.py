@@ -3,7 +3,7 @@ import os
 import binascii
 import struct
 
-crcbp = open("1.png", "rb").read()    # 打开图片
+crcbp = open("../1.png", "rb").read()    # 打开图片
 for i in range(2000):
     for j in range(2000):
         data = crcbp[12:16] + \

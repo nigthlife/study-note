@@ -1,3 +1,12 @@
+## 一些编码
+
+### tapcode
+
+- **敲击码，记录键盘输入的位置字符**
+- 可通过网站反查字母：http://www.hiencode.com/tapcode.html
+
+
+
 ## 流量分析
 
 ### ==数据包筛选==
@@ -722,7 +731,7 @@ with open("extracted2.bmp", "wb") as out:
 
 
 - **Jsteg隐写**
-    
+  
     - 将秘密信息嵌入在量化后的DCT系数的LSB上
     - 原始值为-1,0，+1的DCT系数除外
     - 量化后的DCT系数中有负数
@@ -764,8 +773,9 @@ with open("extracted2.bmp", "wb") as out:
         			if self._write(im_index,data):
         				info_index+=1
         			im_index+=1
-         
-         
+
+
+​         
         	def read(self):
         		"""先读出信息的长度，然后读出信息"""
         		_len,sequence_index=self._get_info_len()
